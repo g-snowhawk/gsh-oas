@@ -109,6 +109,18 @@ class Response extends \Gsnowhawk\Oas\Fixedasset
         }
         $this->view->bind('post', $post);
 
+        $transfers = $this->db->select(
+            'year,month,date,summary,change_quantity,change_price,note',
+            'fixed_assets_detail',
+            'WHERE id = ?',
+            [$this->request->param('id')]
+        );
+        foreach ($transfers as &$transfer) {
+            $transfer['transfer_date'] = implode('-', [$transfer['year'], $transfer['month'], $transfer['date']]);
+        }
+        unset($transfer);
+        $this->view->bind('transfers', $transfers);
+
         $sql = "SELECT ai.item_code,ai.item_name
                   FROM `table::account_items` ai
                   JOIN (SELECT group_d

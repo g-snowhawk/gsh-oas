@@ -54,7 +54,7 @@ class Fixedasset extends Taxation
         $valid = [];
         $valid[] = ['vl_item', 'item', 'empty'];
         $valid[] = ['vl_title', 'title', 'empty'];
-        $valid[] = ['vl_quantity', 'quantity', 'empty'];
+        $valid[] = ['vl_quantity', 'quantity', 'blank'];
         $valid[] = ['vl_acquire', 'acquire', 'empty'];
         $valid[] = ['vl_price', 'price', 'empty'];
         $valid[] = ['vl_location', 'location', 'empty'];
