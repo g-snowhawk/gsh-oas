@@ -57,7 +57,7 @@ class Financial extends \Gsnowhawk\Oas\Taxation
     /**
      * Default view.
      */
-    public function defaultView() : void
+    public function defaultView(): void
     {
         $this->checkPermission('oas.taxation.read');
 
@@ -75,7 +75,7 @@ class Financial extends \Gsnowhawk\Oas\Taxation
         $this->view->render($template_path);
     }
 
-    public function pdf() : void
+    public function pdf(): void
     {
         $target_year = $this->request->POST('nendo') . '-01-01';
         $year = date('Y', strtotime($target_year));
@@ -119,7 +119,7 @@ class Financial extends \Gsnowhawk\Oas\Taxation
         $this->drawHeader($target_year);
         $income = $this->drawIncome($target_year);
         $buying = $this->drawBuying($target_year);
-        $cost   = $this->drawCost($target_year);
+        $cost = $this->drawCost($target_year);
         $data = [
             'no07' => $income - $buying,
             'no37' => 0,
@@ -130,7 +130,7 @@ class Financial extends \Gsnowhawk\Oas\Taxation
         $data['no44'] = min($data['no43'], $this->oas_config->blue_return_deduction);
         $data['no45'] = $data['no43'] - $data['no44'];
         $ary = $this->pdfmap['page1']['columns'] ?? [
-            ['font' => $this->mono, 'style' => '', 'size' => 10, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'no07', 'suffix' => '', 'x' =>  59.5, 'y' => 125.5, 'type' => 'Cell', 'width' => 44.7, 'height' => 6.16, 'align' => 'R', 'flg' => true, 'pitch' => 3.0],
+            ['font' => $this->mono, 'style' => '', 'size' => 10, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'no07', 'suffix' => '', 'x' => 59.5, 'y' => 125.5, 'type' => 'Cell', 'width' => 44.7, 'height' => 6.16, 'align' => 'R', 'flg' => true, 'pitch' => 3.0],
             ['font' => $this->mono, 'style' => '', 'size' => 10, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'no33', 'suffix' => '', 'x' => 145.8, 'y' => 182.7, 'type' => 'Cell', 'width' => 44.7, 'height' => 6.16, 'align' => 'R', 'flg' => true, 'pitch' => 3.0],
             ['font' => $this->mono, 'style' => '', 'size' => 10, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'no43', 'suffix' => '', 'x' => 232.2, 'y' => 135.0, 'type' => 'Cell', 'width' => 44.7, 'height' => 6.16, 'align' => 'R', 'flg' => true, 'pitch' => 3.0],
             ['font' => $this->mono, 'style' => '', 'size' => 10, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'no44', 'suffix' => '', 'x' => 232.2, 'y' => 141.5, 'type' => 'Cell', 'width' => 44.7, 'height' => 6.16, 'align' => 'R', 'flg' => true, 'pitch' => 3.0],
@@ -159,13 +159,13 @@ class Financial extends \Gsnowhawk\Oas\Taxation
 
         $data = [
             'nengo' => $this->toWareki($target_year),
-            'name'  => $this->userinfo['fullname'],
-            'rubi'  => $this->userinfo['fullname_rubi'],
+            'name' => $this->userinfo['fullname'],
+            'rubi' => $this->userinfo['fullname_rubi'],
         ];
         $ary = $this->pdfmap['page2']['header'] ?? [
-            ['font' => $this->mincho, 'style' => '', 'size' =>  6, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'rubi',  'suffix' => '', 'x' =>   70, 'y' => 13.0, 'type' => 'Cell', 'width' => 35, 'height' =>   4, 'align' => 'L', 'flg' => true],
-            ['font' => $this->mincho, 'style' => '', 'size' =>  9, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'name',  'suffix' => '', 'x' =>   70, 'y' => 16.0, 'type' => 'Cell', 'width' => 35, 'height' =>   5, 'align' => 'L', 'flg' => true],
-            ['font' => $this->mono,   'style' => '', 'size' => 12, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'nengo', 'suffix' => '', 'x' => 32.0, 'y' =>  7.8, 'type' => 'Cell', 'width' => 10, 'height' => 6.2, 'align' => 'R', 'flg' => true, 'pitch' => 3.5],
+            ['font' => $this->mincho, 'style' => '', 'size' => 6, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'rubi',  'suffix' => '', 'x' => 70, 'y' => 13.0, 'type' => 'Cell', 'width' => 35, 'height' => 4, 'align' => 'L', 'flg' => true],
+            ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'name',  'suffix' => '', 'x' => 70, 'y' => 16.0, 'type' => 'Cell', 'width' => 35, 'height' => 5, 'align' => 'L', 'flg' => true],
+            ['font' => $this->mono,   'style' => '', 'size' => 12, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'nengo', 'suffix' => '', 'x' => 32.0, 'y' => 7.8, 'type' => 'Cell', 'width' => 10, 'height' => 6.2, 'align' => 'R', 'flg' => true, 'pitch' => 3.5],
         ];
         $this->pdf->draw($ary, $data);
 
@@ -185,20 +185,20 @@ class Financial extends \Gsnowhawk\Oas\Taxation
         $this->pdf->addPageFromTemplate(4, 'L');
 
         $year = date('Y', strtotime($target_year));
-        $data['year']   = $this->toWareki($target_year);
+        $data['year'] = $this->toWareki($target_year);
         $data['sMonth'] = '1';
-        $data['sDay']   = '1';
+        $data['sDay'] = '1';
         $data['eMonth'] = '12';
-        $data['eDay']   = '31';
+        $data['eDay'] = '31';
 
         $ary = $this->pdfmap['page4']['header'] ?? [
-            ['font' => $this->mincho, 'style' => '', 'size' => 8, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'year',   'suffix' => '', 'x' => 170.2, 'y' => 19.3, 'type' => 'Cell', 'width' =>   6, 'height' => 4.5, 'align' => 'R', 'flg' => true],
-            ['font' => $this->mincho, 'style' => '', 'size' => 8, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'eMonth', 'suffix' => '', 'x' => 178.2, 'y' => 19.3, 'type' => 'Cell', 'width' =>   6, 'height' => 4.5, 'align' => 'R', 'flg' => true],
-            ['font' => $this->mincho, 'style' => '', 'size' => 8, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'eDay',   'suffix' => '', 'x' => 186.2, 'y' => 19.3, 'type' => 'Cell', 'width' =>   6, 'height' => 4.5, 'align' => 'R', 'flg' => true],
-            ['font' => $this->mincho, 'style' => '', 'size' => 8, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'sMonth', 'suffix' => '', 'x' =>  49.5, 'y' => 30.4, 'type' => 'Cell', 'width' => 9.8, 'height' => 6.2, 'align' => 'R', 'flg' => true],
-            ['font' => $this->mincho, 'style' => '', 'size' => 8, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'sDay',   'suffix' => '', 'x' =>  58.0, 'y' => 30.4, 'type' => 'Cell', 'width' => 9.8, 'height' => 6.2, 'align' => 'R', 'flg' => true],
-            ['font' => $this->mincho, 'style' => '', 'size' => 8, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'eMonth', 'suffix' => '', 'x' =>  79.5, 'y' => 30.4, 'type' => 'Cell', 'width' => 9.8, 'height' => 6.2, 'align' => 'R', 'flg' => true],
-            ['font' => $this->mincho, 'style' => '', 'size' => 8, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'eDay',   'suffix' => '', 'x' =>    88, 'y' => 30.4, 'type' => 'Cell', 'width' => 9.8, 'height' => 6.2, 'align' => 'R', 'flg' => true],
+            ['font' => $this->mincho, 'style' => '', 'size' => 8, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'year',   'suffix' => '', 'x' => 170.2, 'y' => 19.3, 'type' => 'Cell', 'width' => 6, 'height' => 4.5, 'align' => 'R', 'flg' => true],
+            ['font' => $this->mincho, 'style' => '', 'size' => 8, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'eMonth', 'suffix' => '', 'x' => 178.2, 'y' => 19.3, 'type' => 'Cell', 'width' => 6, 'height' => 4.5, 'align' => 'R', 'flg' => true],
+            ['font' => $this->mincho, 'style' => '', 'size' => 8, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'eDay',   'suffix' => '', 'x' => 186.2, 'y' => 19.3, 'type' => 'Cell', 'width' => 6, 'height' => 4.5, 'align' => 'R', 'flg' => true],
+            ['font' => $this->mincho, 'style' => '', 'size' => 8, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'sMonth', 'suffix' => '', 'x' => 49.5, 'y' => 30.4, 'type' => 'Cell', 'width' => 9.8, 'height' => 6.2, 'align' => 'R', 'flg' => true],
+            ['font' => $this->mincho, 'style' => '', 'size' => 8, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'sDay',   'suffix' => '', 'x' => 58.0, 'y' => 30.4, 'type' => 'Cell', 'width' => 9.8, 'height' => 6.2, 'align' => 'R', 'flg' => true],
+            ['font' => $this->mincho, 'style' => '', 'size' => 8, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'eMonth', 'suffix' => '', 'x' => 79.5, 'y' => 30.4, 'type' => 'Cell', 'width' => 9.8, 'height' => 6.2, 'align' => 'R', 'flg' => true],
+            ['font' => $this->mincho, 'style' => '', 'size' => 8, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'eDay',   'suffix' => '', 'x' => 88, 'y' => 30.4, 'type' => 'Cell', 'width' => 9.8, 'height' => 6.2, 'align' => 'R', 'flg' => true],
             ['font' => $this->mincho, 'style' => '', 'size' => 8, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'sMonth', 'suffix' => '', 'x' => 140.5, 'y' => 30.4, 'type' => 'Cell', 'width' => 9.8, 'height' => 6.2, 'align' => 'R', 'flg' => true],
             ['font' => $this->mincho, 'style' => '', 'size' => 8, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'sDay',   'suffix' => '', 'x' => 148.5, 'y' => 30.4, 'type' => 'Cell', 'width' => 9.8, 'height' => 6.2, 'align' => 'R', 'flg' => true],
             ['font' => $this->mincho, 'style' => '', 'size' => 8, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'eMonth', 'suffix' => '', 'x' => 170.5, 'y' => 30.4, 'type' => 'Cell', 'width' => 9.8, 'height' => 6.2, 'align' => 'R', 'flg' => true],
@@ -216,10 +216,10 @@ class Financial extends \Gsnowhawk\Oas\Taxation
     private function drawIncomeDetail($target_year)
     {
         $start = date('Y-01-01 00:00:00', strtotime($target_year));
-        $end   = date('Y-12-31 23:59:59', strtotime($target_year));
+        $end = date('Y-12-31 23:59:59', strtotime($target_year));
         $item_code = $this->filter_items['SALES'];
 
-        $sql = function($col) {
+        $sql = function ($col) {
             return "SELECT DATE_FORMAT(issue_date, '%c') AS month,
                            SUM(amount_{$col}) AS amount
                       FROM `table::transfer`
@@ -244,7 +244,7 @@ class Financial extends \Gsnowhawk\Oas\Taxation
         $result = $this->db->fetchAll();
 
         $data = [];
-        $ary  = [];
+        $ary = [];
         $total = 0;
         foreach ($result as $unit) {
             $amount = $unit['amount'];
@@ -282,7 +282,7 @@ class Financial extends \Gsnowhawk\Oas\Taxation
             $y += $h;
         }
 
-        $sql = function($col) {
+        $sql = function ($col) {
             return "SELECT item_code_{$col},
                            SUM(amount_{$col}) AS amount
                       FROM `table::transfer`
@@ -377,10 +377,10 @@ class Financial extends \Gsnowhawk\Oas\Taxation
     private function drawBuyingDetail($target_year)
     {
         $start = date('Y-01-01 00:00:00', strtotime($target_year));
-        $end   = date('Y-12-31 23:59:59', strtotime($target_year));
+        $end = date('Y-12-31 23:59:59', strtotime($target_year));
         $item_code = $this->filter_items['SALES'];
 
-        $sql = function($col) {
+        $sql = function ($col) {
             return "SELECT DATE_FORMAT(issue_date, '%c') AS month,
                            SUM(amount_{$col}) AS amount
                       FROM `table::transfer`
@@ -396,7 +396,7 @@ class Financial extends \Gsnowhawk\Oas\Taxation
         }
         $result = $this->db->fetchAll();
         $data = [];
-        $ary  = [];
+        $ary = [];
         $total = 0;
         foreach ($result as $unit) {
             $data[$unit['month']] = number_format($unit['amount']);
@@ -473,23 +473,23 @@ class Financial extends \Gsnowhawk\Oas\Taxation
         $line = 0;
 
         $origin = $this->pdfmap['page3']['item'] ?? [
-            ['font' => $this->mincho, 'style' => '', 'size' => 8, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'name',            'suffix' => '', 'x' =>  19.5, 'y' => 35.4, 'type' => 'Cell', 'width' => 20.5, 'height' => 7.15, 'align' => 'L', 'flg' => true],
-            ['font' => $this->mono,   'style' => '', 'size' => 8, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'quantity',        'suffix' => '', 'x' =>  36.0, 'y' => 35.4, 'type' => 'Cell', 'width' =>  9.8, 'height' => 7.15, 'align' => 'R', 'flg' => true],
-            ['font' => $this->mono,   'style' => '', 'size' => 8, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'acyear',          'suffix' => '', 'x' =>  49.7, 'y' => 36.2, 'type' => 'Cell', 'width' =>    5, 'height' => 7.15, 'align' => 'R', 'flg' => true],
-            ['font' => $this->mono,   'style' => '', 'size' => 8, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'acmon',           'suffix' => '', 'x' =>  55.5, 'y' => 36.2, 'type' => 'Cell', 'width' =>  4.6, 'height' => 7.15, 'align' => 'R', 'flg' => true],
-            ['font' => $this->mono,   'style' => '', 'size' => 8, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'price1',          'suffix' => '', 'x' =>  61.0, 'y' => 35.4, 'type' => 'Cell', 'width' =>   19, 'height' => 4.00, 'align' => 'R', 'flg' => true],
-            ['font' => $this->mono,   'style' => '', 'size' => 8, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'price2',          'suffix' => '', 'x' =>  84.2, 'y' => 35.4, 'type' => 'Cell', 'width' =>   19, 'height' => 7.15, 'align' => 'R', 'flg' => true],
-            ['font' => $this->mincho, 'style' => '', 'size' => 8, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'type',            'suffix' => '', 'x' => 105.3, 'y' => 35.4, 'type' => 'Cell', 'width' =>  9.9, 'height' => 7.15, 'align' => 'C', 'flg' => true],
-            ['font' => $this->mono,   'style' => '', 'size' => 8, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'durability',      'suffix' => '', 'x' =>   115, 'y' => 35.4, 'type' => 'Cell', 'width' =>    7, 'height' => 7.15, 'align' => 'R', 'flg' => true],
+            ['font' => $this->mincho, 'style' => '', 'size' => 8, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'name',            'suffix' => '', 'x' => 19.5, 'y' => 35.4, 'type' => 'Cell', 'width' => 20.5, 'height' => 7.15, 'align' => 'L', 'flg' => true],
+            ['font' => $this->mono,   'style' => '', 'size' => 8, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'quantity',        'suffix' => '', 'x' => 36.0, 'y' => 35.4, 'type' => 'Cell', 'width' => 9.8, 'height' => 7.15, 'align' => 'R', 'flg' => true],
+            ['font' => $this->mono,   'style' => '', 'size' => 8, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'acyear',          'suffix' => '', 'x' => 49.7, 'y' => 36.2, 'type' => 'Cell', 'width' => 5, 'height' => 7.15, 'align' => 'R', 'flg' => true],
+            ['font' => $this->mono,   'style' => '', 'size' => 8, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'acmon',           'suffix' => '', 'x' => 55.5, 'y' => 36.2, 'type' => 'Cell', 'width' => 4.6, 'height' => 7.15, 'align' => 'R', 'flg' => true],
+            ['font' => $this->mono,   'style' => '', 'size' => 8, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'price1',          'suffix' => '', 'x' => 61.0, 'y' => 35.4, 'type' => 'Cell', 'width' => 19, 'height' => 4.00, 'align' => 'R', 'flg' => true],
+            ['font' => $this->mono,   'style' => '', 'size' => 8, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'price2',          'suffix' => '', 'x' => 84.2, 'y' => 35.4, 'type' => 'Cell', 'width' => 19, 'height' => 7.15, 'align' => 'R', 'flg' => true],
+            ['font' => $this->mincho, 'style' => '', 'size' => 8, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'type',            'suffix' => '', 'x' => 105.3, 'y' => 35.4, 'type' => 'Cell', 'width' => 9.9, 'height' => 7.15, 'align' => 'C', 'flg' => true],
+            ['font' => $this->mono,   'style' => '', 'size' => 8, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'durability',      'suffix' => '', 'x' => 115, 'y' => 35.4, 'type' => 'Cell', 'width' => 7, 'height' => 7.15, 'align' => 'R', 'flg' => true],
             ['font' => $this->mono,   'style' => '', 'size' => 8, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'rate',            'suffix' => '', 'x' => 124.2, 'y' => 35.4, 'type' => 'Cell', 'width' => 9.85, 'height' => 7.15, 'align' => 'R', 'flg' => true],
-            ['font' => $this->mono,   'style' => '', 'size' => 7, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'months',          'suffix' => '', 'x' => 139.0, 'y' => 35.4, 'type' => 'Cell', 'width' =>  4.5, 'height' => 4.00, 'align' => 'C', 'flg' => true],
-            ['font' => $this->mono,   'style' => '', 'size' => 8, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'depreciate',      'suffix' => '', 'x' =>   146, 'y' => 35.4, 'type' => 'Cell', 'width' =>   18, 'height' => 7.15, 'align' => 'R', 'flg' => true],
-            ['font' => $this->mono,   'style' => '', 'size' => 8, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'special',         'suffix' => '', 'x' =>   166, 'y' => 35.4, 'type' => 'Cell', 'width' =>   18, 'height' => 7.15, 'align' => 'R', 'flg' => true],
-            ['font' => $this->mono,   'style' => '', 'size' => 8, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'depreciatetotal', 'suffix' => '', 'x' =>   186, 'y' => 35.4, 'type' => 'Cell', 'width' => 18.5, 'height' => 7.15, 'align' => 'R', 'flg' => true],
-            ['font' => $this->mono,   'style' => '', 'size' => 8, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'official_ratio',  'suffix' => '', 'x' =>   207, 'y' => 35.4, 'type' => 'Cell', 'width' =>    8, 'height' => 7.15, 'align' => 'R', 'flg' => true],
+            ['font' => $this->mono,   'style' => '', 'size' => 7, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'months',          'suffix' => '', 'x' => 139.0, 'y' => 35.4, 'type' => 'Cell', 'width' => 4.5, 'height' => 4.00, 'align' => 'C', 'flg' => true],
+            ['font' => $this->mono,   'style' => '', 'size' => 8, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'depreciate',      'suffix' => '', 'x' => 146, 'y' => 35.4, 'type' => 'Cell', 'width' => 18, 'height' => 7.15, 'align' => 'R', 'flg' => true],
+            ['font' => $this->mono,   'style' => '', 'size' => 8, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'special',         'suffix' => '', 'x' => 166, 'y' => 35.4, 'type' => 'Cell', 'width' => 18, 'height' => 7.15, 'align' => 'R', 'flg' => true],
+            ['font' => $this->mono,   'style' => '', 'size' => 8, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'depreciatetotal', 'suffix' => '', 'x' => 186, 'y' => 35.4, 'type' => 'Cell', 'width' => 18.5, 'height' => 7.15, 'align' => 'R', 'flg' => true],
+            ['font' => $this->mono,   'style' => '', 'size' => 8, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'official_ratio',  'suffix' => '', 'x' => 207, 'y' => 35.4, 'type' => 'Cell', 'width' => 8, 'height' => 7.15, 'align' => 'R', 'flg' => true],
             ['font' => $this->mono,   'style' => '', 'size' => 8, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'thisyear',        'suffix' => '', 'x' => 216.5, 'y' => 35.4, 'type' => 'Cell', 'width' => 18.5, 'height' => 7.15, 'align' => 'R', 'flg' => true],
-            ['font' => $this->mono,   'style' => '', 'size' => 8, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'onhand',          'suffix' => '', 'x' => 236.6, 'y' => 35.4, 'type' => 'Cell', 'width' =>   19, 'height' => 7.15, 'align' => 'R', 'flg' => true],
-            ['font' => $this->mincho, 'style' => '', 'size' => 8, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'note',            'suffix' => '', 'x' => 257.5, 'y' => 35.4, 'type' => 'Cell', 'width' =>   20, 'height' => 7.15, 'align' => 'L', 'flg' => true],
+            ['font' => $this->mono,   'style' => '', 'size' => 8, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'onhand',          'suffix' => '', 'x' => 236.6, 'y' => 35.4, 'type' => 'Cell', 'width' => 19, 'height' => 7.15, 'align' => 'R', 'flg' => true],
+            ['font' => $this->mincho, 'style' => '', 'size' => 8, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'note',            'suffix' => '', 'x' => 257.5, 'y' => 35.4, 'type' => 'Cell', 'width' => 20, 'height' => 7.15, 'align' => 'L', 'flg' => true],
         ];
         $y = $origin[0]['y'];
         $lh = $origin[0]['height'];
@@ -533,9 +533,9 @@ class Financial extends \Gsnowhawk\Oas\Taxation
 
             if (isset($result['ido']['month'])) {
                 $months = $result['ido']['month'];
-            } else if ($t == $s) {
+            } elseif ($t == $s) {
                 $months = 13 - date('n', strtotime($result['acquire']));
-            } else if ($t == $limit) {
+            } elseif ($t == $limit) {
                 $months = 12 - (13 - date('n', strtotime($result['acquire'])));
             } else {
                 $months = 12;
@@ -607,11 +607,11 @@ class Financial extends \Gsnowhawk\Oas\Taxation
             $data['special'] = $spsum;
         }
         $ary = $this->pdfmap['page3']['total'] ?? [
-            ['font' => $this->mono, 'style' => '', 'size' => 8, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'depreciate',      'suffix' => '', 'x' =>   146, 'y' => $y, 'type' => 'Cell', 'width' =>   18, 'height' => $lh, 'align' => 'R', 'flg' => true],
-            ['font' => $this->mono, 'style' => '', 'size' => 8, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'special',         'suffix' => '', 'x' =>   166, 'y' => $y, 'type' => 'Cell', 'width' =>   18, 'height' => $lh, 'align' => 'R', 'flg' => true],
-            ['font' => $this->mono, 'style' => '', 'size' => 8, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'depreciatetotal', 'suffix' => '', 'x' =>   186, 'y' => $y, 'type' => 'Cell', 'width' => 18.5, 'height' => $lh, 'align' => 'R', 'flg' => true],
+            ['font' => $this->mono, 'style' => '', 'size' => 8, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'depreciate',      'suffix' => '', 'x' => 146, 'y' => $y, 'type' => 'Cell', 'width' => 18, 'height' => $lh, 'align' => 'R', 'flg' => true],
+            ['font' => $this->mono, 'style' => '', 'size' => 8, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'special',         'suffix' => '', 'x' => 166, 'y' => $y, 'type' => 'Cell', 'width' => 18, 'height' => $lh, 'align' => 'R', 'flg' => true],
+            ['font' => $this->mono, 'style' => '', 'size' => 8, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'depreciatetotal', 'suffix' => '', 'x' => 186, 'y' => $y, 'type' => 'Cell', 'width' => 18.5, 'height' => $lh, 'align' => 'R', 'flg' => true],
             ['font' => $this->mono, 'style' => '', 'size' => 8, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'thisyear',        'suffix' => '', 'x' => 216.5, 'y' => $y, 'type' => 'Cell', 'width' => 18.5, 'height' => $lh, 'align' => 'R', 'flg' => true],
-            ['font' => $this->mono, 'style' => '', 'size' => 8, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'onhand',          'suffix' => '', 'x' => 236.6, 'y' => $y, 'type' => 'Cell', 'width' =>   19, 'height' => $lh, 'align' => 'R', 'flg' => true],
+            ['font' => $this->mono, 'style' => '', 'size' => 8, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'onhand',          'suffix' => '', 'x' => 236.6, 'y' => $y, 'type' => 'Cell', 'width' => 19, 'height' => $lh, 'align' => 'R', 'flg' => true],
         ];
         $this->pdf->draw($ary, $data);
 
@@ -623,10 +623,10 @@ class Financial extends \Gsnowhawk\Oas\Taxation
         $data = [];
         $data['address1'] = $this->userinfo['city'] . $this->userinfo['town'] . $this->userinfo['address1'];
         $data['address2'] = $this->userinfo['address2'];
-        $data['company']  = $this->userinfo['company'];
-        $data['name']     = $this->userinfo['fullname'];
-        $data['rubi']     = $this->userinfo['fullname_rubi'];
-        $data['tel']      = $this->userinfo['tel'];
+        $data['company'] = $this->userinfo['company'];
+        $data['name'] = $this->userinfo['fullname'];
+        $data['rubi'] = $this->userinfo['fullname_rubi'];
+        $data['tel'] = $this->userinfo['tel'];
 
         // fixed properties
         $data['caddress'] = $this->oas_config->caddress;
@@ -634,33 +634,33 @@ class Financial extends \Gsnowhawk\Oas\Taxation
         $data['telhome'] = $this->oas_config->homephone;
 
         // today
-        $data['year']  = $this->toWareki(date('Y-m-d'));
+        $data['year'] = $this->toWareki(date('Y-m-d'));
         $data['month'] = date('n');
-        $data['day']   = date('j');
+        $data['day'] = date('j');
         $data['nengo'] = $this->toWareki($target_year);
         $data['sMonth'] = '1';
-        $data['sDay']   = '1';
+        $data['sDay'] = '1';
         $data['eMonth'] = '12';
-        $data['eDay']   = '31';
+        $data['eDay'] = '31';
 
-        $lh =  (empty($data['address2'])) ? 9.2 : 4.5;
+        $lh = (empty($data['address2'])) ? 9.2 : 4.5;
         $ary = $this->pdfmap['page1']['header'] ?? [
-            ['font' => $this->mincho, 'style' => '', 'size' =>  9, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'address1', 'suffix' => '', 'x' => 114.8, 'y' =>   24, 'type' => 'Cell', 'width' =>  56, 'height' => $lh, 'align' => 'L', 'flg' => true],
-            ['font' => $this->mincho, 'style' => '', 'size' =>  9, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'caddress', 'suffix' => '', 'x' => 114.8, 'y' => 33.5, 'type' => 'Cell', 'width' =>  56, 'height' => $lh, 'align' => 'L', 'flg' => true],
-            ['font' => $this->mincho, 'style' => '', 'size' =>  8, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'works',    'suffix' => '', 'x' => 114.8, 'y' =>   43, 'type' => 'Cell', 'width' =>  23, 'height' => $lh, 'align' => 'C', 'flg' => true],
-            ['font' => $this->mincho, 'style' => '', 'size' =>  8, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'company',  'suffix' => '', 'x' => 148.5, 'y' =>   43, 'type' => 'Cell', 'width' =>  23, 'height' => $lh, 'align' => 'C', 'flg' => true],
-            ['font' => $this->mincho, 'style' => '', 'size' =>  6, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'rubi',     'suffix' => '', 'x' =>   192, 'y' =>   25, 'type' => 'Cell', 'width' =>  35, 'height' =>   4, 'align' => 'L', 'flg' => true],
-            ['font' => $this->mincho, 'style' => '', 'size' =>  9, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'name',     'suffix' => '', 'x' =>   192, 'y' =>   28, 'type' => 'Cell', 'width' =>  35, 'height' =>   5, 'align' => 'L', 'flg' => true],
-            ['font' => $this->mincho, 'style' => '', 'size' =>  8, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'telhome',  'suffix' => '', 'x' =>   197, 'y' =>   34, 'type' => 'Cell', 'width' =>  28, 'height' => 4.5, 'align' => 'L', 'flg' => true],
-            ['font' => $this->mincho, 'style' => '', 'size' =>  8, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'tel',      'suffix' => '', 'x' =>   197, 'y' =>   38, 'type' => 'Cell', 'width' =>  28, 'height' => 4.5, 'align' => 'L', 'flg' => true],
-            ['font' => $this->mono,   'style' => '', 'size' => 12, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'nengo',    'suffix' => '', 'x' => 113.5, 'y' => 14.0, 'type' => 'Cell', 'width' =>  12, 'height' => 6.2, 'align' => 'R', 'flg' => true, 'pitch' => 3.5],
+            ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'address1', 'suffix' => '', 'x' => 114.8, 'y' => 24, 'type' => 'Cell', 'width' => 56, 'height' => $lh, 'align' => 'L', 'flg' => true],
+            ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'caddress', 'suffix' => '', 'x' => 114.8, 'y' => 33.5, 'type' => 'Cell', 'width' => 56, 'height' => $lh, 'align' => 'L', 'flg' => true],
+            ['font' => $this->mincho, 'style' => '', 'size' => 8, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'works',    'suffix' => '', 'x' => 114.8, 'y' => 43, 'type' => 'Cell', 'width' => 23, 'height' => $lh, 'align' => 'C', 'flg' => true],
+            ['font' => $this->mincho, 'style' => '', 'size' => 8, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'company',  'suffix' => '', 'x' => 148.5, 'y' => 43, 'type' => 'Cell', 'width' => 23, 'height' => $lh, 'align' => 'C', 'flg' => true],
+            ['font' => $this->mincho, 'style' => '', 'size' => 6, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'rubi',     'suffix' => '', 'x' => 192, 'y' => 25, 'type' => 'Cell', 'width' => 35, 'height' => 4, 'align' => 'L', 'flg' => true],
+            ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'name',     'suffix' => '', 'x' => 192, 'y' => 28, 'type' => 'Cell', 'width' => 35, 'height' => 5, 'align' => 'L', 'flg' => true],
+            ['font' => $this->mincho, 'style' => '', 'size' => 8, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'telhome',  'suffix' => '', 'x' => 197, 'y' => 34, 'type' => 'Cell', 'width' => 28, 'height' => 4.5, 'align' => 'L', 'flg' => true],
+            ['font' => $this->mincho, 'style' => '', 'size' => 8, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'tel',      'suffix' => '', 'x' => 197, 'y' => 38, 'type' => 'Cell', 'width' => 28, 'height' => 4.5, 'align' => 'L', 'flg' => true],
+            ['font' => $this->mono,   'style' => '', 'size' => 12, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'nengo',    'suffix' => '', 'x' => 113.5, 'y' => 14.0, 'type' => 'Cell', 'width' => 12, 'height' => 6.2, 'align' => 'R', 'flg' => true, 'pitch' => 3.5],
             ['font' => $this->mono,   'style' => '', 'size' => 10, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'sMonth',   'suffix' => '', 'x' => 155.3, 'y' => 63.6, 'type' => 'Cell', 'width' => 9.8, 'height' => 6.2, 'align' => 'R', 'flg' => true, 'pitch' => 3.0],
             ['font' => $this->mono,   'style' => '', 'size' => 10, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'sDay',     'suffix' => '', 'x' => 170.5, 'y' => 63.6, 'type' => 'Cell', 'width' => 9.8, 'height' => 6.2, 'align' => 'R', 'flg' => true, 'pitch' => 3.0],
             ['font' => $this->mono,   'style' => '', 'size' => 10, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'eMonth',   'suffix' => '', 'x' => 191.0, 'y' => 63.6, 'type' => 'Cell', 'width' => 9.8, 'height' => 6.2, 'align' => 'R', 'flg' => true, 'pitch' => 3.0],
             ['font' => $this->mono,   'style' => '', 'size' => 10, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'eDay',     'suffix' => '', 'x' => 206.4, 'y' => 63.6, 'type' => 'Cell', 'width' => 9.8, 'height' => 6.2, 'align' => 'R', 'flg' => true, 'pitch' => 3.0],
-            ['font' => $this->mincho, 'style' => '', 'size' =>  8, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'year',     'suffix' => '', 'x' =>    23, 'y' => 62.8, 'type' => 'Cell', 'width' =>   6, 'height' => 4.5, 'align' => 'R', 'flg' => true],
-            ['font' => $this->mincho, 'style' => '', 'size' =>  8, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'month',    'suffix' => '', 'x' =>    32, 'y' => 62.8, 'type' => 'Cell', 'width' =>   6, 'height' => 4.5, 'align' => 'R', 'flg' => true],
-            ['font' => $this->mincho, 'style' => '', 'size' =>  8, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'day',      'suffix' => '', 'x' =>    41, 'y' => 62.8, 'type' => 'Cell', 'width' =>   6, 'height' => 4.5, 'align' => 'R', 'flg' => true],
+            ['font' => $this->mincho, 'style' => '', 'size' => 8, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'year',     'suffix' => '', 'x' => 23, 'y' => 62.8, 'type' => 'Cell', 'width' => 6, 'height' => 4.5, 'align' => 'R', 'flg' => true],
+            ['font' => $this->mincho, 'style' => '', 'size' => 8, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'month',    'suffix' => '', 'x' => 32, 'y' => 62.8, 'type' => 'Cell', 'width' => 6, 'height' => 4.5, 'align' => 'R', 'flg' => true],
+            ['font' => $this->mincho, 'style' => '', 'size' => 8, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'day',      'suffix' => '', 'x' => 41, 'y' => 62.8, 'type' => 'Cell', 'width' => 6, 'height' => 4.5, 'align' => 'R', 'flg' => true],
         ];
         if (!empty($data['address2'])) {
             $ary[] = ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'address2', 'suffix' => '', 'x' => 123, 'y' => 30.5, 'type' => 'Cell', 'width' => 56, 'height' => $lh, 'align' => 'L', 'flg' => true];
@@ -671,7 +671,7 @@ class Financial extends \Gsnowhawk\Oas\Taxation
     private function drawIncome($target_year)
     {
         $start = date('Y-01-01 00:00:00', strtotime($target_year));
-        $end   = date('Y-12-31 23:59:59', strtotime($target_year));
+        $end = date('Y-12-31 23:59:59', strtotime($target_year));
         $sql = 'SELECT ai.item_code AS code,
                        SUM(td.amount_right) AS amount,
                        MIN(ai.item_name) AS label
@@ -690,7 +690,7 @@ class Financial extends \Gsnowhawk\Oas\Taxation
         }
         $result = $this->db->fetchAll();
 
-        $data  = [];
+        $data = [];
         $total = $this->sum_income;
         foreach ($result as $val) {
             if (empty($val['amount'])) {
@@ -728,13 +728,12 @@ class Financial extends \Gsnowhawk\Oas\Taxation
     private function drawBuying($target_year)
     {
         $start = date('Y-01-01 00:00:00', strtotime($target_year));
-        $end   = date('Y-12-31 23:59:59', strtotime($target_year));
+        $end = date('Y-12-31 23:59:59', strtotime($target_year));
 
-        $data  = [];
+        $data = [];
         $total = $this->sum_buying;
 
         foreach ([8211,8221,8241] as $key) {
-
             $where = ($key === 8221) ? " AND category NOT IN ('A','Z')" : '';
             $lr = ($key !== 8241) ? 'right' : 'left';
 
@@ -787,7 +786,9 @@ class Financial extends \Gsnowhawk\Oas\Taxation
         $h = $origin['height'];
         $ary = [];
         foreach ($data as $key => $val) {
-            if ($key === 8241) continue;
+            if ($key === 8241) {
+                continue;
+            }
             $cell = $origin;
             $cell['y'] = $y;
             $cell['name'] = $key;
@@ -827,9 +828,9 @@ class Financial extends \Gsnowhawk\Oas\Taxation
     private function drawCost($target_year)
     {
         $start = date('Y-01-01 00:00:00', strtotime($target_year));
-        $end   = date('Y-12-31 23:59:59', strtotime($target_year));
+        $end = date('Y-12-31 23:59:59', strtotime($target_year));
 
-        $sql = function($col) {
+        $sql = function ($col) {
             return "SELECT ai.item_code AS code,
                            SUM(td.amount_{$col}) AS amount,
                            MIN(ai.item_name) AS label,
@@ -909,7 +910,7 @@ class Financial extends \Gsnowhawk\Oas\Taxation
         $lab_origin = [
             'font' => $this->mincho,
             'style' => '',
-            'size' =>  8,
+            'size' => 8,
             'color' => self::TEXT_COLOR,
             'prefix' => '',
             'name' => null,
@@ -965,12 +966,12 @@ class Financial extends \Gsnowhawk\Oas\Taxation
 
     private function drawCreditor($year, $last_year = null)
     {
-        $data  = ['dummy' => null];
-        $ary   = [];
+        $data = ['dummy' => null];
+        $ary = [];
         $total = 0;
 
         $start = "$year-01-01 00:00:00";
-        $end   = "$year-12-31 23:59:59";
+        $end = "$year-12-31 23:59:59";
 
         $sql = "SELECT item_code_left AS code,
                        SUM(amount_left) AS amount
@@ -1000,7 +1001,7 @@ class Financial extends \Gsnowhawk\Oas\Taxation
             if ($unit['code'] == $purchase) {
                 $unit['code'] = $periodend_inventory;
             }
-            if (!isset($data[$unit['code']]))  {
+            if (!isset($data[$unit['code']])) {
                 $data[$unit['code']] = 0;
             }
             $data[$unit['code']] += $unit['amount'];
@@ -1008,7 +1009,7 @@ class Financial extends \Gsnowhawk\Oas\Taxation
         }
         if (!is_null($last_year)) {
             $start = "{$last_year}-01-01 00:00:00";
-            $end   = "{$last_year}-12-31 23:59:59";
+            $end = "{$last_year}-12-31 23:59:59";
             $sql = 'SELECT item_code_left AS code,
                            SUM(amount_left) AS amount
                       FROM `table::transfer`
@@ -1019,7 +1020,7 @@ class Financial extends \Gsnowhawk\Oas\Taxation
                 return false;
             }
             while ($unit = $this->db->fetch()) {
-                if (!isset($data[$unit['code']]))  {
+                if (!isset($data[$unit['code']])) {
                     $data[$unit['code']] = 0;
                 }
                 $data[$unit['code']] += $unit['amount'];
@@ -1071,7 +1072,10 @@ class Financial extends \Gsnowhawk\Oas\Taxation
                 $cell['name'] = $label_key;
                 $ary[] = $cell;
                 $data[$label_key] = $this->db->get(
-                    'item_name', 'account_items', 'item_code = ?', [$key]
+                    'item_name',
+                    'account_items',
+                    'item_code = ?',
+                    [$key]
                 );
             }
 
@@ -1091,11 +1095,11 @@ class Financial extends \Gsnowhawk\Oas\Taxation
     private function drawDebit($year, $last_year = null)
     {
         $total = 0;
-        $ary  = [];
+        $ary = [];
         $data = ['dummy' => null];
 
         $start = "{$year}-01-01 00:00:00";
-        $end   = "{$year}-12-31 23:59:59";
+        $end = "{$year}-12-31 23:59:59";
         $sql = "SELECT item_code_right AS code,
                        SUM(amount_right) AS amount
                   FROM `table::transfer`
@@ -1111,7 +1115,7 @@ class Financial extends \Gsnowhawk\Oas\Taxation
             return false;
         }
         while ($unit = $this->db->fetch()) {
-            if (!isset($data[$unit['code']]))  {
+            if (!isset($data[$unit['code']])) {
                 $data[$unit['code']] = 0;
             }
 
@@ -1125,7 +1129,7 @@ class Financial extends \Gsnowhawk\Oas\Taxation
         }
         if (!is_null($last_year)) {
             $start = "{$last_year}-01-01 00:00:00";
-            $end   = "{$last_year}-12-31 23:59:59";
+            $end = "{$last_year}-12-31 23:59:59";
             $sql = 'SELECT item_code_right AS code,
                            SUM(amount_right) AS amount
                       FROM `table::transfer`
@@ -1139,7 +1143,7 @@ class Financial extends \Gsnowhawk\Oas\Taxation
                 if ($unit['code'] === $gain_on_sale_of_fixedassets) {
                     $unit['code'] = $withdrawals;
                 }
-                if (!isset($data[$unit['code']]))  {
+                if (!isset($data[$unit['code']])) {
                     $data[$unit['code']] = 0;
                 }
 
@@ -1158,7 +1162,7 @@ class Financial extends \Gsnowhawk\Oas\Taxation
             //$total += $data[$deposit];
             //
             $this->withdrawals = (isset($data[$withdrawals])) ? (int)$data[$withdrawals] : 0;
-            //$this->deposit = $kari + (int)$data[$deposit] + (int)$data['no33'] - $this->investments;
+        //$this->deposit = $kari + (int)$data[$deposit] + (int)$data['no33'] - $this->investments;
         } else {
             $data['no43'] = null;
             $this->deposit = $data[$deposit];
@@ -1204,7 +1208,10 @@ class Financial extends \Gsnowhawk\Oas\Taxation
                 $cell['name'] = $label_key;
                 $ary[] = $cell;
                 $data[$label_key] = $this->db->get(
-                    'item_name', 'account_items', 'item_code = ?', [$key]
+                    'item_name',
+                    'account_items',
+                    'item_code = ?',
+                    [$key]
                 );
             }
 
@@ -1224,10 +1231,10 @@ class Financial extends \Gsnowhawk\Oas\Taxation
     private function drawDeduction(): void
     {
         $data = [
-            'no06'  => 0,
-            'no07'  => 0,
-            'no08'  => 0,
-            'no09'  => 0,
+            'no06' => 0,
+            'no07' => 0,
+            'no08' => 0,
+            'no09' => 0,
             'no08a' => 0,
             'no09a' => 0
         ];
@@ -1236,10 +1243,10 @@ class Financial extends \Gsnowhawk\Oas\Taxation
         $data['no07'] = number_format($this->column43);
 
         $ary = $this->pdfmap['page2']['deduction'] ?? [
-            ['font' => $this->mono, 'style' => '', 'size' => 10, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' =>  'no06', 'suffix' => '', 'x' => 230, 'y' => 158.0, 'type' => 'Cell', 'width' => 44.7, 'height' => 6.16, 'align' => 'R', 'flg' => true],
-            ['font' => $this->mono, 'style' => '', 'size' => 10, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' =>  'no07', 'suffix' => '', 'x' => 230, 'y' => 164.0, 'type' => 'Cell', 'width' => 44.7, 'height' => 6.16, 'align' => 'R', 'flg' => true],
-            ['font' => $this->mono, 'style' => '', 'size' => 10, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' =>  'no08', 'suffix' => '', 'x' => 230, 'y' => 170.3, 'type' => 'Cell', 'width' => 44.7, 'height' => 6.16, 'align' => 'R', 'flg' => true],
-            ['font' => $this->mono, 'style' => '', 'size' => 10, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' =>  'no09', 'suffix' => '', 'x' => 230, 'y' => 176.6, 'type' => 'Cell', 'width' => 44.7, 'height' => 6.16, 'align' => 'R', 'flg' => true],
+            ['font' => $this->mono, 'style' => '', 'size' => 10, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'no06', 'suffix' => '', 'x' => 230, 'y' => 158.0, 'type' => 'Cell', 'width' => 44.7, 'height' => 6.16, 'align' => 'R', 'flg' => true],
+            ['font' => $this->mono, 'style' => '', 'size' => 10, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'no07', 'suffix' => '', 'x' => 230, 'y' => 164.0, 'type' => 'Cell', 'width' => 44.7, 'height' => 6.16, 'align' => 'R', 'flg' => true],
+            ['font' => $this->mono, 'style' => '', 'size' => 10, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'no08', 'suffix' => '', 'x' => 230, 'y' => 170.3, 'type' => 'Cell', 'width' => 44.7, 'height' => 6.16, 'align' => 'R', 'flg' => true],
+            ['font' => $this->mono, 'style' => '', 'size' => 10, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'no09', 'suffix' => '', 'x' => 230, 'y' => 176.6, 'type' => 'Cell', 'width' => 44.7, 'height' => 6.16, 'align' => 'R', 'flg' => true],
             ['font' => $this->mono, 'style' => '', 'size' => 10, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'no08a', 'suffix' => '', 'x' => 230, 'y' => 183.0, 'type' => 'Cell', 'width' => 44.7, 'height' => 6.16, 'align' => 'R', 'flg' => true],
             ['font' => $this->mono, 'style' => '', 'size' => 10, 'color' => self::TEXT_COLOR, 'prefix' => '', 'name' => 'no09a', 'suffix' => '', 'x' => 230, 'y' => 189.3, 'type' => 'Cell', 'width' => 44.7, 'height' => 6.16, 'align' => 'R', 'flg' => true],
         ];

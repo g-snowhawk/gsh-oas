@@ -140,6 +140,15 @@
           </tr>
         </thead>
         <tbody>
+        {% for transfer in transfers %}
+          <tr class="existing">
+            <td>{{ transfer.transfer_date|date('Y/m/d') }}</td>
+            <td>{{ transfer.summary }}</td>
+            <td>{{ transfer.change_quantity }}</td>
+            <td>{{ transfer.change_price }}</td>
+            <td>{{ transfer.note}}</td>
+          </tr>
+        {% else %}
           <tr>
             <td><input type="date" name="transfer_date"></td>
             <td>
@@ -153,6 +162,7 @@
             <td><input type="number" name="change_price"></td>
             <td><input type="text" name="note"></td>
           </tr>
+        {% endfor %}
         </tbody>
       </table>
       <div class="form-footer">

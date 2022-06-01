@@ -22,7 +22,7 @@ use Gsnowhawk\Pdf;
  */
 class Response extends \Gsnowhawk\Oas\Transfer
 {
-    const LEAVES = 3;
+    public const LEAVES = 3;
 
     private $pages = 0;
     private $lines = 0;
@@ -47,7 +47,7 @@ class Response extends \Gsnowhawk\Oas\Transfer
     /**
      * Default view.
      */
-    public function defaultView() : void
+    public function defaultView(): void
     {
         $this->checkPermission('oas.transfer.read');
 
@@ -71,7 +71,7 @@ class Response extends \Gsnowhawk\Oas\Transfer
     /**
      * Edit view.
      */
-    public function edit($readonly = false) : void
+    public function edit($readonly = false): void
     {
         $id = $this->request->param('id');
         $privilege_type = (empty($id)) ? 'create' : 'update';
@@ -109,7 +109,9 @@ class Response extends \Gsnowhawk\Oas\Transfer
                         ];
                     } else {
                         $current_transfer = $this->transferByDay(
-                            $date->format('Y-m-d'), $category, 'issue_date,page_number'
+                            $date->format('Y-m-d'),
+                            $category,
+                            'issue_date,page_number'
                         );
                     }
                 }
@@ -159,8 +161,10 @@ class Response extends \Gsnowhawk\Oas\Transfer
         $this->view->bind('readonly', $readonly);
 
         $account_items = $this->db->select(
-            'item_code,item_name,alias,note', parent::ACCOUNT_ITEM_TABLE,
-            'WHERE userkey = ? ORDER BY item_code', [$this->uid]
+            'item_code,item_name,alias,note',
+            parent::ACCOUNT_ITEM_TABLE,
+            'WHERE userkey = ? ORDER BY item_code',
+            [$this->uid]
         );
         $this->view->bind('accountItems', $account_items);
 
@@ -219,12 +223,12 @@ class Response extends \Gsnowhawk\Oas\Transfer
         $locked = ($this->request->param('locked') === '1');
         $category = $this->request->param('category');
         $begin = date('Y-m-d 00:00:00', strtotime($this->request->param('begin')));
-        $end   = date('Y-m-d 23:59:59', strtotime($this->request->param('end')));
+        $end = date('Y-m-d 23:59:59', strtotime($this->request->param('end')));
         if ($locked) {
             $begin = date('Y-01-01 00:00:00', strtotime($begin));
-            $end   = date('Y-12-31 23:59:59', strtotime($begin));
+            $end = date('Y-12-31 23:59:59', strtotime($begin));
         }
-        $closure = function($col) {
+        $closure = function ($col) {
             return "SELECT lf.*, ai.item_name AS item_{$col}
                       FROM (SELECT * FROM `table::transfer`
                              WHERE userkey = ? AND category = ?
@@ -236,15 +240,15 @@ class Response extends \Gsnowhawk\Oas\Transfer
 
         $column = ($category === 'R') ? 'right' : 'left';
         $header_map = [
-            ['font' => $this->mono,   'style' => '', 'size' => 10, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'page_number', 'suffix' => '', 'x' => 54, 'y' =>  9.5, 'type' => 'Cell', 'width' => 16, 'height' =>  6, 'align' => 'R', 'flg' => true],
-            ['font' => $this->mono,   'style' => '', 'size' => 10, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'year',        'suffix' => '', 'x' => 24, 'y' => 20.3, 'type' => 'Cell', 'width' => 12, 'height' =>  6, 'align' => 'R', 'flg' => true],
-            ['font' => $this->mono,   'style' => '', 'size' => 10, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'month',       'suffix' => '', 'x' => 39, 'y' => 20.3, 'type' => 'Cell', 'width' => 12, 'height' =>  6, 'align' => 'R', 'flg' => true],
-            ['font' => $this->mono,   'style' => '', 'size' => 10, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'day',         'suffix' => '', 'x' => 54, 'y' => 20.3, 'type' => 'Cell', 'width' => 12, 'height' =>  6, 'align' => 'R', 'flg' => true],
+            ['font' => $this->mono,   'style' => '', 'size' => 10, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'page_number', 'suffix' => '', 'x' => 54, 'y' => 9.5, 'type' => 'Cell', 'width' => 16, 'height' => 6, 'align' => 'R', 'flg' => true],
+            ['font' => $this->mono,   'style' => '', 'size' => 10, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'year',        'suffix' => '', 'x' => 24, 'y' => 20.3, 'type' => 'Cell', 'width' => 12, 'height' => 6, 'align' => 'R', 'flg' => true],
+            ['font' => $this->mono,   'style' => '', 'size' => 10, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'month',       'suffix' => '', 'x' => 39, 'y' => 20.3, 'type' => 'Cell', 'width' => 12, 'height' => 6, 'align' => 'R', 'flg' => true],
+            ['font' => $this->mono,   'style' => '', 'size' => 10, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'day',         'suffix' => '', 'x' => 54, 'y' => 20.3, 'type' => 'Cell', 'width' => 12, 'height' => 6, 'align' => 'R', 'flg' => true],
             ['font' => $this->mincho, 'style' => '', 'size' => 10, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'trade',       'suffix' => '', 'x' => 67, 'y' => 26.0, 'type' => 'Cell', 'width' => 68, 'height' => 15, 'align' => 'L', 'flg' => true],
         ];
         $body_map = [
-            ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => "item_{$column}",   'suffix' => '', 'x' =>    22, 'y' => 32, 'type' => 'Cell', 'width' => 25, 'height' => 8, 'align' => 'C', 'flg' => true, 'pitch' => 0],
-            ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'summary',          'suffix' => '', 'x' =>    47, 'y' => 32, 'type' => 'Cell', 'width' => 64, 'height' => 8, 'align' => 'C', 'flg' => true, 'pitch' => 0],
+            ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => "item_{$column}",   'suffix' => '', 'x' => 22, 'y' => 32, 'type' => 'Cell', 'width' => 25, 'height' => 8, 'align' => 'C', 'flg' => true, 'pitch' => 0],
+            ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'summary',          'suffix' => '', 'x' => 47, 'y' => 32, 'type' => 'Cell', 'width' => 64, 'height' => 8, 'align' => 'C', 'flg' => true, 'pitch' => 0],
             ['font' => $this->mono,   'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => "amount_{$column}", 'suffix' => '', 'x' => 110.5, 'y' => 32, 'type' => 'Cell', 'width' => 26, 'height' => 8, 'align' => 'R', 'flg' => true, 'pitch' => 1.15],
         ];
         $footer_map = [
@@ -276,21 +280,21 @@ class Response extends \Gsnowhawk\Oas\Transfer
                                 ) lf
                         ON lf.item_code_right = ar.item_code';
             $header_map = [
-                ['font' => $this->mono, 'style' => '', 'size' => 10, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'page_number', 'suffix' => '', 'x' => 109, 'y' =>  9.5, 'type' => 'Cell', 'width' => 16, 'height' => 6, 'align' => 'R', 'flg' => true],
-                ['font' => $this->mono, 'style' => '', 'size' => 10, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'year',        'suffix' => '', 'x' =>  24, 'y' => 20.3, 'type' => 'Cell', 'width' => 12, 'height' => 6, 'align' => 'R', 'flg' => true],
-                ['font' => $this->mono, 'style' => '', 'size' => 10, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'month',       'suffix' => '', 'x' =>  39, 'y' => 20.3, 'type' => 'Cell', 'width' => 12, 'height' => 6, 'align' => 'R', 'flg' => true],
-                ['font' => $this->mono, 'style' => '', 'size' => 10, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'day',         'suffix' => '', 'x' =>  54, 'y' => 20.3, 'type' => 'Cell', 'width' => 12, 'height' => 6, 'align' => 'R', 'flg' => true],
+                ['font' => $this->mono, 'style' => '', 'size' => 10, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'page_number', 'suffix' => '', 'x' => 109, 'y' => 9.5, 'type' => 'Cell', 'width' => 16, 'height' => 6, 'align' => 'R', 'flg' => true],
+                ['font' => $this->mono, 'style' => '', 'size' => 10, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'year',        'suffix' => '', 'x' => 24, 'y' => 20.3, 'type' => 'Cell', 'width' => 12, 'height' => 6, 'align' => 'R', 'flg' => true],
+                ['font' => $this->mono, 'style' => '', 'size' => 10, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'month',       'suffix' => '', 'x' => 39, 'y' => 20.3, 'type' => 'Cell', 'width' => 12, 'height' => 6, 'align' => 'R', 'flg' => true],
+                ['font' => $this->mono, 'style' => '', 'size' => 10, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'day',         'suffix' => '', 'x' => 54, 'y' => 20.3, 'type' => 'Cell', 'width' => 12, 'height' => 6, 'align' => 'R', 'flg' => true],
             ];
             $body_map = [
-                ['font' => $this->mono,   'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'amount_left',  'suffix' => '', 'x' =>  20.5, 'y' => 32, 'type' => 'Cell', 'width' => 26, 'height' => 7, 'align' => 'R', 'flg' => true, 'pitch' => 1.15],
-                ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'item_left',    'suffix' => '', 'x' =>    52, 'y' => 32, 'type' => 'Cell', 'width' => 25, 'height' => 7, 'align' => 'C', 'flg' => true, 'pitch' => 0],
-                ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'summary',      'suffix' => '', 'x' =>    77, 'y' => 32, 'type' => 'Cell', 'width' => 64, 'height' => 7, 'align' => 'C', 'flg' => true, 'pitch' => 0],
-                ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'item_right',   'suffix' => '', 'x' =>   141, 'y' => 32, 'type' => 'Cell', 'width' => 25, 'height' => 7, 'align' => 'C', 'flg' => true, 'pitch' => 0],
+                ['font' => $this->mono,   'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'amount_left',  'suffix' => '', 'x' => 20.5, 'y' => 32, 'type' => 'Cell', 'width' => 26, 'height' => 7, 'align' => 'R', 'flg' => true, 'pitch' => 1.15],
+                ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'item_left',    'suffix' => '', 'x' => 52, 'y' => 32, 'type' => 'Cell', 'width' => 25, 'height' => 7, 'align' => 'C', 'flg' => true, 'pitch' => 0],
+                ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'summary',      'suffix' => '', 'x' => 77, 'y' => 32, 'type' => 'Cell', 'width' => 64, 'height' => 7, 'align' => 'C', 'flg' => true, 'pitch' => 0],
+                ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'item_right',   'suffix' => '', 'x' => 141, 'y' => 32, 'type' => 'Cell', 'width' => 25, 'height' => 7, 'align' => 'C', 'flg' => true, 'pitch' => 0],
                 ['font' => $this->mono,   'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'amount_right', 'suffix' => '', 'x' => 164.5, 'y' => 32, 'type' => 'Cell', 'width' => 26, 'height' => 7, 'align' => 'R', 'flg' => true, 'pitch' => 1.15],
             ];
             $footer_map = [
-                ['font' => $this->mono, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'amount_left',  'suffix' =>  '', 'x' =>  20.5, 'y' => 32, 'type' => 'Cell', 'width' => 26, 'height' => 7, 'align' => 'R', 'flg' => true, 'pitch' => 1.15],
-                ['font' => $this->mono, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'amount_right', 'suffix' =>  '', 'x' => 164.5, 'y' => 32, 'type' => 'Cell', 'width' => 26, 'height' => 7, 'align' => 'R', 'flg' => true, 'pitch' => 1.15],
+                ['font' => $this->mono, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'amount_left',  'suffix' => '', 'x' => 20.5, 'y' => 32, 'type' => 'Cell', 'width' => 26, 'height' => 7, 'align' => 'R', 'flg' => true, 'pitch' => 1.15],
+                ['font' => $this->mono, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'amount_right', 'suffix' => '', 'x' => 164.5, 'y' => 32, 'type' => 'Cell', 'width' => 26, 'height' => 7, 'align' => 'R', 'flg' => true, 'pitch' => 1.15],
             ];
             break;
         }
@@ -304,7 +308,8 @@ class Response extends \Gsnowhawk\Oas\Transfer
                 'SELECT MAX(lf.page_number) as max FROM',
                 $sql,
                 1
-            ), $replaces
+            ),
+            $replaces
         )) {
             $result = $this->db->fetch();
             $max = $result['max'] ?? 0;
@@ -340,7 +345,7 @@ class Response extends \Gsnowhawk\Oas\Transfer
                 foreach ($results as $result) {
                     $unit[$result['line_number']] = $result;
                 }
-                $totalLeft  = 0;
+                $totalLeft = 0;
                 $totalRight = 0;
                 $forceY = ($category === 'T') ? 32 : 47;
                 for ($i = 1; $i <= $this->lines; $i++) {
@@ -350,9 +355,9 @@ class Response extends \Gsnowhawk\Oas\Transfer
                     }
                     $data = $unit[$i];
                     if ($i == 1) {
-                        $data['year']  = date('Y', strtotime($data['issue_date']));
+                        $data['year'] = date('Y', strtotime($data['issue_date']));
                         $data['month'] = date('n', strtotime($data['issue_date']));
-                        $data['day']   = date('j', strtotime($data['issue_date']));
+                        $data['day'] = date('j', strtotime($data['issue_date']));
                         $this->pdf->draw($header_map, $data, null, $shiftY);
                     }
                     if (empty($data['amount_left'])) {
@@ -363,11 +368,11 @@ class Response extends \Gsnowhawk\Oas\Transfer
                     }
                     $this->pdf->draw($body_map, $data, $forceY, $shiftY);
                     $forceY += $line_height;
-                    $totalLeft  += $data['amount_left'];
+                    $totalLeft += $data['amount_left'];
                     $totalRight += $data['amount_right'];
                 }
                 $data = [
-                    'amount_left'  => $totalLeft,
+                    'amount_left' => $totalLeft,
                     'amount_right' => $totalRight,
                 ];
                 $this->pdf->draw($footer_map, $data, $forceY, $shiftY);

@@ -20,7 +20,7 @@ use Gsnowhawk\Common\Lang;
  */
 class Receive extends Response
 {
-    const REDIRECT_MODE = 'oas.transfer.response';
+    public const REDIRECT_MODE = 'oas.transfer.response';
 
     protected $saved_issue_date;
     protected $saved_page_number;
@@ -28,7 +28,7 @@ class Receive extends Response
     /**
      * Save the data receive interface.
      */
-    public function save() : bool
+    public function save(): bool
     {
         $redirect_type = 'redirect';
         $redirect_mode = (!empty($this->request->param('redirect_mode')))

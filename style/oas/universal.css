@@ -204,6 +204,7 @@ html.fixedasset.edit #transfer-list h2 {
 }
 html.fixedasset.edit #transfer-list thead td {
   font-size: 0.8rem;
+  padding: 0.5em;
 }
 html.fixedasset.edit #transfer-list input {
   font-size: 0.8rem;
@@ -233,6 +234,28 @@ html.fixedasset.edit #transfer-list select {
   font-size: 0.8rem;
   min-width: 120px;
   padding: 6px;
+}
+html.fixedasset.edit #transfer-list table {
+  border-collapse: collapse;
+}
+html.fixedasset.edit #transfer-list tr.existing {
+  border-top: 1px solid #ccc;
+}
+html.fixedasset.edit #transfer-list tr.existing td {
+  font-size: 0.8rem;
+  padding: 0.5em;
+}
+html.fixedasset.edit #transfer-list tr.existing td:nth-child(2) {
+  min-width: 80px;
+}
+html.fixedasset.edit #transfer-list tr.existing td:nth-child(3) {
+  text-align: center;
+}
+html.fixedasset.edit #transfer-list tr.existing td:nth-child(4) {
+  min-width: 72px;
+}
+html.fixedasset.edit #transfer-list tr.existing td:nth-child(5) {
+  min-width: 160px;
 }
 
 #oas-transfer-edit form p.date-range {

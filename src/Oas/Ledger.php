@@ -26,7 +26,7 @@ class Ledger extends Taxation
      */
     use \Gsnowhawk\Accessor;
 
-    const LINE_HEIGHT = 8.3;
+    public const LINE_HEIGHT = 8.3;
 
     private $pages = 0;
     private $lines = 30;
@@ -51,7 +51,7 @@ class Ledger extends Taxation
     /**
      * Default view.
      */
-    public function defaultView() : void
+    public function defaultView(): void
     {
         $this->checkPermission('oas.ledger.read');
 
@@ -91,22 +91,21 @@ class Ledger extends Taxation
         ksort($items);
 
         foreach ($items as $key => $item) {
-
             if ($key < 1000) {
                 continue;
             }
 
             $this->pages = 1;
-            $lineNo  = 0;
+            $lineNo = 0;
             $balance = 0;
-            $total_left  = 0;
+            $total_left = 0;
             $total_right = 0;
             $m_total_left = 0;
             $m_total_right = 0;
-            $month   = 0;
-            $day     = 0;
-            $lod     = '';
-            $y       = 38;
+            $month = 0;
+            $day = 0;
+            $lod = '';
+            $y = 38;
 
             if ((string)$key === $this->filter_items['BEGINNING_INVENTORY']) {
                 continue;
@@ -128,16 +127,16 @@ class Ledger extends Taxation
 
                     if ($lineNo >= ($this->lines - 1)) {
                         $fw = [
-                            'day'     => Lang::translate('IDENTICAL'),
+                            'day' => Lang::translate('IDENTICAL'),
                             'summary' => Lang::translate('TO_NEXT_PAGE'),
                             'balance' => abs($balance),
-                            'lod'     => Lang::translate('IDENTICAL')
+                            'lod' => Lang::translate('IDENTICAL')
                         ];
                         $ary = [
-                            ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'day',     'suffix' => '', 'x' =>     20, 'y' => $y, 'type' => 'Cell', 'width' => 6.2, 'height' => self::LINE_HEIGHT, 'align' => $dayAlign, 'flg' => true],
-                            ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'summary', 'suffix' => '', 'x' =>     26, 'y' => $y, 'type' => 'Cell', 'width' =>  47, 'height' => self::LINE_HEIGHT, 'align' => 'L', 'flg' => true],
-                            ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'lod',     'suffix' => '', 'x' =>    153, 'y' => $y, 'type' => 'Cell', 'width' =>   6, 'height' => self::LINE_HEIGHT, 'align' => 'C', 'flg' => true],
-                            ['font' => $this->mono,   'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'balance', 'suffix' => '', 'x' => 157.75, 'y' => $y, 'type' => 'Cell', 'width' =>  33, 'height' => self::LINE_HEIGHT, 'align' => 'R', 'flg' => true, 'pitch' => 1.65],
+                            ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'day',     'suffix' => '', 'x' => 20, 'y' => $y, 'type' => 'Cell', 'width' => 6.2, 'height' => self::LINE_HEIGHT, 'align' => $dayAlign, 'flg' => true],
+                            ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'summary', 'suffix' => '', 'x' => 26, 'y' => $y, 'type' => 'Cell', 'width' => 47, 'height' => self::LINE_HEIGHT, 'align' => 'L', 'flg' => true],
+                            ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'lod',     'suffix' => '', 'x' => 153, 'y' => $y, 'type' => 'Cell', 'width' => 6, 'height' => self::LINE_HEIGHT, 'align' => 'C', 'flg' => true],
+                            ['font' => $this->mono,   'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'balance', 'suffix' => '', 'x' => 157.75, 'y' => $y, 'type' => 'Cell', 'width' => 33, 'height' => self::LINE_HEIGHT, 'align' => 'R', 'flg' => true, 'pitch' => 1.65],
                         ];
                         $this->pdf->draw($ary, $fw);
                         $this->pages++;
@@ -148,32 +147,32 @@ class Ledger extends Taxation
                     if ($lineNo === 0) {
                         $this->pdf->addPageFromTemplate();
                         $head = [
-                            'num'     => $this->pages,
-                            'year'    => $this->toWareki($tYear, true),
+                            'num' => $this->pages,
+                            'year' => $this->toWareki($tYear, true),
                             'summary' => $this->pageTitle($key, $item)
                         ];
                         $ary = [
-                            ['font' => $this->mono,   'style' => '', 'size' => 10, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'num',     'suffix' => '', 'x' => 183, 'y' =>    9, 'type' => 'Cell', 'width' => 17, 'height' => 6, 'align' => 'R', 'flg' => true],
-                            ['font' => $this->mincho, 'style' => '', 'size' => 11, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'summary', 'suffix' => '', 'x' =>  65, 'y' =>   19, 'type' => 'Cell', 'width' => 80, 'height' => 7, 'align' => 'C', 'flg' => true],
-                            ['font' => $this->gothic, 'style' => '', 'size' =>  9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'year',    'suffix' => '', 'x' =>  10, 'y' => 28.7, 'type' => 'Cell', 'width' => 12, 'height' => 6, 'align' => 'R', 'flg' => true],
+                            ['font' => $this->mono,   'style' => '', 'size' => 10, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'num',     'suffix' => '', 'x' => 183, 'y' => 9, 'type' => 'Cell', 'width' => 17, 'height' => 6, 'align' => 'R', 'flg' => true],
+                            ['font' => $this->mincho, 'style' => '', 'size' => 11, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'summary', 'suffix' => '', 'x' => 65, 'y' => 19, 'type' => 'Cell', 'width' => 80, 'height' => 7, 'align' => 'C', 'flg' => true],
+                            ['font' => $this->gothic, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'year',    'suffix' => '', 'x' => 10, 'y' => 28.7, 'type' => 'Cell', 'width' => 12, 'height' => 6, 'align' => 'R', 'flg' => true],
                         ];
                         $this->pdf->draw($ary, $head);
 
                         if ($this->pages > 1) {
                             $lod = ($balance <= 0) ? Lang::translate('DEBT') : Lang::translate('LOAN');
                             $fw = [
-                                'month'   => $month,
-                                'day'     => $day,
+                                'month' => $month,
+                                'day' => $day,
                                 'summary' => Lang::translate('FROM_PRIV_PAGE'),
                                 'balance' => abs($balance),
-                                'lod'     => $lod
+                                'lod' => $lod
                             ];
                             $ary = [
-                                ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'month',   'suffix' => '', 'x' =>     10, 'y' => $y, 'type' => 'Cell', 'width' =>  10, 'height' => self::LINE_HEIGHT, 'align' => 'R', 'flg' => true],
-                                ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'day',     'suffix' => '', 'x' =>     20, 'y' => $y, 'type' => 'Cell', 'width' => 6.2, 'height' => self::LINE_HEIGHT, 'align' => $dayAlign, 'flg' => true],
-                                ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'summary', 'suffix' => '', 'x' =>     26, 'y' => $y, 'type' => 'Cell', 'width' =>  47, 'height' => self::LINE_HEIGHT, 'align' => 'L', 'flg' => true],
-                                ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'lod',     'suffix' => '', 'x' =>    153, 'y' => $y, 'type' => 'Cell', 'width' =>   6, 'height' => self::LINE_HEIGHT, 'align' => 'C', 'flg' => true],
-                                ['font' => $this->mono,   'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'balance', 'suffix' => '', 'x' => 157.75, 'y' => $y, 'type' => 'Cell', 'width' =>  33, 'height' => self::LINE_HEIGHT, 'align' => 'R', 'flg' => true, 'pitch' => 1.65],
+                                ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'month',   'suffix' => '', 'x' => 10, 'y' => $y, 'type' => 'Cell', 'width' => 10, 'height' => self::LINE_HEIGHT, 'align' => 'R', 'flg' => true],
+                                ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'day',     'suffix' => '', 'x' => 20, 'y' => $y, 'type' => 'Cell', 'width' => 6.2, 'height' => self::LINE_HEIGHT, 'align' => $dayAlign, 'flg' => true],
+                                ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'summary', 'suffix' => '', 'x' => 26, 'y' => $y, 'type' => 'Cell', 'width' => 47, 'height' => self::LINE_HEIGHT, 'align' => 'L', 'flg' => true],
+                                ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'lod',     'suffix' => '', 'x' => 153, 'y' => $y, 'type' => 'Cell', 'width' => 6, 'height' => self::LINE_HEIGHT, 'align' => 'C', 'flg' => true],
+                                ['font' => $this->mono,   'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'balance', 'suffix' => '', 'x' => 157.75, 'y' => $y, 'type' => 'Cell', 'width' => 33, 'height' => self::LINE_HEIGHT, 'align' => 'R', 'flg' => true, 'pitch' => 1.65],
                             ];
                             $this->pdf->draw($ary, $fw);
                             $y += self::LINE_HEIGHT;
@@ -195,29 +194,28 @@ class Ledger extends Taxation
                             $dayAlign = 'R';
                         }
                     } else {
-
                         $data['month'] = $m;
-                        $data['day']   = $d;
+                        $data['day'] = $d;
                         $dayAlign = 'R';
 
                         // Forwarding
                         if ($m > 1 && $balance !== 0) {
                             if ($lineNo >= ($this->lines - 3)) {
-                                while($lineNo < $this->lines - 1) {
+                                while ($lineNo < $this->lines - 1) {
                                     $y += self::LINE_HEIGHT;
                                     $lineNo++;
                                 }
                                 $fw = [
-                                    'day'     => Lang::translate('IDENTICAL'),
+                                    'day' => Lang::translate('IDENTICAL'),
                                     'summary' => Lang::translate('TO_NEXT_PAGE'),
                                     'balance' => abs($balance),
-                                    'lod'     => Lang::translate('IDENTICAL')
+                                    'lod' => Lang::translate('IDENTICAL')
                                 ];
                                 $ary = [
-                                    ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'day',     'suffix' => '', 'x' =>     20, 'y' => $y, 'type' => 'Cell',  'width' => 6.2, 'height' => self::LINE_HEIGHT, 'align' => $dayAlign, 'flg' => true],
-                                    ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'summary', 'suffix' => '', 'x' =>     26, 'y' => $y, 'type' => 'Cell',  'width' =>  47, 'height' => self::LINE_HEIGHT, 'align' => 'L', 'flg' => true],
-                                    ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'lod',     'suffix' => '', 'x' =>    153, 'y' => $y, 'type' => 'Cell',  'width' =>   6, 'height' => self::LINE_HEIGHT, 'align' => 'C', 'flg' => true],
-                                    ['font' => $this->mono,   'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'balance', 'suffix' => '', 'x' => 157.75, 'y' => $y, 'type' => 'Cell',  'width' =>  33, 'height' => self::LINE_HEIGHT, 'align' => 'R', 'flg' => true, 'pitch' => 1.65],
+                                    ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'day',     'suffix' => '', 'x' => 20, 'y' => $y, 'type' => 'Cell',  'width' => 6.2, 'height' => self::LINE_HEIGHT, 'align' => $dayAlign, 'flg' => true],
+                                    ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'summary', 'suffix' => '', 'x' => 26, 'y' => $y, 'type' => 'Cell',  'width' => 47, 'height' => self::LINE_HEIGHT, 'align' => 'L', 'flg' => true],
+                                    ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'lod',     'suffix' => '', 'x' => 153, 'y' => $y, 'type' => 'Cell',  'width' => 6, 'height' => self::LINE_HEIGHT, 'align' => 'C', 'flg' => true],
+                                    ['font' => $this->mono,   'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'balance', 'suffix' => '', 'x' => 157.75, 'y' => $y, 'type' => 'Cell',  'width' => 33, 'height' => self::LINE_HEIGHT, 'align' => 'R', 'flg' => true, 'pitch' => 1.65],
                                 ];
                                 $this->pdf->draw($ary, $fw);
                                 ++$this->pages;
@@ -226,32 +224,32 @@ class Ledger extends Taxation
 
                                 $this->pdf->addPageFromTemplate();
                                 $head = [
-                                    'num'     => $this->pages,
-                                    'year'    => $this->toWareki($tYear, true),
+                                    'num' => $this->pages,
+                                    'year' => $this->toWareki($tYear, true),
                                     'summary' => $this->pageTitle($key, $item)
                                 ];
                                 $ary = [
-                                    ['font' => $this->mono,   'style' => '', 'size' => 10, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'num',     'suffix' => '', 'x' => 183, 'y' =>    9, 'type' => 'Cell', 'width' => 17, 'height' => 6, 'align' => 'R', 'flg' => true],
-                                    ['font' => $this->mincho, 'style' => '', 'size' => 11, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'summary', 'suffix' => '', 'x' =>  65, 'y' =>   19, 'type' => 'Cell', 'width' => 80, 'height' => 7, 'align' => 'C', 'flg' => true],
-                                    ['font' => $this->gothic, 'style' => '', 'size' =>  9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'year',    'suffix' => '', 'x' =>  10, 'y' => 28.7, 'type' => 'Cell', 'width' => 12, 'height' => 6, 'align' => 'R', 'flg' => true],
+                                    ['font' => $this->mono,   'style' => '', 'size' => 10, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'num',     'suffix' => '', 'x' => 183, 'y' => 9, 'type' => 'Cell', 'width' => 17, 'height' => 6, 'align' => 'R', 'flg' => true],
+                                    ['font' => $this->mincho, 'style' => '', 'size' => 11, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'summary', 'suffix' => '', 'x' => 65, 'y' => 19, 'type' => 'Cell', 'width' => 80, 'height' => 7, 'align' => 'C', 'flg' => true],
+                                    ['font' => $this->gothic, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'year',    'suffix' => '', 'x' => 10, 'y' => 28.7, 'type' => 'Cell', 'width' => 12, 'height' => 6, 'align' => 'R', 'flg' => true],
                                 ];
                                 $this->pdf->draw($ary, $head);
 
                                 if ($this->pages > 1) {
                                     $lod = ($balance <= 0) ? Lang::translate('DEBT') : Lang::translate('LOAN');
                                     $fw = [
-                                        'month'   => $month,
-                                        'day'     => $day,
+                                        'month' => $month,
+                                        'day' => $day,
                                         'summary' => Lang::translate('FROM_PRIV_PAGE'),
                                         'balance' => abs($balance),
-                                        'lod'     => $lod
+                                        'lod' => $lod
                                     ];
                                     $ary = [
-                                        ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'month',   'suffix' => '', 'x' =>     10, 'y' => $y, 'type' => 'Cell', 'width' =>  10, 'height' => self::LINE_HEIGHT, 'align' => 'R', 'flg' => true],
-                                        ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'day',     'suffix' => '', 'x' =>     20, 'y' => $y, 'type' => 'Cell', 'width' => 6.2, 'height' => self::LINE_HEIGHT, 'align' => $dayAlign, 'flg' => true],
-                                        ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'summary', 'suffix' => '', 'x' =>     26, 'y' => $y, 'type' => 'Cell', 'width' =>  47, 'height' => self::LINE_HEIGHT, 'align' => 'L', 'flg' => true],
-                                        ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'lod',     'suffix' => '', 'x' =>    153, 'y' => $y, 'type' => 'Cell', 'width' =>   6, 'height' => self::LINE_HEIGHT, 'align' => 'C', 'flg' => true],
-                                        ['font' => $this->mono,   'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'balance', 'suffix' => '', 'x' => 157.75, 'y' => $y, 'type' => 'Cell', 'width' =>  33, 'height' => self::LINE_HEIGHT, 'align' => 'R', 'flg' => true, 'pitch' => 1.65],
+                                        ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'month',   'suffix' => '', 'x' => 10, 'y' => $y, 'type' => 'Cell', 'width' => 10, 'height' => self::LINE_HEIGHT, 'align' => 'R', 'flg' => true],
+                                        ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'day',     'suffix' => '', 'x' => 20, 'y' => $y, 'type' => 'Cell', 'width' => 6.2, 'height' => self::LINE_HEIGHT, 'align' => $dayAlign, 'flg' => true],
+                                        ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'summary', 'suffix' => '', 'x' => 26, 'y' => $y, 'type' => 'Cell', 'width' => 47, 'height' => self::LINE_HEIGHT, 'align' => 'L', 'flg' => true],
+                                        ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'lod',     'suffix' => '', 'x' => 153, 'y' => $y, 'type' => 'Cell', 'width' => 6, 'height' => self::LINE_HEIGHT, 'align' => 'C', 'flg' => true],
+                                        ['font' => $this->mono,   'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'balance', 'suffix' => '', 'x' => 157.75, 'y' => $y, 'type' => 'Cell', 'width' => 33, 'height' => self::LINE_HEIGHT, 'align' => 'R', 'flg' => true, 'pitch' => 1.65],
                                     ];
                                     $this->pdf->draw($ary, $fw);
                                     $y += self::LINE_HEIGHT;
@@ -277,10 +275,10 @@ class Ledger extends Taxation
                                 $m_total_left += abs($balance);
                             }
                             $ary = [
-                                ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [255, 0, 0], 'prefix' => '', 'name' => 'day',          'suffix' => '', 'x' =>     20, 'y' => $y, 'type' => 'Cell', 'width' => 6.2, 'height' => self::LINE_HEIGHT, 'align' => $dayAlign, 'flg' => true],
-                                ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [255, 0, 0], 'prefix' => '', 'name' => 'summary',      'suffix' => '', 'x' =>     26, 'y' => $y, 'type' => 'Cell', 'width' =>  47, 'height' => self::LINE_HEIGHT, 'align' => 'L', 'flg' => true],
-                                ['font' => $this->mono,   'style' => '', 'size' => 9, 'color' => [255, 0, 0], 'prefix' => '', 'name' => 'amount_left',  'suffix' => '', 'x' =>  77.75, 'y' => $y, 'type' => 'Cell', 'width' =>  33, 'height' => self::LINE_HEIGHT, 'align' => 'R', 'flg' => true, 'pitch' => 1.65],
-                                ['font' => $this->mono,   'style' => '', 'size' => 9, 'color' => [255, 0, 0], 'prefix' => '', 'name' => 'amount_right', 'suffix' => '', 'x' => 114.75, 'y' => $y, 'type' => 'Cell', 'width' =>  33, 'height' => self::LINE_HEIGHT, 'align' => 'R', 'flg' => true, 'pitch' => 1.65],
+                                ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [255, 0, 0], 'prefix' => '', 'name' => 'day',          'suffix' => '', 'x' => 20, 'y' => $y, 'type' => 'Cell', 'width' => 6.2, 'height' => self::LINE_HEIGHT, 'align' => $dayAlign, 'flg' => true],
+                                ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [255, 0, 0], 'prefix' => '', 'name' => 'summary',      'suffix' => '', 'x' => 26, 'y' => $y, 'type' => 'Cell', 'width' => 47, 'height' => self::LINE_HEIGHT, 'align' => 'L', 'flg' => true],
+                                ['font' => $this->mono,   'style' => '', 'size' => 9, 'color' => [255, 0, 0], 'prefix' => '', 'name' => 'amount_left',  'suffix' => '', 'x' => 77.75, 'y' => $y, 'type' => 'Cell', 'width' => 33, 'height' => self::LINE_HEIGHT, 'align' => 'R', 'flg' => true, 'pitch' => 1.65],
+                                ['font' => $this->mono,   'style' => '', 'size' => 9, 'color' => [255, 0, 0], 'prefix' => '', 'name' => 'amount_right', 'suffix' => '', 'x' => 114.75, 'y' => $y, 'type' => 'Cell', 'width' => 33, 'height' => self::LINE_HEIGHT, 'align' => 'R', 'flg' => true, 'pitch' => 1.65],
                             ];
                             $this->pdf->draw($ary, $fw);
                             $y += self::LINE_HEIGHT;
@@ -295,8 +293,8 @@ class Ledger extends Taxation
                                 'amount_right' => $m_total_right
                             ];
                             $ary = [
-                                ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'summary',      'suffix' => '', 'x' =>     26, 'y' => $y, 'type' => 'Cell', 'width' => 47, 'height' => self::LINE_HEIGHT, 'align' => 'R', 'flg' => true],
-                                ['font' => $this->mono,   'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'amount_left',  'suffix' => '', 'x' =>  77.75, 'y' => $y, 'type' => 'Cell', 'width' => 33, 'height' => self::LINE_HEIGHT, 'align' => 'R', 'flg' => true, 'pitch' => 1.65],
+                                ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'summary',      'suffix' => '', 'x' => 26, 'y' => $y, 'type' => 'Cell', 'width' => 47, 'height' => self::LINE_HEIGHT, 'align' => 'R', 'flg' => true],
+                                ['font' => $this->mono,   'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'amount_left',  'suffix' => '', 'x' => 77.75, 'y' => $y, 'type' => 'Cell', 'width' => 33, 'height' => self::LINE_HEIGHT, 'align' => 'R', 'flg' => true, 'pitch' => 1.65],
                                 ['font' => $this->mono,   'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'amount_right', 'suffix' => '', 'x' => 114.75, 'y' => $y, 'type' => 'Cell', 'width' => 33, 'height' => self::LINE_HEIGHT, 'align' => 'R', 'flg' => true, 'pitch' => 1.65],
                             ];
                             $this->pdf->draw($ary, $fw);
@@ -313,9 +311,17 @@ class Ledger extends Taxation
                             // Fill monthes
                             if ($item['show_empty'] === '1' && $month > 0 && $m - $month > 1) {
                                 $this->fillMonths(
-                                    $month + 1, $m - 1, $balance, $lod, $dayAlign,
-                                    $m_total_left, $m_total_right, $total_left, $total_right,
-                                    $y, $lineNo
+                                    $month + 1,
+                                    $m - 1,
+                                    $balance,
+                                    $lod,
+                                    $dayAlign,
+                                    $m_total_left,
+                                    $m_total_right,
+                                    $total_left,
+                                    $total_right,
+                                    $y,
+                                    $lineNo
                                 );
                             }
 
@@ -334,13 +340,13 @@ class Ledger extends Taxation
                                 $m_total_left += abs($balance);
                             }
                             $ary = [
-                                ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'month',        'suffix' => '', 'x' =>     10, 'y' => $y, 'type' => 'Cell', 'width' =>  10, 'height' => self::LINE_HEIGHT, 'align' => 'R', 'flg' => true],
-                                ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'day',          'suffix' => '', 'x' =>     20, 'y' => $y, 'type' => 'Cell', 'width' => 6.2, 'height' => self::LINE_HEIGHT, 'align' => $dayAlign, 'flg' => true],
-                                ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'summary',      'suffix' => '', 'x' =>     26, 'y' => $y, 'type' => 'Cell', 'width' =>  47, 'height' => self::LINE_HEIGHT, 'align' => 'L', 'flg' => true],
-                                ['font' => $this->mono,   'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'amount_left',  'suffix' => '', 'x' =>  77.75, 'y' => $y, 'type' => 'Cell', 'width' =>  33, 'height' => self::LINE_HEIGHT, 'align' => 'R', 'flg' => true, 'pitch' => 1.65],
-                                ['font' => $this->mono,   'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'amount_right', 'suffix' => '', 'x' => 114.75, 'y' => $y, 'type' => 'Cell', 'width' =>  33, 'height' => self::LINE_HEIGHT, 'align' => 'R', 'flg' => true, 'pitch' => 1.65],
-                                ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'lod',          'suffix' => '', 'x' =>    153, 'y' => $y, 'type' => 'Cell', 'width' =>   6, 'height' => self::LINE_HEIGHT, 'align' => 'C', 'flg' => true],
-                                ['font' => $this->mono,   'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'balance',      'suffix' => '', 'x' => 157.75, 'y' => $y, 'type' => 'Cell', 'width' =>  33, 'height' => self::LINE_HEIGHT, 'align' => 'R', 'flg' => true, 'pitch' => 1.65],
+                                ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'month',        'suffix' => '', 'x' => 10, 'y' => $y, 'type' => 'Cell', 'width' => 10, 'height' => self::LINE_HEIGHT, 'align' => 'R', 'flg' => true],
+                                ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'day',          'suffix' => '', 'x' => 20, 'y' => $y, 'type' => 'Cell', 'width' => 6.2, 'height' => self::LINE_HEIGHT, 'align' => $dayAlign, 'flg' => true],
+                                ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'summary',      'suffix' => '', 'x' => 26, 'y' => $y, 'type' => 'Cell', 'width' => 47, 'height' => self::LINE_HEIGHT, 'align' => 'L', 'flg' => true],
+                                ['font' => $this->mono,   'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'amount_left',  'suffix' => '', 'x' => 77.75, 'y' => $y, 'type' => 'Cell', 'width' => 33, 'height' => self::LINE_HEIGHT, 'align' => 'R', 'flg' => true, 'pitch' => 1.65],
+                                ['font' => $this->mono,   'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'amount_right', 'suffix' => '', 'x' => 114.75, 'y' => $y, 'type' => 'Cell', 'width' => 33, 'height' => self::LINE_HEIGHT, 'align' => 'R', 'flg' => true, 'pitch' => 1.65],
+                                ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'lod',          'suffix' => '', 'x' => 153, 'y' => $y, 'type' => 'Cell', 'width' => 6, 'height' => self::LINE_HEIGHT, 'align' => 'C', 'flg' => true],
+                                ['font' => $this->mono,   'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'balance',      'suffix' => '', 'x' => 157.75, 'y' => $y, 'type' => 'Cell', 'width' => 33, 'height' => self::LINE_HEIGHT, 'align' => 'R', 'flg' => true, 'pitch' => 1.65],
                             ];
                             $this->pdf->draw($ary, $fw);
                             $y += self::LINE_HEIGHT;
@@ -350,16 +356,16 @@ class Ledger extends Taxation
 
                     if ($lineNo == ($this->lines - 1)) {
                         $fw = [
-                            'day'     => Lang::translate('IDENTICAL'),
+                            'day' => Lang::translate('IDENTICAL'),
                             'summary' => Lang::translate('TO_NEXT_PAGE'),
                             'balance' => abs($balance),
-                            'lod'     => Lang::translate('IDENTICAL')
+                            'lod' => Lang::translate('IDENTICAL')
                         ];
                         $ary = [
-                            ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'day',     'suffix' => '', 'x' =>     20, 'y' => $y, 'type' => 'Cell', 'width' => 6.2, 'height' => self::LINE_HEIGHT, 'align' => $dayAlign, 'flg' => true],
-                            ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'summary', 'suffix' => '', 'x' =>     26, 'y' => $y, 'type' => 'Cell', 'width' =>  47, 'height' => self::LINE_HEIGHT, 'align' => 'L', 'flg' => true],
-                            ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'lod',     'suffix' => '', 'x' =>    153, 'y' => $y, 'type' => 'Cell', 'width' =>   6, 'height' => self::LINE_HEIGHT, 'align' => 'C', 'flg' => true],
-                            ['font' => $this->mono,   'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'balance', 'suffix' => '', 'x' => 157.75, 'y' => $y, 'type' => 'Cell', 'width' =>  33, 'height' => self::LINE_HEIGHT, 'align' => 'R', 'flg' => true, 'pitch' => 1.65],
+                            ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'day',     'suffix' => '', 'x' => 20, 'y' => $y, 'type' => 'Cell', 'width' => 6.2, 'height' => self::LINE_HEIGHT, 'align' => $dayAlign, 'flg' => true],
+                            ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'summary', 'suffix' => '', 'x' => 26, 'y' => $y, 'type' => 'Cell', 'width' => 47, 'height' => self::LINE_HEIGHT, 'align' => 'L', 'flg' => true],
+                            ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'lod',     'suffix' => '', 'x' => 153, 'y' => $y, 'type' => 'Cell', 'width' => 6, 'height' => self::LINE_HEIGHT, 'align' => 'C', 'flg' => true],
+                            ['font' => $this->mono,   'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'balance', 'suffix' => '', 'x' => 157.75, 'y' => $y, 'type' => 'Cell', 'width' => 33, 'height' => self::LINE_HEIGHT, 'align' => 'R', 'flg' => true, 'pitch' => 1.65],
                         ];
                         $this->pdf->draw($ary, $fw);
                         ++$this->pages;
@@ -368,32 +374,32 @@ class Ledger extends Taxation
 
                         $this->pdf->addPageFromTemplate();
                         $head = [
-                            'num'     => $this->pages,
-                            'year'    => $this->toWareki($tYear, true),
+                            'num' => $this->pages,
+                            'year' => $this->toWareki($tYear, true),
                             'summary' => $this->pageTitle($key, $item)
                         ];
                         $ary = [
-                            ['font' => $this->mono,   'style' => '', 'size' => 10, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'num',     'suffix' => '', 'x' => 183, 'y' =>    9, 'type' => 'Cell', 'width' => 17, 'height' => 6, 'align' => 'R', 'flg' => true],
-                            ['font' => $this->mincho, 'style' => '', 'size' => 11, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'summary', 'suffix' => '', 'x' =>  65, 'y' =>   19, 'type' => 'Cell', 'width' => 80, 'height' => 7, 'align' => 'C', 'flg' => true],
-                            ['font' => $this->gothic, 'style' => '', 'size' =>  9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'year',    'suffix' => '', 'x' =>  10, 'y' => 28.7, 'type' => 'Cell', 'width' => 12, 'height' => 6, 'align' => 'R', 'flg' => true],
+                            ['font' => $this->mono,   'style' => '', 'size' => 10, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'num',     'suffix' => '', 'x' => 183, 'y' => 9, 'type' => 'Cell', 'width' => 17, 'height' => 6, 'align' => 'R', 'flg' => true],
+                            ['font' => $this->mincho, 'style' => '', 'size' => 11, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'summary', 'suffix' => '', 'x' => 65, 'y' => 19, 'type' => 'Cell', 'width' => 80, 'height' => 7, 'align' => 'C', 'flg' => true],
+                            ['font' => $this->gothic, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'year',    'suffix' => '', 'x' => 10, 'y' => 28.7, 'type' => 'Cell', 'width' => 12, 'height' => 6, 'align' => 'R', 'flg' => true],
                         ];
                         $this->pdf->draw($ary, $head);
 
                         if ($this->pages > 1) {
                             $lod = ($balance <= 0) ? Lang::translate('DEBT') : Lang::translate('LOAN');
                             $fw = [
-                                'month'   => $m,
-                                'day'     => '1',
+                                'month' => $m,
+                                'day' => '1',
                                 'summary' => Lang::translate('FROM_PRIV_PAGE'),
                                 'balance' => abs($balance),
-                                'lod'     => $lod
+                                'lod' => $lod
                             ];
                             $ary = [
-                                ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'month',   'suffix' => '', 'x' =>     10, 'y' => $y, 'type' => 'Cell', 'width' =>  10, 'height' => self::LINE_HEIGHT, 'align' => 'R', 'flg' => true],
-                                ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'day',     'suffix' => '', 'x' =>     20, 'y' => $y, 'type' => 'Cell', 'width' => 6.2, 'height' => self::LINE_HEIGHT, 'align' => $dayAlign, 'flg' => true],
-                                ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'summary', 'suffix' => '', 'x' =>     26, 'y' => $y, 'type' => 'Cell', 'width' =>  47, 'height' => self::LINE_HEIGHT, 'align' => 'L', 'flg' => true],
-                                ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'lod',     'suffix' => '', 'x' =>    153, 'y' => $y, 'type' => 'Cell', 'width' =>   6, 'height' => self::LINE_HEIGHT, 'align' => 'C', 'flg' => true],
-                                ['font' => $this->mono,   'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'balance', 'suffix' => '', 'x' => 157.75, 'y' => $y, 'type' => 'Cell', 'width' =>  33, 'height' => self::LINE_HEIGHT, 'align' => 'R', 'flg' => true, 'pitch' => 1.65],
+                                ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'month',   'suffix' => '', 'x' => 10, 'y' => $y, 'type' => 'Cell', 'width' => 10, 'height' => self::LINE_HEIGHT, 'align' => 'R', 'flg' => true],
+                                ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'day',     'suffix' => '', 'x' => 20, 'y' => $y, 'type' => 'Cell', 'width' => 6.2, 'height' => self::LINE_HEIGHT, 'align' => $dayAlign, 'flg' => true],
+                                ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'summary', 'suffix' => '', 'x' => 26, 'y' => $y, 'type' => 'Cell', 'width' => 47, 'height' => self::LINE_HEIGHT, 'align' => 'L', 'flg' => true],
+                                ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'lod',     'suffix' => '', 'x' => 153, 'y' => $y, 'type' => 'Cell', 'width' => 6, 'height' => self::LINE_HEIGHT, 'align' => 'C', 'flg' => true],
+                                ['font' => $this->mono,   'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'balance', 'suffix' => '', 'x' => 157.75, 'y' => $y, 'type' => 'Cell', 'width' => 33, 'height' => self::LINE_HEIGHT, 'align' => 'R', 'flg' => true, 'pitch' => 1.65],
                             ];
                             $this->pdf->draw($ary, $fw);
                             $y += self::LINE_HEIGHT;
@@ -402,7 +408,7 @@ class Ledger extends Taxation
                     }
 
                     $month = $m;
-                    $day   = $d;
+                    $day = $d;
 
                     $balance += $result["amount_$k"] * $b;
 
@@ -421,7 +427,7 @@ class Ledger extends Taxation
                         } else {
                             $m_total_right += abs($balance);
                         }
-                    } else if ($result['category'] === 'Z') {
+                    } elseif ($result['category'] === 'Z') {
                         $data['summary'] = $this->summary($key, $result, $items, $u, $k);
                         if ($balance < 0) {
                             $m_total_right += $result['amount_right'];
@@ -433,7 +439,7 @@ class Ledger extends Taxation
                     } else {
                         $data['summary'] = $this->summary($key, $result, $items, $u, $k);
                         $data["amount_$k"] = $result["amount_$k"];
-                        $data['page']      = $result['page_number'];
+                        $data['page'] = $result['page_number'];
                         if (isset($data['amount_left'])) {
                             $m_total_left += $data['amount_left'];
                         }
@@ -448,14 +454,14 @@ class Ledger extends Taxation
                     $lod = $l;
 
                     $ary = [
-                        ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'month',        'suffix' => '', 'x' =>     10, 'y' => $y, 'type' => 'Cell', 'width' =>  10, 'height' => self::LINE_HEIGHT, 'align' => 'R', 'flg' => true],
-                        ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'day',          'suffix' => '', 'x' =>     20, 'y' => $y, 'type' => 'Cell', 'width' => 6.2, 'height' => self::LINE_HEIGHT, 'align' => $dayAlign, 'flg' => true],
-                        ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'summary',      'suffix' => '', 'x' =>     26, 'y' => $y, 'type' => 'Cell', 'width' =>  47, 'height' => self::LINE_HEIGHT, 'align' => 'L', 'flg' => true],
-                        ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'page',         'suffix' => '', 'x' =>     73, 'y' => $y, 'type' => 'Cell', 'width' => 6.2, 'height' => self::LINE_HEIGHT, 'align' => 'R', 'flg' => true],
-                        ['font' => $this->mono,   'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'amount_left',  'suffix' => '', 'x' =>  77.75, 'y' => $y, 'type' => 'Cell', 'width' =>  33, 'height' => self::LINE_HEIGHT, 'align' => 'R', 'flg' => true, 'pitch' => 1.65],
-                        ['font' => $this->mono,   'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'amount_right', 'suffix' => '', 'x' => 114.75, 'y' => $y, 'type' => 'Cell', 'width' =>  33, 'height' => self::LINE_HEIGHT, 'align' => 'R', 'flg' => true, 'pitch' => 1.65],
-                        ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'lod',          'suffix' => '', 'x' =>    153, 'y' => $y, 'type' => 'Cell', 'width' =>   6, 'height' => self::LINE_HEIGHT, 'align' => 'C', 'flg' => true],
-                        ['font' => $this->mono,   'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'balance',      'suffix' => '', 'x' => 157.75, 'y' => $y, 'type' => 'Cell', 'width' =>  33, 'height' => self::LINE_HEIGHT, 'align' => 'R', 'flg' => true, 'pitch' => 1.65],
+                        ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'month',        'suffix' => '', 'x' => 10, 'y' => $y, 'type' => 'Cell', 'width' => 10, 'height' => self::LINE_HEIGHT, 'align' => 'R', 'flg' => true],
+                        ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'day',          'suffix' => '', 'x' => 20, 'y' => $y, 'type' => 'Cell', 'width' => 6.2, 'height' => self::LINE_HEIGHT, 'align' => $dayAlign, 'flg' => true],
+                        ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'summary',      'suffix' => '', 'x' => 26, 'y' => $y, 'type' => 'Cell', 'width' => 47, 'height' => self::LINE_HEIGHT, 'align' => 'L', 'flg' => true],
+                        ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'page',         'suffix' => '', 'x' => 73, 'y' => $y, 'type' => 'Cell', 'width' => 6.2, 'height' => self::LINE_HEIGHT, 'align' => 'R', 'flg' => true],
+                        ['font' => $this->mono,   'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'amount_left',  'suffix' => '', 'x' => 77.75, 'y' => $y, 'type' => 'Cell', 'width' => 33, 'height' => self::LINE_HEIGHT, 'align' => 'R', 'flg' => true, 'pitch' => 1.65],
+                        ['font' => $this->mono,   'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'amount_right', 'suffix' => '', 'x' => 114.75, 'y' => $y, 'type' => 'Cell', 'width' => 33, 'height' => self::LINE_HEIGHT, 'align' => 'R', 'flg' => true, 'pitch' => 1.65],
+                        ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'lod',          'suffix' => '', 'x' => 153, 'y' => $y, 'type' => 'Cell', 'width' => 6, 'height' => self::LINE_HEIGHT, 'align' => 'C', 'flg' => true],
+                        ['font' => $this->mono,   'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'balance',      'suffix' => '', 'x' => 157.75, 'y' => $y, 'type' => 'Cell', 'width' => 33, 'height' => self::LINE_HEIGHT, 'align' => 'R', 'flg' => true, 'pitch' => 1.65],
                     ];
                     $this->pdf->draw($ary, $data);
                     $y += self::LINE_HEIGHT;
@@ -465,21 +471,21 @@ class Ledger extends Taxation
                 // Forwarding
                 if ($balance !== 0) {
                     if ($lineNo >= ($this->lines - 3)) {
-                        while($lineNo < $this->lines - 1) {
+                        while ($lineNo < $this->lines - 1) {
                             $y += self::LINE_HEIGHT;
                             $lineNo++;
                         }
                         $fw = [
-                            'day'     => Lang::translate('IDENTICAL'),
+                            'day' => Lang::translate('IDENTICAL'),
                             'summary' => Lang::translate('TO_NEXT_PAGE'),
                             'balance' => abs($balance),
-                            'lod'     => Lang::translate('IDENTICAL')
+                            'lod' => Lang::translate('IDENTICAL')
                         ];
                         $ary = [
-                            ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'nema' => 'day',     'suffix' => '', 'x' =>     20, 'y' => $y, 'type' => 'Cell', 'width' => 6.2, 'height' => self::LINE_HEIGHT, 'align' => $dayAlign, 'flg' => true],
-                            ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'nema' => 'summary', 'suffix' => '', 'x' =>     26, 'y' => $y, 'type' => 'Cell', 'width' =>  47, 'height' => self::LINE_HEIGHT, 'align' => 'L', 'flg' => true],
-                            ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'nema' => 'lod',     'suffix' => '', 'x' =>    153, 'y' => $y, 'type' => 'Cell', 'width' =>   6, 'height' => self::LINE_HEIGHT, 'align' => 'C', 'flg' => true],
-                            ['font' => $this->mono,   'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'nema' => 'balance', 'suffix' => '', 'x' => 157.75, 'y' => $y, 'type' => 'Cell', 'width' =>  33, 'height' => self::LINE_HEIGHT, 'align' => 'R', 'flg' => true, 'pitch' => 1.65],
+                            ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'nema' => 'day',     'suffix' => '', 'x' => 20, 'y' => $y, 'type' => 'Cell', 'width' => 6.2, 'height' => self::LINE_HEIGHT, 'align' => $dayAlign, 'flg' => true],
+                            ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'nema' => 'summary', 'suffix' => '', 'x' => 26, 'y' => $y, 'type' => 'Cell', 'width' => 47, 'height' => self::LINE_HEIGHT, 'align' => 'L', 'flg' => true],
+                            ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'nema' => 'lod',     'suffix' => '', 'x' => 153, 'y' => $y, 'type' => 'Cell', 'width' => 6, 'height' => self::LINE_HEIGHT, 'align' => 'C', 'flg' => true],
+                            ['font' => $this->mono,   'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'nema' => 'balance', 'suffix' => '', 'x' => 157.75, 'y' => $y, 'type' => 'Cell', 'width' => 33, 'height' => self::LINE_HEIGHT, 'align' => 'R', 'flg' => true, 'pitch' => 1.65],
                         ];
                         $this->pdf->draw($ary, $fw);
                         ++$this->pages;
@@ -488,32 +494,32 @@ class Ledger extends Taxation
 
                         $this->pdf->addPageFromTemplate();
                         $head = [
-                            'num'     => $this->pages,
-                            'year'    => $this->toWareki($tYear, true),
+                            'num' => $this->pages,
+                            'year' => $this->toWareki($tYear, true),
                             'summary' => $this->pageTitle($key, $item)
                         ];
                         $ary = [
-                            ['font' => $this->mono,   'style' => '', 'size' => 10, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'num',     'suffix' => '', 'x' => 183, 'y' =>    9, 'type' => 'Cell', 'width' => 17, 'height' => 6, 'align' => 'R', 'flg' => true],
-                            ['font' => $this->mincho, 'style' => '', 'size' => 11, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'summary', 'suffix' => '', 'x' =>  65, 'y' =>   19, 'type' => 'Cell', 'width' => 80, 'height' => 7, 'align' => 'C', 'flg' => true],
-                            ['font' => $this->gothic, 'style' => '', 'size' =>  9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'year',    'suffix' => '', 'x' =>  10, 'y' => 28.7, 'type' => 'Cell', 'width' => 12, 'height' => 6, 'align' => 'R', 'flg' => true],
+                            ['font' => $this->mono,   'style' => '', 'size' => 10, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'num',     'suffix' => '', 'x' => 183, 'y' => 9, 'type' => 'Cell', 'width' => 17, 'height' => 6, 'align' => 'R', 'flg' => true],
+                            ['font' => $this->mincho, 'style' => '', 'size' => 11, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'summary', 'suffix' => '', 'x' => 65, 'y' => 19, 'type' => 'Cell', 'width' => 80, 'height' => 7, 'align' => 'C', 'flg' => true],
+                            ['font' => $this->gothic, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'year',    'suffix' => '', 'x' => 10, 'y' => 28.7, 'type' => 'Cell', 'width' => 12, 'height' => 6, 'align' => 'R', 'flg' => true],
                         ];
                         $this->pdf->draw($ary, $head);
 
                         if ($this->pages > 1) {
                             $lod = ($balance <= 0) ? Lang::translate('DEBT') : Lang::translate('LOAN');
                             $fw = [
-                                'month'   => $month,
-                                'day'     => $day,
+                                'month' => $month,
+                                'day' => $day,
                                 'summary' => Lang::translate('FROM_PRIV_PAGE'),
                                 'balance' => abs($balance),
-                                'lod'     => $lod
+                                'lod' => $lod
                             ];
                             $ary = [
-                                ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'month',   'suffix' => '', 'x' =>     10, 'y' => $y, 'type' => 'Cell', 'width' =>  10, 'height' => self::LINE_HEIGHT, 'align' => 'R', 'flg' => true],
-                                ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'day',     'suffix' => '', 'x' =>     20, 'y' => $y, 'type' => 'Cell', 'width' => 6.2, 'height' => self::LINE_HEIGHT, 'align' => $dayAlign, 'flg' => true],
-                                ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'summary', 'suffix' => '', 'x' =>     26, 'y' => $y, 'type' => 'Cell', 'width' =>  47, 'height' => self::LINE_HEIGHT, 'align' => 'L', 'flg' => true],
-                                ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'lod',     'suffix' => '', 'x' =>    153, 'y' => $y, 'type' => 'Cell', 'width' =>   6, 'height' => self::LINE_HEIGHT, 'align' => 'C', 'flg' => true],
-                                ['font' => $this->mono,   'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'balance', 'suffix' => '', 'x' => 157.75, 'y' => $y, 'type' => 'Cell', 'width' =>  33, 'height' => self::LINE_HEIGHT, 'align' => 'R', 'flg' => true, 'pitch' => 1.65],
+                                ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'month',   'suffix' => '', 'x' => 10, 'y' => $y, 'type' => 'Cell', 'width' => 10, 'height' => self::LINE_HEIGHT, 'align' => 'R', 'flg' => true],
+                                ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'day',     'suffix' => '', 'x' => 20, 'y' => $y, 'type' => 'Cell', 'width' => 6.2, 'height' => self::LINE_HEIGHT, 'align' => $dayAlign, 'flg' => true],
+                                ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'summary', 'suffix' => '', 'x' => 26, 'y' => $y, 'type' => 'Cell', 'width' => 47, 'height' => self::LINE_HEIGHT, 'align' => 'L', 'flg' => true],
+                                ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'lod',     'suffix' => '', 'x' => 153, 'y' => $y, 'type' => 'Cell', 'width' => 6, 'height' => self::LINE_HEIGHT, 'align' => 'C', 'flg' => true],
+                                ['font' => $this->mono,   'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'balance', 'suffix' => '', 'x' => 157.75, 'y' => $y, 'type' => 'Cell', 'width' => 33, 'height' => self::LINE_HEIGHT, 'align' => 'R', 'flg' => true, 'pitch' => 1.65],
                             ];
                             $this->pdf->draw($ary, $fw);
                             $y += self::LINE_HEIGHT;
@@ -543,10 +549,10 @@ class Ledger extends Taxation
                         $m_total_left += abs($balance);
                     }
                     $ary = [
-                        ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [255, 0, 0], 'prefix' => '', 'name' => 'day',          'suffix' => '', 'x' =>     20, 'y' => $y, 'type' => 'Cell', 'width' => 6.2, 'height' => self::LINE_HEIGHT, 'align' => $dayAlign, 'flg' => true],
-                        ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [255, 0, 0], 'prefix' => '', 'name' => 'summary',      'suffix' => '', 'x' =>     26, 'y' => $y, 'type' => 'Cell', 'width' =>  47, 'height' => self::LINE_HEIGHT, 'align' => 'L', 'flg' => true],
-                        ['font' => $this->mono,   'style' => '', 'size' => 9, 'color' => [255, 0, 0], 'prefix' => '', 'name' => 'amount_left',  'suffix' => '', 'x' =>  77.75, 'y' => $y, 'type' => 'Cell', 'width' =>  33, 'height' => self::LINE_HEIGHT, 'align' => 'R', 'flg' => true, 'pitch' => 1.65],
-                        ['font' => $this->mono,   'style' => '', 'size' => 9, 'color' => [255, 0, 0], 'prefix' => '', 'name' => 'amount_right', 'suffix' => '', 'x' => 114.75, 'y' => $y, 'type' => 'Cell', 'width' =>  33, 'height' => self::LINE_HEIGHT, 'align' => 'R', 'flg' => true, 'pitch' => 1.65],
+                        ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [255, 0, 0], 'prefix' => '', 'name' => 'day',          'suffix' => '', 'x' => 20, 'y' => $y, 'type' => 'Cell', 'width' => 6.2, 'height' => self::LINE_HEIGHT, 'align' => $dayAlign, 'flg' => true],
+                        ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [255, 0, 0], 'prefix' => '', 'name' => 'summary',      'suffix' => '', 'x' => 26, 'y' => $y, 'type' => 'Cell', 'width' => 47, 'height' => self::LINE_HEIGHT, 'align' => 'L', 'flg' => true],
+                        ['font' => $this->mono,   'style' => '', 'size' => 9, 'color' => [255, 0, 0], 'prefix' => '', 'name' => 'amount_left',  'suffix' => '', 'x' => 77.75, 'y' => $y, 'type' => 'Cell', 'width' => 33, 'height' => self::LINE_HEIGHT, 'align' => 'R', 'flg' => true, 'pitch' => 1.65],
+                        ['font' => $this->mono,   'style' => '', 'size' => 9, 'color' => [255, 0, 0], 'prefix' => '', 'name' => 'amount_right', 'suffix' => '', 'x' => 114.75, 'y' => $y, 'type' => 'Cell', 'width' => 33, 'height' => self::LINE_HEIGHT, 'align' => 'R', 'flg' => true, 'pitch' => 1.65],
                     ];
                     $this->pdf->draw($ary, $fw);
                     $y += self::LINE_HEIGHT;
@@ -561,8 +567,8 @@ class Ledger extends Taxation
                         'amount_right' => $m_total_right
                     ];
                     $ary = [
-                        ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'summary',      'suffix' => '', 'x' =>     26, 'y' => $y, 'type' => 'Cell', 'width' => 47, 'height' => self::LINE_HEIGHT, 'align' => 'R', 'flg' => true],
-                        ['font' => $this->mono,   'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'amount_left',  'suffix' => '', 'x' =>  77.75, 'y' => $y, 'type' => 'Cell', 'width' => 33, 'height' => self::LINE_HEIGHT, 'align' => 'R', 'flg' => true, 'pitch' => 1.65],
+                        ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'summary',      'suffix' => '', 'x' => 26, 'y' => $y, 'type' => 'Cell', 'width' => 47, 'height' => self::LINE_HEIGHT, 'align' => 'R', 'flg' => true],
+                        ['font' => $this->mono,   'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'amount_left',  'suffix' => '', 'x' => 77.75, 'y' => $y, 'type' => 'Cell', 'width' => 33, 'height' => self::LINE_HEIGHT, 'align' => 'R', 'flg' => true, 'pitch' => 1.65],
                         ['font' => $this->mono,   'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'amount_right', 'suffix' => '', 'x' => 114.75, 'y' => $y, 'type' => 'Cell', 'width' => 33, 'height' => self::LINE_HEIGHT, 'align' => 'R', 'flg' => true, 'pitch' => 1.65],
                     ];
                     $this->pdf->draw($ary, $fw);
@@ -582,12 +588,19 @@ class Ledger extends Taxation
                     if ($item['show_empty'] === '1' && $month > 0) {
                         $end = date('n');
                         $this->fillMonths(
-                            $month + 1, $end, $balance, $lod, $dayAlign,
-                            $m_total_left, $m_total_right, $total_left, $total_right,
-                            $y, $lineNo
+                            $month + 1,
+                            $end,
+                            $balance,
+                            $lod,
+                            $dayAlign,
+                            $m_total_left,
+                            $m_total_right,
+                            $total_left,
+                            $total_right,
+                            $y,
+                            $lineNo
                         );
                     }
-
                 }
 
                 if (in_array($key, $this->filter_items['FORWARD_1'])) {
@@ -613,7 +626,7 @@ class Ledger extends Taxation
 
         if ($at) {
             $start = date('Y-01-01 00:00:00', strtotime($at));
-            $end   = date('Y-12-31 23:59:59', strtotime($at));
+            $end = date('Y-12-31 23:59:59', strtotime($at));
             $where = ' AND issue_date >= ' . $this->db->quote($start) .
                      ' AND issue_date <= ' . $this->db->quote($end);
         }
@@ -655,7 +668,7 @@ class Ledger extends Taxation
      * @param string $k
      * @return string
      */
-    public function summary($key, array $result, $items, $u, $k) : string
+    public function summary($key, array $result, $items, $u, $k): string
     {
         $col = ($key === $this->filter_items['PURCHASE']) ? 'alias' : 'item_name';
         $value = (isset($items[$result["item_code_$u"]])) ? $items[$result["item_code_$u"]][$col] : '';
@@ -664,19 +677,21 @@ class Ledger extends Taxation
         if (!empty($result['summary'])) {
             $summary .= ' ' . $result['summary'];
         }
+
         return $summary;
     }
 
-    public function pageTitle($key, array $item) : string
+    public function pageTitle($key, array $item): string
     {
         $summary = ($key === $this->filter_items['PERIODEND_INVENTORY']) ? $item['alias'] : $item['item_name'];
         if (!empty($item['note']) && $key !== $this->filter_items['PERIODEND_INVENTORY']) {
             $summary .= Lang::translate('BRACKETS_LEFT') . $item['note'] . Lang::translate('BRACKETS_RIGHT');
         }
+
         return $summary;
     }
 
-    private function singleLineShort($y) : void
+    private function singleLineShort($y): void
     {
         $style = [
             'width' => 0.5,
@@ -693,7 +708,7 @@ class Ledger extends Taxation
         $this->pdf->draw($ary, $fw);
     }
 
-    private function doubleLineLong($y1) : void
+    private function doubleLineLong($y1): void
     {
         $style = [
             'width' => 0.25,
@@ -731,13 +746,13 @@ class Ledger extends Taxation
                 $m_total_left += abs($balance);
             }
             $ary = [
-                ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'month',        'suffix' => '', 'x' =>     10, 'y' => $y, 'type' => 'Cell', 'width' =>  10, 'height' => self::LINE_HEIGHT, 'align' => 'R', 'flg' => true],
-                ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'day',          'suffix' => '', 'x' =>     20, 'y' => $y, 'type' => 'Cell', 'width' => 6.2, 'height' => self::LINE_HEIGHT, 'align' => $dayAlign, 'flg' => true],
-                ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'summary',      'suffix' => '', 'x' =>     26, 'y' => $y, 'type' => 'Cell', 'width' =>  47, 'height' => self::LINE_HEIGHT, 'align' => 'L', 'flg' => true],
-                ['font' => $this->mono,   'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'amount_left',  'suffix' => '', 'x' =>  77.75, 'y' => $y, 'type' => 'Cell', 'width' =>  33, 'height' => self::LINE_HEIGHT, 'align' => 'R', 'flg' => true, 'pitch' => 1.65],
-                ['font' => $this->mono,   'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'amount_right', 'suffix' => '', 'x' => 114.75, 'y' => $y, 'type' => 'Cell', 'width' =>  33, 'height' => self::LINE_HEIGHT, 'align' => 'R', 'flg' => true, 'pitch' => 1.65],
-                ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'lod',          'suffix' => '', 'x' =>    153, 'y' => $y, 'type' => 'Cell', 'width' =>   6, 'height' => self::LINE_HEIGHT, 'align' => 'C', 'flg' => true],
-                ['font' => $this->mono,   'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'balance',      'suffix' => '', 'x' => 157.75, 'y' => $y, 'type' => 'Cell', 'width' =>  33, 'height' => self::LINE_HEIGHT, 'align' => 'R', 'flg' => true, 'pitch' => 1.65],
+                ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'month',        'suffix' => '', 'x' => 10, 'y' => $y, 'type' => 'Cell', 'width' => 10, 'height' => self::LINE_HEIGHT, 'align' => 'R', 'flg' => true],
+                ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'day',          'suffix' => '', 'x' => 20, 'y' => $y, 'type' => 'Cell', 'width' => 6.2, 'height' => self::LINE_HEIGHT, 'align' => $dayAlign, 'flg' => true],
+                ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'summary',      'suffix' => '', 'x' => 26, 'y' => $y, 'type' => 'Cell', 'width' => 47, 'height' => self::LINE_HEIGHT, 'align' => 'L', 'flg' => true],
+                ['font' => $this->mono,   'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'amount_left',  'suffix' => '', 'x' => 77.75, 'y' => $y, 'type' => 'Cell', 'width' => 33, 'height' => self::LINE_HEIGHT, 'align' => 'R', 'flg' => true, 'pitch' => 1.65],
+                ['font' => $this->mono,   'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'amount_right', 'suffix' => '', 'x' => 114.75, 'y' => $y, 'type' => 'Cell', 'width' => 33, 'height' => self::LINE_HEIGHT, 'align' => 'R', 'flg' => true, 'pitch' => 1.65],
+                ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'lod',          'suffix' => '', 'x' => 153, 'y' => $y, 'type' => 'Cell', 'width' => 6, 'height' => self::LINE_HEIGHT, 'align' => 'C', 'flg' => true],
+                ['font' => $this->mono,   'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'balance',      'suffix' => '', 'x' => 157.75, 'y' => $y, 'type' => 'Cell', 'width' => 33, 'height' => self::LINE_HEIGHT, 'align' => 'R', 'flg' => true, 'pitch' => 1.65],
             ];
             $this->pdf->draw($ary, $fw);
             $y += self::LINE_HEIGHT;
@@ -768,10 +783,10 @@ class Ledger extends Taxation
                 $m_total_left += abs($balance);
             }
             $ary = [
-                ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [255, 0, 0], 'prefix' => '', 'name' => 'day',          'suffix' => '', 'x' =>     20, 'y' => $y, 'type' => 'Cell', 'width' => 6.2, 'height' => self::LINE_HEIGHT, 'align' => $dayAlign, 'flg' => true],
-                ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [255, 0, 0], 'prefix' => '', 'name' => 'summary',      'suffix' => '', 'x' =>     26, 'y' => $y, 'type' => 'Cell', 'width' =>  47, 'height' => self::LINE_HEIGHT, 'align' => 'L', 'flg' => true],
-                ['font' => $this->mono,   'style' => '', 'size' => 9, 'color' => [255, 0, 0], 'prefix' => '', 'name' => 'amount_left',  'suffix' => '', 'x' =>  77.75, 'y' => $y, 'type' => 'Cell', 'width' =>  33, 'height' => self::LINE_HEIGHT, 'align' => 'R', 'flg' => true, 'pitch' => 1.65],
-                ['font' => $this->mono,   'style' => '', 'size' => 9, 'color' => [255, 0, 0], 'prefix' => '', 'name' => 'amount_right', 'suffix' => '', 'x' => 114.75, 'y' => $y, 'type' => 'Cell', 'width' =>  33, 'height' => self::LINE_HEIGHT, 'align' => 'R', 'flg' => true, 'pitch' => 1.65],
+                ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [255, 0, 0], 'prefix' => '', 'name' => 'day',          'suffix' => '', 'x' => 20, 'y' => $y, 'type' => 'Cell', 'width' => 6.2, 'height' => self::LINE_HEIGHT, 'align' => $dayAlign, 'flg' => true],
+                ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [255, 0, 0], 'prefix' => '', 'name' => 'summary',      'suffix' => '', 'x' => 26, 'y' => $y, 'type' => 'Cell', 'width' => 47, 'height' => self::LINE_HEIGHT, 'align' => 'L', 'flg' => true],
+                ['font' => $this->mono,   'style' => '', 'size' => 9, 'color' => [255, 0, 0], 'prefix' => '', 'name' => 'amount_left',  'suffix' => '', 'x' => 77.75, 'y' => $y, 'type' => 'Cell', 'width' => 33, 'height' => self::LINE_HEIGHT, 'align' => 'R', 'flg' => true, 'pitch' => 1.65],
+                ['font' => $this->mono,   'style' => '', 'size' => 9, 'color' => [255, 0, 0], 'prefix' => '', 'name' => 'amount_right', 'suffix' => '', 'x' => 114.75, 'y' => $y, 'type' => 'Cell', 'width' => 33, 'height' => self::LINE_HEIGHT, 'align' => 'R', 'flg' => true, 'pitch' => 1.65],
             ];
             $this->pdf->draw($ary, $fw);
             $y += self::LINE_HEIGHT;
@@ -786,8 +801,8 @@ class Ledger extends Taxation
                 'amount_right' => $m_total_right
             ];
             $ary = [
-                ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'summary',      'suffix' => '', 'x' =>     26, 'y' => $y, 'type' => 'Cell', 'width' => 47, 'height' => self::LINE_HEIGHT, 'align' => 'R', 'flg' => true],
-                ['font' => $this->mono,   'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'amount_left',  'suffix' => '', 'x' =>  77.75, 'y' => $y, 'type' => 'Cell', 'width' => 33, 'height' => self::LINE_HEIGHT, 'align' => 'R', 'flg' => true, 'pitch' => 1.65],
+                ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'summary',      'suffix' => '', 'x' => 26, 'y' => $y, 'type' => 'Cell', 'width' => 47, 'height' => self::LINE_HEIGHT, 'align' => 'R', 'flg' => true],
+                ['font' => $this->mono,   'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'amount_left',  'suffix' => '', 'x' => 77.75, 'y' => $y, 'type' => 'Cell', 'width' => 33, 'height' => self::LINE_HEIGHT, 'align' => 'R', 'flg' => true, 'pitch' => 1.65],
                 ['font' => $this->mono,   'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'amount_right', 'suffix' => '', 'x' => 114.75, 'y' => $y, 'type' => 'Cell', 'width' => 33, 'height' => self::LINE_HEIGHT, 'align' => 'R', 'flg' => true, 'pitch' => 1.65],
             ];
             $this->pdf->draw($ary, $fw);
