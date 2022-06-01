@@ -31,7 +31,7 @@ class Oas extends User implements PackageInterface
     /**
      * Application default mode.
      */
-    const DEFAULT_MODE = 'oas.transfer.response';
+    public const DEFAULT_MODE = 'oas.transfer.response';
 
     protected $command_convert = null;
 
@@ -44,9 +44,9 @@ class Oas extends User implements PackageInterface
     /**
      * fonts for TCPDF
      */
-    protected $mincho  = 'ipamp';
-    protected $gothic  = 'ipagp';
-    protected $mono    = 'ocrb';
+    protected $mincho = 'ipamp';
+    protected $gothic = 'ipagp';
+    protected $mono = 'ocrb';
 
     protected $oas_config;
 
@@ -98,6 +98,7 @@ class Oas extends User implements PackageInterface
     final public static function getDefaultMode($app)
     {
         $mode = $app->cnf('application:default_mode');
+
         return (!empty($mode)) ? $mode : self::DEFAULT_MODE;
     }
 
@@ -226,7 +227,7 @@ class Oas extends User implements PackageInterface
 
     protected function pathToID($path)
     {
-        return trim(str_replace(['/','.'], ['-','_'], preg_replace('/\.html?$/','',$path)), '-_');
+        return trim(str_replace(['/','.'], ['-','_'], preg_replace('/\.html?$/', '', $path)), '-_');
     }
 
     public function receipts()
@@ -263,7 +264,9 @@ class Oas extends User implements PackageInterface
     {
         $banks = $this->db->select(
             'account_number,bank,branch,account_type',
-            'bank', 'WHERE userkey = ?', [$this->uid]
+            'bank',
+            'WHERE userkey = ?',
+            [$this->uid]
         );
 
         $bank_list = [];
@@ -292,6 +295,7 @@ class Oas extends User implements PackageInterface
         if (empty($format)) {
             $format = $this->privateSavePath() . '/%s/%s/%s';
         }
+
         return sprintf($format, $year, $category, $fileName);
     }
 
@@ -331,7 +335,7 @@ class Oas extends User implements PackageInterface
         exit;
     }
 
-    static public function toWareki($date, $with_gengo = false)
+    public static function toWareki($date, $with_gengo = false)
     {
         $timestamp = (is_string($date)) ? strtotime($date) : $date;
         $year = date('Y', $timestamp);
@@ -341,10 +345,10 @@ class Oas extends User implements PackageInterface
         if ($end > 20190430) {
             $gengo = 'R.';
             $offset = 2018;
-        } elseif($end > 19890107) {
+        } elseif ($end > 19890107) {
             $gengo = 'H.';
             $offset = 1988;
-        } elseif($end > 19261225) {
+        } elseif ($end > 19261225) {
             $gengo = 'S.';
             $offset = 1925;
         }

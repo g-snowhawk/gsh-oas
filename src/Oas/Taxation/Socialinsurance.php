@@ -38,7 +38,7 @@ class Socialinsurance extends \Gsnowhawk\Oas\Taxation
     /**
      * Default view.
      */
-    public function defaultView() : void
+    public function defaultView(): void
     {
         $this->checkPermission('oas.taxation.read');
 

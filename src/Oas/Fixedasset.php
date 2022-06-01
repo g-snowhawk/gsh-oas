@@ -10,7 +10,6 @@
 
 namespace Gsnowhawk\Oas;
 
-
 use Gsnowhawk\Pdf;
 
 /**
@@ -21,12 +20,11 @@ use Gsnowhawk\Pdf;
  */
 class Fixedasset extends Taxation
 {
-    const MEMVALUE = 1;
-
     /**
      * Using common accessor methods
      */
     use \Gsnowhawk\Accessor;
+    public const MEMVALUE = 1;
 
     /**
      * Object Constructor.
@@ -151,7 +149,9 @@ class Fixedasset extends Taxation
         $end = min($limit, $target_year);
 
         if ($lda) {
-            if ($limit <= $target_year) return 0;
+            if ($limit <= $target_year) {
+                return 0;
+            }
             $surplus = $result['price'] % $durability;
             $depreciate = ($result['price'] - $surplus) / $durability;
 
@@ -162,7 +162,9 @@ class Fixedasset extends Taxation
                     $subtotal = $depreciate;
                 }
                 if (!$istotal) {
-                    if ($limit >= $target_year && $y === $target_year) return $subtotal;
+                    if ($limit >= $target_year && $y === $target_year) {
+                        return $subtotal;
+                    }
                 }
                 $total += $subtotal;
             }
@@ -179,7 +181,9 @@ class Fixedasset extends Taxation
                 }
                 $subtotal = ceil($result['price'] * $result['depreciate_rate'] * ($months / 12));
                 if (!$istotal) {
-                    if ($limit >= $target_year && $y === $target_year) return $subtotal;
+                    if ($limit >= $target_year && $y === $target_year) {
+                        return $subtotal;
+                    }
                 }
                 $total += $subtotal;
             }

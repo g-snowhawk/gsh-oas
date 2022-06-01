@@ -26,10 +26,10 @@ class Transfer extends \Gsnowhawk\Oas
      */
     use \Gsnowhawk\Accessor;
 
-    const LINE_COUNT = ['T' => 7, 'P' => 4, 'R' => 4];
-    const TRANSFER_TABLE = 'transfer';
-    const ACCOUNT_ITEM_TABLE = 'account_items';
-    const ITEMS_BY_LINE = [
+    public const LINE_COUNT = ['T' => 7, 'P' => 4, 'R' => 4];
+    public const TRANSFER_TABLE = 'transfer';
+    public const ACCOUNT_ITEM_TABLE = 'account_items';
+    public const ITEMS_BY_LINE = [
         'amount_left','item_code_left',
         'summary',
         'item_code_right','amount_right',
@@ -67,7 +67,8 @@ class Transfer extends \Gsnowhawk\Oas
 
         $label_cash = Lang::translate('LABEL_CASH');
         $item_code_of_cash = $this->db->get(
-            'item_code', self::ACCOUNT_ITEM_TABLE,
+            'item_code',
+            self::ACCOUNT_ITEM_TABLE,
             'userkey = ? AND item_name = ?',
             [$this->uid, $label_cash]
         );
@@ -116,8 +117,12 @@ class Transfer extends \Gsnowhawk\Oas
                     if ('1' === $this->db->get('locked', self::TRANSFER_TABLE, $statement, $options)) {
                         return false;
                     }
-                    if (false === ($result = $this->db->delete(
-                        self::TRANSFER_TABLE, $statement, $options)
+                    if (false === (
+                        $result = $this->db->delete(
+                        self::TRANSFER_TABLE,
+                        $statement,
+                        $options
+                    )
                     )) {
                         break;
                     }
@@ -153,7 +158,8 @@ class Transfer extends \Gsnowhawk\Oas
                 $result = $this->db->insert(self::TRANSFER_TABLE, $save);
             } else {
                 $result = $this->db->update(
-                    self::TRANSFER_TABLE, $save,
+                    self::TRANSFER_TABLE,
+                    $save,
                     $statement,
                     [$this->uid, $post['issue_date'], $page_number, $line_number, $post['category']]
                 );
@@ -189,7 +195,7 @@ class Transfer extends \Gsnowhawk\Oas
     {
     }
 
-    private function newTransferNumber($issue_date, $category) : int
+    private function newTransferNumber($issue_date, $category): int
     {
         if (empty($category)) {
             return -1;
@@ -203,7 +209,7 @@ class Transfer extends \Gsnowhawk\Oas
         $options_count = count($options);
 
         switch ($this->app->cnf('oas:reset_transfer_number_type')) {
-            case 'fiscal_year' :
+            case 'fiscal_year':
                 $year = date('Y', $timestamp);
                 $start_fiscal_year = $this->app->cnf('oas:start_fiscal_year');
                 if (empty($start_fiscal_year)) {
@@ -218,10 +224,10 @@ class Transfer extends \Gsnowhawk\Oas
                 $issue_date = "$year-$start_fiscal_year";
                 $options[] = date('Y-m-d', strtotime($issue_date));
                 break;
-            case 'year' :
+            case 'year':
                 $options[] = date('Y-01-01', $timestamp);
                 break;
-            case 'month' :
+            case 'month':
                 $options[] = date('Y-m-01', $timestamp);
                 break;
         }
@@ -253,7 +259,7 @@ class Transfer extends \Gsnowhawk\Oas
         $options_count = count($options);
 
         switch ($this->app->cnf('oas:reset_transfer_number_type')) {
-            case 'fiscal_year' :
+            case 'fiscal_year':
                 $year = $date_time->format('Y');
                 $start_fiscal_year = $this->app->cnf('oas:start_fiscal_year');
                 if (empty($start_fiscal_year)) {
@@ -270,11 +276,11 @@ class Transfer extends \Gsnowhawk\Oas
                 $end = new DateTime($start->modify('+1 year')->format('Y-m-d'));
                 $options[] = $end->modify('-1 day')->format('Y-m-d');
                 break;
-            case 'year' :
+            case 'year':
                 $options[] = $date_time->format('Y-01-01');
                 $options[] = $date_time->format('Y-12-31');
                 break;
-            case 'month' :
+            case 'month':
                 $month = $date_time->format('Y-m');
                 foreach (['first','last'] as $at) {
                     $day = new DateTime("$at day of $month");
@@ -287,8 +293,10 @@ class Transfer extends \Gsnowhawk\Oas
         }
 
         return $this->db->update(
-            'transfer', [],
-            $statement . ' ORDER BY page_number DESC', $options,
+            'transfer',
+            [],
+            $statement . ' ORDER BY page_number DESC',
+            $options,
             ['page_number' => "page_number + '$value'"]
         );
     }
@@ -340,8 +348,10 @@ class Transfer extends \Gsnowhawk\Oas
     protected function currentTransfer($issue_date, $page_number, $category, $columns = '*')
     {
         $issue_date = date('Y-m-d', strtotime($issue_date));
+
         return $this->db->select(
-            '*', self::TRANSFER_TABLE,
+            '*',
+            self::TRANSFER_TABLE,
             'WHERE userkey = ? AND issue_date = ? AND page_number = ? AND category = ?',
             [$this->uid, $issue_date, $page_number, $category]
         );
@@ -350,6 +360,7 @@ class Transfer extends \Gsnowhawk\Oas
     protected function transferByDay($issue_date, $category, $columns = '*', $page_order = 'ASC')
     {
         $issue_date = date('Y-m-d', strtotime($issue_date));
+
         return $this->db->get(
             $columns,
             self::TRANSFER_TABLE,

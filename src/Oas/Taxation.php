@@ -25,7 +25,7 @@ class Taxation extends \Gsnowhawk\Oas
      */
     use \Gsnowhawk\Accessor;
 
-    const TEXT_COLOR = [0,66,99];
+    public const TEXT_COLOR = [0,66,99];
 
     protected $filter_items = [];
     protected $operation_filter = [];
@@ -89,8 +89,8 @@ class Taxation extends \Gsnowhawk\Oas
         }
 
         $start = sprintf('%d-01-01 00:00:00', $year + 1);
-        $end   = sprintf('%d-01-01 23:59:59', $year + 1);
-        $where =  'userkey = ?
+        $end = sprintf('%d-01-01 23:59:59', $year + 1);
+        $where = 'userkey = ?
                    AND category = ?
                    AND line_number = ?
                    AND (issue_date >= ? AND issue_date <= ?)';
@@ -103,9 +103,9 @@ class Taxation extends \Gsnowhawk\Oas
         if ($this->db->query($sql, $replaces)) {
             $count = $this->db->fetchColumn(0);
         }
-        $amount_left  = ($amount < 0) ? abs($amount) : null;
+        $amount_left = ($amount < 0) ? abs($amount) : null;
         $amount_right = ($amount < 0) ? null : abs($amount);
-        $code_left  = ($amount < 0) ? $item_code : null;
+        $code_left = ($amount < 0) ? $item_code : null;
         $code_right = ($amount < 0) ? null : $item_code;
         if ($count > 0) {
             $data = [
@@ -115,6 +115,7 @@ class Taxation extends \Gsnowhawk\Oas
                 'amount_right' => $amount_right,
                 'item_code_right' => $code_right,
             ];
+
             return $this->db->update('transfer', $data, $where, $replaces);
         }
         $data = [
@@ -129,6 +130,7 @@ class Taxation extends \Gsnowhawk\Oas
             'amount_right' => $amount_right,
             'item_code_right' => $code_right,
         ];
+
         return $this->db->insert('transfer', $data);
     }
 
@@ -143,6 +145,7 @@ class Taxation extends \Gsnowhawk\Oas
         $data['userkey'] = $this->uid;
         if (false === $this->db->merge('account_book', $data, ['modify_date'])) {
             trigger_error($this->db->error());
+
             return false;
         }
 

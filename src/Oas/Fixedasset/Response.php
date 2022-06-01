@@ -20,7 +20,7 @@ use Gsnowhawk\Common\Lang;
  */
 class Response extends \Gsnowhawk\Oas\Fixedasset
 {
-    const LINE_HEIGHT = 8;
+    public const LINE_HEIGHT = 8;
 
     private $y = 78;
     private $pages = 0;
@@ -28,12 +28,12 @@ class Response extends \Gsnowhawk\Oas\Fixedasset
     private $closed = false;
 
     private $acquire_quantity_total = 0;
-    private $acquire_price_total    = 0;
+    private $acquire_price_total = 0;
     private $depreciate_price_total = 0;
-    private $change_quantity_total  = 0;
-    private $change_price_total     = 0;
-    private $quantity_onhand_total  = 0;
-    private $price_onhand_total     = 0;
+    private $change_quantity_total = 0;
+    private $change_price_total = 0;
+    private $quantity_onhand_total = 0;
+    private $price_onhand_total = 0;
 
     private $pMon = 1;
     private $pDay = 1;
@@ -68,7 +68,7 @@ class Response extends \Gsnowhawk\Oas\Fixedasset
     /**
      * Default view.
      */
-    public function defaultView() : void
+    public function defaultView(): void
     {
         $this->checkPermission('oas.fixedasset.read');
 
@@ -96,7 +96,7 @@ class Response extends \Gsnowhawk\Oas\Fixedasset
     /**
      * Edit view.
      */
-    public function edit($readonly = false) : void
+    public function edit($readonly = false): void
     {
         $this->checkPermission('oas.fixedasset.update');
 
@@ -104,7 +104,10 @@ class Response extends \Gsnowhawk\Oas\Fixedasset
             $post = $this->request->post();
         } else {
             $post = $this->db->get(
-                '*', 'fixed_assets', 'id = ?', [$this->request->param('id')]
+                '*',
+                'fixed_assets',
+                'id = ?',
+                [$this->request->param('id')]
             );
         }
         $this->view->bind('post', $post);
@@ -160,14 +163,16 @@ class Response extends \Gsnowhawk\Oas\Fixedasset
         $this->pages = 0;
         $results = $this->db->fetchAll();
         foreach ($results as $result) {
-            if (!isset($over[$result['item']])) $over[$result['item']] = 0;
+            if (!isset($over[$result['item']])) {
+                $over[$result['item']] = 0;
+            }
             $this->acquire_quantity_total = 0;
-            $this->acquire_price_total    = 0;
+            $this->acquire_price_total = 0;
             $this->depreciate_price_total = 0;
-            $this->change_quantity_total  = 0;
-            $this->change_price_total     = 0;
-            $this->quantity_onhand_total  = 0;
-            $this->price_onhand_total     = 0;
+            $this->change_quantity_total = 0;
+            $this->change_price_total = 0;
+            $this->quantity_onhand_total = 0;
+            $this->price_onhand_total = 0;
 
             $this->closed = false;
 
@@ -180,14 +185,14 @@ class Response extends \Gsnowhawk\Oas\Fixedasset
 
             $ary = [
                 ['font' => $this->mincho, 'style' => '', 'size' => 11, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'title',           'suffix' => '', 'x' => 108, 'y' => 20, 'type' => 'Cell', 'width' => 80, 'height' => 6, 'align' => 'C', 'flg' => true],
-                ['font' => $this->mincho, 'style' => '', 'size' =>  9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'id',              'suffix' => '', 'x' =>  22, 'y' => 37, 'type' => 'Cell', 'width' => 40, 'height' => 6, 'align' => 'C', 'flg' => true],
-                ['font' => $this->mincho, 'style' => '', 'size' =>  9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'item_name',       'suffix' => '', 'x' =>  22, 'y' => 45, 'type' => 'Cell', 'width' => 40, 'height' => 6, 'align' => 'C', 'flg' => true],
-                ['font' => $this->mincho, 'style' => '', 'size' =>  9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'acqr',            'suffix' => '', 'x' => 178, 'y' => 37, 'type' => 'Cell', 'width' => 38, 'height' => 6, 'align' => 'C', 'flg' => true],
-                ['font' => $this->mincho, 'style' => '', 'size' =>  9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'location',        'suffix' => '', 'x' => 178, 'y' => 45, 'type' => 'Cell', 'width' => 38, 'height' => 6, 'align' => 'C', 'flg' => true],
-                ['font' => $this->mincho, 'style' => '', 'size' =>  9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'durability',      'suffix' => '', 'x' => 178, 'y' => 53, 'type' => 'Cell', 'width' => 38, 'height' => 6, 'align' => 'C', 'flg' => true],
-                ['font' => $this->mincho, 'style' => '', 'size' =>  9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'depreciate_type', 'suffix' => '', 'x' => 248, 'y' => 37, 'type' => 'Cell', 'width' => 38, 'height' => 6, 'align' => 'C', 'flg' => true],
-                ['font' => $this->mincho, 'style' => '', 'size' =>  9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'depreciate_rate', 'suffix' => '', 'x' => 248, 'y' => 45, 'type' => 'Cell', 'width' => 38, 'height' => 6, 'align' => 'C', 'flg' => true],
-                ['font' => $this->gothic, 'style' => '', 'size' =>  9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'year',            'suffix' => '', 'x' => 9.5, 'y' => 68, 'type' => 'Cell', 'width' =>  9, 'height' => 6, 'align' => 'R', 'flg' => true],
+                ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'id',              'suffix' => '', 'x' => 22, 'y' => 37, 'type' => 'Cell', 'width' => 40, 'height' => 6, 'align' => 'C', 'flg' => true],
+                ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'item_name',       'suffix' => '', 'x' => 22, 'y' => 45, 'type' => 'Cell', 'width' => 40, 'height' => 6, 'align' => 'C', 'flg' => true],
+                ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'acqr',            'suffix' => '', 'x' => 178, 'y' => 37, 'type' => 'Cell', 'width' => 38, 'height' => 6, 'align' => 'C', 'flg' => true],
+                ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'location',        'suffix' => '', 'x' => 178, 'y' => 45, 'type' => 'Cell', 'width' => 38, 'height' => 6, 'align' => 'C', 'flg' => true],
+                ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'durability',      'suffix' => '', 'x' => 178, 'y' => 53, 'type' => 'Cell', 'width' => 38, 'height' => 6, 'align' => 'C', 'flg' => true],
+                ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'depreciate_type', 'suffix' => '', 'x' => 248, 'y' => 37, 'type' => 'Cell', 'width' => 38, 'height' => 6, 'align' => 'C', 'flg' => true],
+                ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'depreciate_rate', 'suffix' => '', 'x' => 248, 'y' => 45, 'type' => 'Cell', 'width' => 38, 'height' => 6, 'align' => 'C', 'flg' => true],
+                ['font' => $this->gothic, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'year',            'suffix' => '', 'x' => 9.5, 'y' => 68, 'type' => 'Cell', 'width' => 9, 'height' => 6, 'align' => 'R', 'flg' => true],
             ];
             $this->pdf->draw($ary, $result);
 
@@ -200,15 +205,15 @@ class Response extends \Gsnowhawk\Oas\Fixedasset
             $shift = 0;
             if ($tYear === $s) {
                 $data = [
-                    'month'   => date('n', strtotime($result['acquire'])),
-                    'date'    => date('j', strtotime($result['acquire'])),
+                    'month' => date('n', strtotime($result['acquire'])),
+                    'date' => date('j', strtotime($result['acquire'])),
                     'summary' => Lang::translate('ACQUIRE'),
                     'acquire_quantity' => $result['quantity'],
                 ];
             } else {
                 $data = [
-                    'month'   => 1,
-                    'date'    => 1,
+                    'month' => 1,
+                    'date' => 1,
                     'summary' => Lang::translate('FROM_PRIV_YEAR'),
                     'acquire_quantity' => $result['quantity'],
                 ];
@@ -216,7 +221,7 @@ class Response extends \Gsnowhawk\Oas\Fixedasset
             }
 
             if ($data['acquire_quantity'] > 1) {
-                $data['acquire_unit']  = number_format($result['price']);
+                $data['acquire_unit'] = number_format($result['price']);
             }
             $data['acquire_price'] = $result['quantity'] * $result['price'];
             $lda = ($result['item'] === $this->lumpsum_depreciable_assets);
@@ -234,10 +239,10 @@ class Response extends \Gsnowhawk\Oas\Fixedasset
             $data['price_onhand'] = $price_onhand;
 
             $this->acquire_quantity_total += $data['acquire_quantity'];
-            $this->acquire_price_total    += $data['acquire_price'];
+            $this->acquire_price_total += $data['acquire_price'];
             $this->depreciate_price_total += $data['depreciate_price'];
-            $this->quantity_onhand_total  += $data['quantity_onhand'];
-            $this->price_onhand_total     += $data['price_onhand'];
+            $this->quantity_onhand_total += $data['quantity_onhand'];
+            $this->price_onhand_total += $data['price_onhand'];
 
             $this->pdf->draw($ary, $data, $this->y);
             $this->y += self::LINE_HEIGHT;
@@ -264,7 +269,7 @@ class Response extends \Gsnowhawk\Oas\Fixedasset
             $y1 = $this->y + 1;
             $y2 = $y1 + 6;
             $line_map = [
-                ['name' => 'line', 'x' => 59, 'y' => $y1, 'x2' =>  23, 'y2' => $y2, 'type' => 'Line', 'style' => $style],
+                ['name' => 'line', 'x' => 59, 'y' => $y1, 'x2' => 23, 'y2' => $y2, 'type' => 'Line', 'style' => $style],
                 ['name' => 'line', 'x' => 23, 'y' => $y2, 'x2' => 287, 'y2' => $y2, 'type' => 'Line', 'style' => $style],
             ];
             $this->pdf->draw($line_map, ['line' => 2]);
@@ -272,13 +277,23 @@ class Response extends \Gsnowhawk\Oas\Fixedasset
             $this->y += self::LINE_HEIGHT;
 
             $data = [
-                'summary'  => Lang::translate('TB_TOTAL'),
+                'summary' => Lang::translate('TB_TOTAL'),
             ];
-            if ($this->acquire_quantity_total != 0) $data['acquire_quantity'] = $this->acquire_quantity_total;
-            if ($this->acquire_price_total    != 0) $data['acquire_price']    = $this->acquire_price_total;
-            if ($this->depreciate_price_total != 0) $data['depreciate_price'] = $this->depreciate_price_total;
-            if ($this->change_quantity_total  != 0) $data['change_quantity']  = $this->change_quantity_total;
-            if ($this->change_price_total     != 0) $data['change_price']     = $this->change_price_total;
+            if ($this->acquire_quantity_total != 0) {
+                $data['acquire_quantity'] = $this->acquire_quantity_total;
+            }
+            if ($this->acquire_price_total != 0) {
+                $data['acquire_price'] = $this->acquire_price_total;
+            }
+            if ($this->depreciate_price_total != 0) {
+                $data['depreciate_price'] = $this->depreciate_price_total;
+            }
+            if ($this->change_quantity_total != 0) {
+                $data['change_quantity'] = $this->change_quantity_total;
+            }
+            if ($this->change_price_total != 0) {
+                $data['change_price'] = $this->change_price_total;
+            }
             $this->quantity_onhand_total = $this->acquire_quantity_total - $this->change_quantity_total;
             $diff = intval($this->depreciate_price_total + abs($this->change_price_total));
             if ($diff === 0) {
@@ -289,8 +304,8 @@ class Response extends \Gsnowhawk\Oas\Fixedasset
                 $this->price_onhand_total = ($result['item'] !== $this->lumpsum_depreciable_assets)
                     ? parent::MEMVALUE : 0;
             }
-            if ($this->quantity_onhand_total  > 0) {
-                $data['quantity_onhand']  = $this->quantity_onhand_total;
+            if ($this->quantity_onhand_total > 0) {
+                $data['quantity_onhand'] = $this->quantity_onhand_total;
             }
             $data['price_onhand'] = $this->price_onhand_total;
             $this->pdf->draw($ary, $data, $this->y);
@@ -360,12 +375,11 @@ class Response extends \Gsnowhawk\Oas\Fixedasset
                 $this->y += self::LINE_HEIGHT;
 
                 $this->change_quantity_total += $unit['change_quantity'];
-                $this->change_price_total    += -$price_onhand;
+                $this->change_price_total += -$price_onhand;
                 $price_onhand = 0;
                 $this->price_onhand_total = $price_onhand;
                 $this->closed = true;
-            }
-            elseif ($unit['summary'] === Lang::translate('RETIREMENT')) {
+            } elseif ($unit['summary'] === Lang::translate('RETIREMENT')) {
                 $single = round($result['price'] * $result['depreciate_rate'] / 12);
                 $s = $single * $unit['month'];
 
@@ -403,7 +417,7 @@ class Response extends \Gsnowhawk\Oas\Fixedasset
                 $this->y += self::LINE_HEIGHT;
 
                 $this->change_quantity_total += $unit['change_quantity'];
-                $this->change_price_total    += -$price_onhand;
+                $this->change_price_total += -$price_onhand;
                 $price_onhand = 0;
                 $this->price_onhand_total = $price_onhand;
                 $this->closed = true;
@@ -420,8 +434,8 @@ class Response extends \Gsnowhawk\Oas\Fixedasset
             } else {
                 $this->pMon = $data['month'];
             }
-            if ($data['date']  == $this->pDay) {
-                $data['date']  = Lang::translate('IDENTICAL');
+            if ($data['date'] == $this->pDay) {
+                $data['date'] = Lang::translate('IDENTICAL');
                 $da = 'C';
             } else {
                 $this->pDay = $data['date'];
@@ -441,17 +455,17 @@ class Response extends \Gsnowhawk\Oas\Fixedasset
     public function drawClosing(&$result, &$price_onhand, $year, $month = 12, $date = 31)
     {
         $data = [
-            'month'    => $month,
-            'date'     => $date,
-            'summary'  => Lang::translate('DEPRECIATION'),
+            'month' => $month,
+            'date' => $date,
+            'summary' => Lang::translate('DEPRECIATION'),
         ];
         if ($data['month'] == $this->pMon) {
             $data['month'] = '';
         } else {
             $this->pMon = $data['month'];
         }
-        if ($data['date']  == $this->pDay) {
-            $data['date']  = Lang::translate('IDENTICAL');
+        if ($data['date'] == $this->pDay) {
+            $data['date'] = Lang::translate('IDENTICAL');
             $da = 'C';
         } else {
             $this->pDay = $data['date'];
@@ -477,7 +491,7 @@ class Response extends \Gsnowhawk\Oas\Fixedasset
         }
 
         $this->depreciate_price_total += $data['depreciate_price'];
-        $this->price_onhand_total     += $data['price_onhand'];
+        $this->price_onhand_total += $data['price_onhand'];
 
         $this->pdf->draw($ary, $data, $this->y);
         $this->y += self::LINE_HEIGHT;
@@ -500,9 +514,9 @@ class Response extends \Gsnowhawk\Oas\Fixedasset
         $key = 'DATE_FORMAT_N';
         if ($year > 20190430) {
             $key = 'DATE_FORMAT_R';
-        } elseif($year > 19890107) {
+        } elseif ($year > 19890107) {
             $key = 'DATE_FORMAT_H';
-        } elseif($year > 19261225) {
+        } elseif ($year > 19261225) {
             $key = 'DATE_FORMAT_S';
         }
 
@@ -512,19 +526,19 @@ class Response extends \Gsnowhawk\Oas\Fixedasset
     public function pdfMappingRow($align = 'R')
     {
         return [
-            ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'month',            'suffix' => '', 'x' =>    10, 'y' => 0, 'type' => 'Cell', 'width' =>   7, 'height' => 8, 'align' => 'R', 'flg' => true],
-            ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'date',             'suffix' => '', 'x' =>    17, 'y' => 0, 'type' => 'Cell', 'width' => 5.5, 'height' => 8, 'align' => $align, 'flg' => true],
-            ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'summary',          'suffix' => '', 'x' =>    22, 'y' => 0, 'type' => 'Cell', 'width' =>  38, 'height' => 8, 'align' => 'L', 'flg' => true],
-            ['font' => $this->mono,   'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'acquire_quantity', 'suffix' => '', 'x' =>    60, 'y' => 0, 'type' => 'Cell', 'width' =>  15, 'height' => 8, 'align' => 'R', 'flg' => true],
-            ['font' => $this->mono,   'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'acquire_unit',     'suffix' => '', 'x' =>    75, 'y' => 0, 'type' => 'Cell', 'width' =>  15, 'height' => 8, 'align' => 'R', 'flg' => true],
-            ['font' => $this->mono,   'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'acquire_price',    'suffix' => '', 'x' =>  89.5, 'y' => 0, 'type' =>  'Tri', 'width' =>  24, 'height' => 8, 'align' => 'R', 'flg' => true, 'pitch' => 1.2],
-            ['font' => $this->mono,   'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'depreciate_price', 'suffix' => '', 'x' => 117.5, 'y' => 0, 'type' =>  'Tri', 'width' =>  24, 'height' => 8, 'align' => 'R', 'flg' => true, 'pitch' => 1.2],
-            ['font' => $this->mono,   'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'change_quantity',  'suffix' => '', 'x' =>   146, 'y' => 0, 'type' => 'Cell', 'width' =>  15, 'height' => 8, 'align' => 'R', 'flg' => true],
-            ['font' => $this->mono,   'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'change_price',     'suffix' => '', 'x' => 160.5, 'y' => 0, 'type' =>  'Tri', 'width' =>  24, 'height' => 8, 'align' => 'R', 'flg' => true, 'pitch' => 1.2],
-            ['font' => $this->mono,   'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'quantity_onhand',  'suffix' => '', 'x' =>   189, 'y' => 0, 'type' => 'Cell', 'width' =>  15, 'height' => 8, 'align' => 'R', 'flg' => true],
-            ['font' => $this->mono,   'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'price_onhand',     'suffix' => '', 'x' => 203.5, 'y' => 0, 'type' =>  'Tri', 'width' =>  24, 'height' => 8, 'align' => 'R', 'flg' => true, 'pitch' => 1.2],
-            ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'official_ratio',   'suffix' => '', 'x' =>   232, 'y' => 0, 'type' => 'Cell', 'width' =>  14, 'height' => 8, 'align' => 'R', 'flg' => true],
-            ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'note',             'suffix' => '', 'x' =>   247, 'y' => 0, 'type' => 'Cell', 'width' =>  40, 'height' => 8, 'align' => 'L', 'flg' => true],
+            ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'month',            'suffix' => '', 'x' => 10, 'y' => 0, 'type' => 'Cell', 'width' => 7, 'height' => 8, 'align' => 'R', 'flg' => true],
+            ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'date',             'suffix' => '', 'x' => 17, 'y' => 0, 'type' => 'Cell', 'width' => 5.5, 'height' => 8, 'align' => $align, 'flg' => true],
+            ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'summary',          'suffix' => '', 'x' => 22, 'y' => 0, 'type' => 'Cell', 'width' => 38, 'height' => 8, 'align' => 'L', 'flg' => true],
+            ['font' => $this->mono,   'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'acquire_quantity', 'suffix' => '', 'x' => 60, 'y' => 0, 'type' => 'Cell', 'width' => 15, 'height' => 8, 'align' => 'R', 'flg' => true],
+            ['font' => $this->mono,   'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'acquire_unit',     'suffix' => '', 'x' => 75, 'y' => 0, 'type' => 'Cell', 'width' => 15, 'height' => 8, 'align' => 'R', 'flg' => true],
+            ['font' => $this->mono,   'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'acquire_price',    'suffix' => '', 'x' => 89.5, 'y' => 0, 'type' => 'Tri', 'width' => 24, 'height' => 8, 'align' => 'R', 'flg' => true, 'pitch' => 1.2],
+            ['font' => $this->mono,   'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'depreciate_price', 'suffix' => '', 'x' => 117.5, 'y' => 0, 'type' => 'Tri', 'width' => 24, 'height' => 8, 'align' => 'R', 'flg' => true, 'pitch' => 1.2],
+            ['font' => $this->mono,   'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'change_quantity',  'suffix' => '', 'x' => 146, 'y' => 0, 'type' => 'Cell', 'width' => 15, 'height' => 8, 'align' => 'R', 'flg' => true],
+            ['font' => $this->mono,   'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'change_price',     'suffix' => '', 'x' => 160.5, 'y' => 0, 'type' => 'Tri', 'width' => 24, 'height' => 8, 'align' => 'R', 'flg' => true, 'pitch' => 1.2],
+            ['font' => $this->mono,   'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'quantity_onhand',  'suffix' => '', 'x' => 189, 'y' => 0, 'type' => 'Cell', 'width' => 15, 'height' => 8, 'align' => 'R', 'flg' => true],
+            ['font' => $this->mono,   'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'price_onhand',     'suffix' => '', 'x' => 203.5, 'y' => 0, 'type' => 'Tri', 'width' => 24, 'height' => 8, 'align' => 'R', 'flg' => true, 'pitch' => 1.2],
+            ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'official_ratio',   'suffix' => '', 'x' => 232, 'y' => 0, 'type' => 'Cell', 'width' => 14, 'height' => 8, 'align' => 'R', 'flg' => true],
+            ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'note',             'suffix' => '', 'x' => 247, 'y' => 0, 'type' => 'Cell', 'width' => 40, 'height' => 8, 'align' => 'L', 'flg' => true],
         ];
     }
 
@@ -551,9 +565,9 @@ class Response extends \Gsnowhawk\Oas\Fixedasset
         for ($y = $startYear; $y <= $endYear; $y++) {
             if (isset($result['ido']['month'])) {
                 $months = $result['ido']['month'];
-            } else if ($y == $acquire) {
+            } elseif ($y == $acquire) {
                 $months = 13 - date('n', strtotime($result['acquire']));
-            } else if ($y == $limit) {
+            } elseif ($y == $limit) {
                 $months = 12 - (13 - date('n', strtotime($result['acquire'])));
                 $y = $endYear;
             } else {
@@ -564,6 +578,7 @@ class Response extends \Gsnowhawk\Oas\Fixedasset
         if ($total >= $result['price']) {
             $total = $result['price'] - parent::MEMVALUE;
         }
+
         return $total;
     }
 

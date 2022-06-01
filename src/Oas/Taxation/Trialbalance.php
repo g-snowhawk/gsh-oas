@@ -41,7 +41,7 @@ class Trialbalance extends \Gsnowhawk\Oas\Taxation
     /**
      * Default view.
      */
-    public function defaultView() : void
+    public function defaultView(): void
     {
         $this->checkPermission('oas.taxation.read');
 
@@ -59,14 +59,14 @@ class Trialbalance extends \Gsnowhawk\Oas\Taxation
         $this->view->render($template_path);
     }
 
-    public function pdf() : void
+    public function pdf(): void
     {
         $target_year = strtotime($this->app->request->param('nendo') . '-01-01');
 
         $this->pdf->loadTemplate('oas/taxation/trialbalance.pdf');
         $tplIdx = $this->pdf->addPageFromTemplate(1);
 
-        $sql = function($column, $this_year) {
+        $sql = function ($column, $this_year) {
             $category = ($this_year) ? " AND category <> 'A'" : '';
             $versus = ($column === 'left') ? 'right' : 'left';
 
@@ -95,7 +95,7 @@ class Trialbalance extends \Gsnowhawk\Oas\Taxation
         $date = ($this_year) ? date('m-d') : '12-31';
 
         $start = date('Y-01-01 00:00:00', $target_year);
-        $end   = date("Y-{$date} 23:59:59", $target_year);
+        $end = date("Y-{$date} 23:59:59", $target_year);
 
         $replaces = [$this->uid, $start, $end];
 
@@ -106,6 +106,7 @@ class Trialbalance extends \Gsnowhawk\Oas\Taxation
 
         if (!$this->db->query($sql('left', $this_year), $replaces)) {
             trigger_error($this->db->error());
+
             return;
         }
         while ($result = $this->app->db->fetch()) {
@@ -123,6 +124,7 @@ class Trialbalance extends \Gsnowhawk\Oas\Taxation
 
         if (!$this->app->db->query($sql('right', $this_year), $replaces)) {
             trigger_error($this->db->error());
+
             return;
         }
         while ($result = $this->app->db->fetch()) {
@@ -148,10 +150,10 @@ class Trialbalance extends \Gsnowhawk\Oas\Taxation
         $item_name = '';
         $y = 44;
         $total = [
-            'item_name'     => Lang::translate('TB_TOTAL'),
-            'amount_left'   => 0,
-            'amount_right'  => 0,
-            'balance_left'  => 0,
+            'item_name' => Lang::translate('TB_TOTAL'),
+            'amount_left' => 0,
+            'amount_right' => 0,
+            'balance_left' => 0,
             'balance_right' => 0,
         ];
 
@@ -163,15 +165,23 @@ class Trialbalance extends \Gsnowhawk\Oas\Taxation
                 } else {
                     $total['balance_right'] += abs($balance);
                 }
-                if ($data['amount_left']   == 0) $data['amount_left']   = '';
-                if ($data['amount_right']  == 0) $data['amount_right']  = '';
-                if ($data['balance_left']  == 0) $data['balance_left']  = '';
-                if ($data['balance_right'] == 0) $data['balance_right'] = '';
+                if ($data['amount_left'] == 0) {
+                    $data['amount_left'] = '';
+                }
+                if ($data['amount_right'] == 0) {
+                    $data['amount_right'] = '';
+                }
+                if ($data['balance_left'] == 0) {
+                    $data['balance_left'] = '';
+                }
+                if ($data['balance_right'] == 0) {
+                    $data['balance_right'] = '';
+                }
 
                 $map = [
-                    ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'item_name',     'suffix' => '', 'x' =>  20.0, 'y' => $y, 'type' => 'Cell', 'width' => 40, 'height' => 8, 'align' => 'L', 'flg' => true],
-                    ['font' => $this->mono,   'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'amount_left',   'suffix' => '', 'x' =>  62.7, 'y' => $y, 'type' => 'Cell', 'width' => 33, 'height' => 8, 'align' => 'R', 'flg' => true, 'pitch' => 1.65],
-                    ['font' => $this->mono,   'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'amount_right',  'suffix' => '', 'x' =>  94.2, 'y' => $y, 'type' => 'Cell', 'width' => 33, 'height' => 8, 'align' => 'R', 'flg' => true, 'pitch' => 1.65],
+                    ['font' => $this->mincho, 'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'item_name',     'suffix' => '', 'x' => 20.0, 'y' => $y, 'type' => 'Cell', 'width' => 40, 'height' => 8, 'align' => 'L', 'flg' => true],
+                    ['font' => $this->mono,   'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'amount_left',   'suffix' => '', 'x' => 62.7, 'y' => $y, 'type' => 'Cell', 'width' => 33, 'height' => 8, 'align' => 'R', 'flg' => true, 'pitch' => 1.65],
+                    ['font' => $this->mono,   'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'amount_right',  'suffix' => '', 'x' => 94.2, 'y' => $y, 'type' => 'Cell', 'width' => 33, 'height' => 8, 'align' => 'R', 'flg' => true, 'pitch' => 1.65],
                     ['font' => $this->mono,   'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'balance_left',  'suffix' => '', 'x' => 125.7, 'y' => $y, 'type' => 'Cell', 'width' => 33, 'height' => 8, 'align' => 'R', 'flg' => true, 'pitch' => 1.65],
                     ['font' => $this->mono,   'style' => '', 'size' => 9, 'color' => [0, 0, 0], 'prefix' => '', 'name' => 'balance_right', 'suffix' => '', 'x' => 157.2, 'y' => $y, 'type' => 'Cell', 'width' => 33, 'height' => 8, 'align' => 'R', 'flg' => true, 'pitch' => 1.65],
                 ];
@@ -180,9 +190,9 @@ class Trialbalance extends \Gsnowhawk\Oas\Taxation
                 $y += 8;
             }
             $data = [
-                'amount_left'   => 0,
-                'amount_right'  => 0,
-                'balance_left'  => 0,
+                'amount_left' => 0,
+                'amount_right' => 0,
+                'balance_left' => 0,
                 'balance_right' => 0,
             ];
             $data['item_name'] = $item['item_name'];
@@ -211,28 +221,36 @@ class Trialbalance extends \Gsnowhawk\Oas\Taxation
         } else {
             $total['balance_right'] += abs($balance);
         }
-        if ($data['amount_left']   == 0) { $data['amount_left']   = ''; }
-        if ($data['amount_right']  == 0) { $data['amount_right']  = ''; }
-        if ($data['balance_left']  == 0) { $data['balance_left']  = ''; }
-        if ($data['balance_right'] == 0) { $data['balance_right'] = ''; }
+        if ($data['amount_left'] == 0) {
+            $data['amount_left'] = '';
+        }
+        if ($data['amount_right'] == 0) {
+            $data['amount_right'] = '';
+        }
+        if ($data['balance_left'] == 0) {
+            $data['balance_left'] = '';
+        }
+        if ($data['balance_right'] == 0) {
+            $data['balance_right'] = '';
+        }
         $this->pdf->draw($map, $data, $y);
         $y += 8;
 
         $this->pdf->draw($map, $total, $y);
 
-        $offset_left  = $total['amount_left'] - $total['amount_right'];
+        $offset_left = $total['amount_left'] - $total['amount_right'];
         $offset_right = $total['balance_left'] - $total['balance_right'];
         if ($offset_left !== 0 || $offset_right !== 0) {
             $y += 8;
             $map = [
-                ['font' => $this->mono, 'style' => '', 'size' => 9, 'color' => [255, 0, 0], '', 'name' => 'amount_left',   '', 'x' =>  62.7, 'y' => $y, 'type' => 'Cell', 'width' => 33, 'height' => 8, 'align' => 'R', 'flg' => true, 'pitch' => 1.65],
-                ['font' => $this->mono, 'style' => '', 'size' => 9, 'color' => [255, 0, 0], '', 'name' => 'amount_right',  '', 'x' =>  94.2, 'y' => $y, 'type' => 'Cell', 'width' => 33, 'height' => 8, 'align' => 'R', 'flg' => true, 'pitch' => 1.65],
+                ['font' => $this->mono, 'style' => '', 'size' => 9, 'color' => [255, 0, 0], '', 'name' => 'amount_left',   '', 'x' => 62.7, 'y' => $y, 'type' => 'Cell', 'width' => 33, 'height' => 8, 'align' => 'R', 'flg' => true, 'pitch' => 1.65],
+                ['font' => $this->mono, 'style' => '', 'size' => 9, 'color' => [255, 0, 0], '', 'name' => 'amount_right',  '', 'x' => 94.2, 'y' => $y, 'type' => 'Cell', 'width' => 33, 'height' => 8, 'align' => 'R', 'flg' => true, 'pitch' => 1.65],
                 ['font' => $this->mono, 'style' => '', 'size' => 9, 'color' => [255, 0, 0], '', 'name' => 'balance_left',  '', 'x' => 125.7, 'y' => $y, 'type' => 'Cell', 'width' => 33, 'height' => 8, 'align' => 'R', 'flg' => true, 'pitch' => 1.65],
                 ['font' => $this->mono, 'style' => '', 'size' => 9, 'color' => [255, 0, 0], '', 'name' => 'balance_right', '', 'x' => 157.2, 'y' => $y, 'type' => 'Cell', 'width' => 33, 'height' => 8, 'align' => 'R', 'flg' => true, 'pitch' => 1.65],
             ];
-            $offsets['amount_left']   = ($offset_left  > 0) ? '' : $offset_left;
-            $offsets['amount_right']  = ($offset_left  > 0) ? $offset_left : '';
-            $offsets['balance_left']  = ($offset_right > 0) ? '' : $offset_right;
+            $offsets['amount_left'] = ($offset_left > 0) ? '' : $offset_left;
+            $offsets['amount_right'] = ($offset_left > 0) ? $offset_left : '';
+            $offsets['balance_left'] = ($offset_right > 0) ? '' : $offset_right;
             $offsets['balance_right'] = ($offset_right > 0) ? $offset_right : '';
             $this->pdf->draw($map, $offsets, $y);
         }
