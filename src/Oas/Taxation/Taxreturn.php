@@ -393,41 +393,41 @@ class Taxreturn extends \Gsnowhawk\Oas\Taxation
             if (isset($calc[$key])) {
                 $unit = $calc[$key];
                 switch ($unit['type']) {
-                case 'floor':
-                    if (!empty($data[$key])) {
-                        $override[$key] = floor($data[$key] / $unit['figure']);
-                        $width = $unit['width'] ?? null;
-                    }
-                    break;
-                case 'life insurance':
-                    $sum = 0;
-                    if (preg_match('/^([0-9]+)-([0-9]+)$/', $unit['data'], $match)) {
-                        $this->db->query(
-                            'SELECT SUM(`amount`) as `amount` FROM `table::social_insurance` WHERE `year` = ? AND `colnumber` = ? GROUP BY `colnumber`',
-                            [$start, $unit['data']]
-                        );
-                        $sum = $this->db->fetchColumn();
-                        switch ($match[2]) {
-                        case '1':
-                            if ($sum > 80000) {
-                                $sum = 40000;
-                            } elseif ($sum <= 80000 and $sum > 40000) {
-                                $sum = $sum * 0.25 + 20000;
-                            } elseif ($sum <= 40000 and $sum > 20000) {
-                                $sum = $sum * 0.5 + 10000;
-                            }
-                            break;
+                    case 'floor':
+                        if (!empty($data[$key])) {
+                            $override[$key] = floor($data[$key] / $unit['figure']);
+                            $width = $unit['width'] ?? null;
                         }
-                        $data[$key] = ceil($sum);
-                    }
-                    break;
-                case 'sum':
-                    $sum = 0;
-                    foreach ($unit['data'] as $k) {
-                        $sum += $data[$k] ?? 0;
-                    }
-                    $data[$key] = $sum;
-                    break;
+                        break;
+                    case 'life insurance':
+                        $sum = 0;
+                        if (preg_match('/^([0-9]+)-([0-9]+)$/', $unit['data'], $match)) {
+                            $this->db->query(
+                                'SELECT SUM(`amount`) as `amount` FROM `table::social_insurance` WHERE `year` = ? AND `colnumber` = ? GROUP BY `colnumber`',
+                                [$start, $unit['data']]
+                            );
+                            $sum = $this->db->fetchColumn();
+                            switch ($match[2]) {
+                                case '1':
+                                    if ($sum > 80000) {
+                                        $sum = 40000;
+                                    } elseif ($sum <= 80000 and $sum > 40000) {
+                                        $sum = $sum * 0.25 + 20000;
+                                    } elseif ($sum <= 40000 and $sum > 20000) {
+                                        $sum = $sum * 0.5 + 10000;
+                                    }
+                                    break;
+                            }
+                            $data[$key] = ceil($sum);
+                        }
+                        break;
+                    case 'sum':
+                        $sum = 0;
+                        foreach ($unit['data'] as $k) {
+                            $sum += $data[$k] ?? 0;
+                        }
+                        $data[$key] = $sum;
+                        break;
                 }
             }
 
@@ -464,63 +464,63 @@ class Taxreturn extends \Gsnowhawk\Oas\Taxation
             if (isset($calc[$key])) {
                 $unit = $calc[$key];
                 switch ($unit['type']) {
-                case 'config':
-                    $name = $unit['name'];
-                    $data[$key] = $this->oas_config->$name ?? null;
-                    break;
-                case 'diff':
-                    $base = array_shift($unit['data']);
-                    $diff = $data[$base];
-                    foreach ($unit['data'] as $k) {
-                        $diff -= $data[$k] ?? 0;
-                    }
-                    if (isset($unit['floor'])) {
-                        $diff = floor($diff / $unit['floor']);
-                        if (($unit['notoverride'] ?? null) !== 1) {
-                            $override[$key] = $diff;
+                    case 'config':
+                        $name = $unit['name'];
+                        $data[$key] = $this->oas_config->$name ?? null;
+                        break;
+                    case 'diff':
+                        $base = array_shift($unit['data']);
+                        $diff = $data[$base];
+                        foreach ($unit['data'] as $k) {
+                            $diff -= $data[$k] ?? 0;
                         }
-                        $diff *= $unit['floor'];
-                        $width = $unit['width'] ?? null;
-                    }
-                    $data[$key] = $diff;
-                    break;
-                case 'floor':
-                    if (!empty($data[$key])) {
-                        $override[$key] = floor($data[$key] / $unit['figure']);
-                        $width = $unit['width'] ?? null;
-                    }
-                    break;
-                case 'multiplication':
-                    $base = $data[$unit['data']];
-                    $data[$key] = floor($base * $unit['value']);
-                    break;
-                case 'sum':
-                    $sum = 0;
-                    foreach ($unit['data'] as $k) {
-                        $sum += $data[$k] ?? 0;
-                    }
-                    $data[$key] = $sum;
-                    break;
-                case 'tax':
-                    $total = $data[$unit['amount']];
-                    if ($total < 1000) {
-                        $tax = 0;
-                    } elseif ($total < 1950000) {
-                        $tax = $total * 0.05;
-                    } elseif ($total < 3300000) {
-                        $tax = $total * 0.1 - 97500;
-                    } elseif ($total < 6950000) {
-                        $tax = $total * 0.2 - 427500;
-                    } elseif ($total < 9000000) {
-                        $tax = $total * 0.23 - 636000;
-                    } elseif ($total < 18000000) {
-                        $tax = $total * 0.33 - 1536000;
-                    } else {
-                        $tax = $total * 0.4 - 2796000;
-                    }
+                        if (isset($unit['floor'])) {
+                            $diff = floor($diff / $unit['floor']);
+                            if (($unit['notoverride'] ?? null) !== 1) {
+                                $override[$key] = $diff;
+                            }
+                            $diff *= $unit['floor'];
+                            $width = $unit['width'] ?? null;
+                        }
+                        $data[$key] = $diff;
+                        break;
+                    case 'floor':
+                        if (!empty($data[$key])) {
+                            $override[$key] = floor($data[$key] / $unit['figure']);
+                            $width = $unit['width'] ?? null;
+                        }
+                        break;
+                    case 'multiplication':
+                        $base = $data[$unit['data']];
+                        $data[$key] = floor($base * $unit['value']);
+                        break;
+                    case 'sum':
+                        $sum = 0;
+                        foreach ($unit['data'] as $k) {
+                            $sum += $data[$k] ?? 0;
+                        }
+                        $data[$key] = $sum;
+                        break;
+                    case 'tax':
+                        $total = $data[$unit['amount']];
+                        if ($total < 1000) {
+                            $tax = 0;
+                        } elseif ($total < 1950000) {
+                            $tax = $total * 0.05;
+                        } elseif ($total < 3300000) {
+                            $tax = $total * 0.1 - 97500;
+                        } elseif ($total < 6950000) {
+                            $tax = $total * 0.2 - 427500;
+                        } elseif ($total < 9000000) {
+                            $tax = $total * 0.23 - 636000;
+                        } elseif ($total < 18000000) {
+                            $tax = $total * 0.33 - 1536000;
+                        } else {
+                            $tax = $total * 0.4 - 2796000;
+                        }
 
-                    $data[$key] = floor($tax / 10) * 10;
-                    break;
+                        $data[$key] = floor($tax / 10) * 10;
+                        break;
                 }
             }
 

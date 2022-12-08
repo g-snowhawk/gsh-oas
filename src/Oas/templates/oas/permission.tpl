@@ -46,6 +46,14 @@
           <td>-</td>
         </tr>
         <tr>
+          <th>受領書類</th>
+          <td>{% if apps.userinfo.admin == 1 or priv.accepteddocs.create == 1 %}<input type="checkbox" value="1" name="perm[{{ filters }}oas.accepteddocs.create]"{% if post.perm[filters ~ 'oas.accepteddocs.create'] == 1 %} checked{% endif %}>{% else %}-{% endif %}</td>
+          <td>{% if apps.userinfo.admin == 1 or priv.accepteddocs.read   == 1 %}<input type="checkbox" value="1" name="perm[{{ filters }}oas.accepteddocs.read]"  {% if post.perm[filters ~ 'oas.accepteddocs.read']   == 1 %} checked{% endif %}>{% else %}-{% endif %}</td>
+          <td>{% if apps.userinfo.admin == 1 or priv.accepteddocs.update == 1 %}<input type="checkbox" value="1" name="perm[{{ filters }}oas.accepteddocs.update]"{% if post.perm[filters ~ 'oas.accepteddocs.update'] == 1 %} checked{% endif %}>{% else %}-{% endif %}</td>
+          <td>{% if apps.userinfo.admin == 1 or priv.accepteddocs.delete == 1 %}<input type="checkbox" value="1" name="perm[{{ filters }}oas.accepteddocs.delete]"{% if post.perm[filters ~ 'oas.accepteddocs.delete'] == 1 %} checked{% endif %}>{% else %}-{% endif %}</td>
+          <td>-</td>
+        </tr>
+        <tr>
           <th>ファイル</th>
           <td>{% if apps.userinfo.admin == 1 or priv.file.create == 1 %}<input type="checkbox" value="1" name="perm[{{ filters }}oas.file.create]"{% if post.perm[filters ~ 'oas.file.create'] == 1 %} checked{% endif %}>{% else %}-{% endif %}</td>
           <td>{% if apps.userinfo.admin == 1 or priv.file.read   == 1 %}<input type="checkbox" value="1" name="perm[{{ filters }}oas.file.read]"  {% if post.perm[filters ~ 'oas.file.read']   == 1 %} checked{% endif %}>{% else %}-{% endif %}</td>

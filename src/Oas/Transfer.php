@@ -119,10 +119,10 @@ class Transfer extends \Gsnowhawk\Oas
                     }
                     if (false === (
                         $result = $this->db->delete(
-                        self::TRANSFER_TABLE,
-                        $statement,
-                        $options
-                    )
+                            self::TRANSFER_TABLE,
+                            $statement,
+                            $options
+                        )
                     )) {
                         break;
                     }

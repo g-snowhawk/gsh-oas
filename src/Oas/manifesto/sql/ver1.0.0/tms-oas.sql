@@ -200,3 +200,29 @@ CREATE TABLE `table::fixed_assets_detail` (
   PRIMARY KEY (`id`,`year`,`month`,`date`),
   CONSTRAINT `table::fixed_assets_detail_ibfk_1` FOREIGN KEY (`id`) REFERENCES `table::fixed_assets` (`id`) ON UPDATE CASCADE ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `table::accepted_document` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `userkey` int unsigned NOT NULL,
+  `checksum` varchar(64) NOT NULL,
+  `sender` varchar(255) NOT NULL,
+  `category` varchar(32) NOT NULL,
+  `price` int DEFAULT NULL,
+  `tax_a` int DEFAULT NULL,
+  `tax_b` int DEFAULT NULL,
+  `receipt_date` date,
+  `modify_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `checksum` (`checksum`),
+  CONSTRAINT `table::accepted_document_ibfk_1` FOREIGN KEY (`userkey`) REFERENCES `table::user` (`id`) ON UPDATE CASCADE ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE `table::accepted_history` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `document_id` int unsigned NOT NULL,
+  `type` varchar(32) NOT NULL,
+  `reason` text,
+  `modify_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  CONSTRAINT `table::accepted_history_ibfk_1` FOREIGN KEY (`document_id`) REFERENCES `table::accepted_document` (`id`) ON UPDATE CASCADE ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

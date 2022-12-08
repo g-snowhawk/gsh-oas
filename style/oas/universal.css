@@ -316,3 +316,112 @@ html.fixedasset.edit #transfer-list tr.existing td:nth-child(5) {
   color: #f66;
   text-decoration: none;
 }
+
+#oas-accepteddocs-default .explorer-list .footer-controls .flexbox {
+  align-items: center;
+  display: flex;
+}
+#oas-accepteddocs-default input.search-query {
+  border-radius: 4px;
+  line-height: 1;
+  margin: auto .5em;
+  padding: 4px 20px 4px 4px;
+  vertical-align: middle;
+}
+#oas-accepteddocs-default input.search-query + button.clear-search {
+  background: transparent url("clear-button.png") no-repeat 50% 50%;
+  background-size: contain;
+  border: 0 none transparent;
+  color: transparent;
+  font-size: 0;
+  height: 16px;
+  line-height: 1;
+  margin: 0 0 0 -26px;
+  min-width: initial;
+  padding: 0;
+  text-align: center;
+  width: 16px;
+}
+#oas-accepteddocs-default .explorer-list .footer-controls a.normal-link {
+  align-self: center;
+  background: transparent;
+  border-radius: 0;
+  display: inline;
+  height: auto;
+  margin: auto .8em;
+  padding: 0;
+  width: auto;
+}
+#oas-accepteddocs-default .explorer-list .footer-controls input.search-query + a.normal-link {
+  margin-left: 0;
+}
+#oas-accepteddocs-default .explorer-list .footer-controls a.options {
+  font-size: .75rem;
+}
+#oas-accepteddocs-default #subform input[type=number] {
+  text-align: end;
+}
+#oas-accepteddocs-default #subform #fs-price .tax {
+  margin-left: 10%;
+  margin-top: 3px;
+  width: 90%;
+}
+#oas-accepteddocs-default #subform input.search-query {
+  margin: 0;
+  padding: 6px 4px;
+  width: 100%;
+}
+#oas-accepteddocs-default .explorer-list table thead td {
+  background-color: #fff;
+  border: 1px solid #999;
+  color: #000;
+  text-align: center;
+}
+#oas-accepteddocs-default .explorer-list table thead td:before {
+  border: 1px solid #999;
+  border-right-width: 0;
+  bottom: 0;
+  box-sizing: border-box;
+  content: '';
+  display: block;
+  left: 0;
+  margin: -1px;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+#oas-accepteddocs-default .explorer-list table thead tr td:last-child:before {
+  border-right-width: 1px;
+}
+#oas-accepteddocs-default .explorer-list table tbody td {
+  border: 1px solid #999;
+  padding: 0.3rem 0.5rem;
+}
+#oas-accepteddocs-default .explorer-list table tbody tr td:nth-child(1) {
+  text-align: end;
+}
+#oas-accepteddocs-default .explorer-list table tbody tr td:nth-child(3) {
+  width: 10%;
+  text-align: end;
+}
+#oas-accepteddocs-default .explorer-list table tbody tr td:nth-child(4) {
+  width: 30%;
+}
+#oas-accepteddocs-default .explorer-list table tbody tr td:nth-child(5) {
+  width: 10%;
+}
+#oas-accepteddocs-default .explorer-list table tbody tr td:last-child {
+  width: 50%;
+}
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
