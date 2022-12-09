@@ -1,6 +1,8 @@
 {% extends "subform.tpl" %}
 
 {% block main %}
+  <input type="hidden" name="rel" value="{{ rel }}">
+  <input type="hidden" name="redirect_mode">
   {% set appname = apps.currentApp('basename') %}
   <article class="wrapper">
     <h1>ファイルアップロード</h1>
@@ -23,7 +25,20 @@
     {% endif %}
     <div class="fieldset{% if err.vl_file == 1 %} invalid{% endif %}">
       <label for="file">ファイル<small>&nbsp;※PDFのみ選択可</small></label>
-      <input type="file" name="file" id="file" accept=".pdf,application/pdf" required>
+      <input type="file" name="file" id="file" accept=".pdf,application/pdf,.eml,message/rfc822" required>
+    </div>
+
+    <div class="fieldset">
+      <label for="source">受領形態</label>
+      <select name="source" id="source" required>
+        <option></option>
+        <option value="WEB（ダウンロード）"{% if post.source == 'WEB（ダウンロード）' %} selected{% endif %}>WEB（ダウンロード）</option>
+        <option value="WEB（画面キャプチャ）"{% if post.source == 'WEB（画面キャプチャ）' %} selected{% endif %}>WEB（画面キャプチャ）</option>
+        <option value="メール（本文）"{% if post.source == 'メール（本文）' %} selected{% endif %}>メール（本文）</option>
+        <option value="メール（添付）"{% if post.source == 'メール（添付）' %} selected{% endif %}>メール（添付）</option>
+        <option value="紙媒体（スキャン／撮影）"{% if post.source == '紙媒体（スキャン／撮影）' %} selected{% endif %}>紙媒体（スキャン／撮影）</option>
+        <option value="その他"{% if post.source == 'その他' %} selected{% endif %}>その他</option>
+      </select>
     </div>
 
     {% if err.vl_receipt_date >= 1 %}

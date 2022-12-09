@@ -15,6 +15,7 @@ let searchTimer = undefined;
 switch (document.readyState) {
     case 'loading' :
         window.addEventListener('DOMContentLoaded', acceptedDocumentInit)
+        window.addEventListener('load', acceptedDocumentInit)
         break;
     case 'interactive':
     case 'complete':
@@ -23,11 +24,17 @@ switch (document.readyState) {
 }
 
 function acceptedDocumentInit(event) {
+    if (typeof TM.subform == 'object' && event.type == 'load') {
+        TM.subform.addListener('opened', acceptedDocumentSetRedirectMode);
+    }
+
     const tbody = document.getElementById('document-list');
-    const rows = tbody.querySelectorAll('tr');
-    rows.forEach(element => {
-        element.addEventListener('click', acceptedDocumentOpenDoc);
-    });
+    if (tbody) {
+        const rows = tbody.querySelectorAll('tr');
+        rows.forEach(element => {
+            element.addEventListener('click', acceptedDocumentOpenDoc);
+        });
+    }
 
     document.querySelectorAll('input.search-query').forEach((element) => {
         element.form.dataset.freeUnload = "1";
@@ -82,6 +89,11 @@ function acceptedDocumentOpenDoc(event) {
 }
 
 function acceptedDocumentCloseSubForm(args) {
+    if (args === 'created') {
+        if (args.indexOf('oas.transfer.response') !== -1) {
+            return;
+        }
+    }
     let query = location.search.replace(/[&\?]q=[^=&\?]*/g, '');
     query = query.replace(/^[&\?]/g, '');
     location.href = location.pathname + '?' + query;
@@ -153,4 +165,9 @@ function execSearchReceipt(event) {
     searchTimer = setTimeout((url) => {
         location.href = url;
     }, 300, getSearchURI(element.value));
+}
+
+function acceptedDocumentSetRedirectMode(event) {
+    const form = document.getElementById('subform');
+    form.redirect_mode.value = location.search.substr(1);
 }

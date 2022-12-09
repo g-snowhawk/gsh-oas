@@ -21,7 +21,7 @@
                     <td>金額</td>
                     <td>取引先</td>
                     <td>種別</td>
-                    <td>&nbsp;</td>
+                    <td>備考</td>
                   </tr>
                 </thead>
                 <tbody id="document-list">
@@ -32,7 +32,7 @@
               <td>{{ doc.price|number_format }}</td>
               <td>{{ doc.sender }}</td>
               <td>{{ doc.category }}</td>
-              <td>&nbsp;</td>
+              <td>{{ doc.source }}</td>
             </tr>
             {% if loop.last %}
                 </tbody>

@@ -203,20 +203,24 @@ CREATE TABLE `table::fixed_assets_detail` (
 
 CREATE TABLE `table::accepted_document` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `sequence` int unsigned NOT NULL,
   `userkey` int unsigned NOT NULL,
   `checksum` varchar(64) NOT NULL,
+  `mimetype` text,
   `sender` varchar(255) NOT NULL,
   `category` varchar(32) NOT NULL,
+  `source` text,
   `receipt_date` date NOT NULL,
   `year` varchar(4) NOT NULL,
   `price` int DEFAULT NULL,
   `tax_a` int DEFAULT NULL,
   `tax_b` int DEFAULT NULL,
+  `rel` varchar(128) DEFAULT NULL,
   `modify_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `checksum` (`checksum`),
   UNIQUE KEY `sequence` (`userkey`,`sequence`,`year`),
-  CONSTRAINT `table::accepted_document_ibfk_1` FOREIGN KEY (`userkey`) REFERENCES `table::user` (`id`) ON UPDATE CASCADE ON DELETE CASCADE
+  CONSTRAINT `table::accepted_document_ibfk_1` FOREIGN KEY (`userkey`) REFERENCES `table::user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `table::accepted_history` (

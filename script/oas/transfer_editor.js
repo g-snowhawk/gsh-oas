@@ -111,6 +111,10 @@ function initializeTransferEditor(event) {
 
     // TODO: avoid dependencies
     if (TM.form) TM.form.through = true;
+    if (TM.subform) {
+        TM.subform.inited = false;
+        TM.subform.init();
+    }
 }
 
 function openCalendarForSearch(event) {

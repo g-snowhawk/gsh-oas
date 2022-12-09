@@ -74,6 +74,8 @@ class AcceptedDocs extends \Gsnowhawk\Oas
 
         $file = $this->request->FILES('file');
         $checksum = hash_file('sha256', $file['tmp_name']);
+        $mimetype = mime_content_type($file['tmp_name']);
+        $extension = ($mimetype === 'message/rfc822') ? '.eml' : '.pdf';
 
         if ($this->db->exists('accepted_document', 'userkey = ? AND checksum = ?', [$userkey, $checksum])) {
             $this->app->err['vl_file'] = 128;
@@ -100,11 +102,14 @@ class AcceptedDocs extends \Gsnowhawk\Oas
             'sequence' => $sequence,
             'userkey' => $userkey,
             'checksum' => $checksum,
+            'mimetype' => $mimetype,
             'sender' => $this->request->param('sender'),
             'category' => $this->request->param('category'),
+            'source' => $this->request->param('source'),
             'receipt_date' => $receipt_date->format('Y-m-d'),
             'year' => $receipt_date->format('Y'),
             'price' => $this->request->param('price'),
+            'rel' => $this->request->param('rel'),
         ];
         if (!empty($this->request->param('tax_a'))) {
             $data['tax_a'] = $this->request->param('tax_a');
@@ -140,7 +145,7 @@ class AcceptedDocs extends \Gsnowhawk\Oas
         $filepath = $this->getPdfPath(
             $receipt_date->format('Y'),
             'accepted_documents',
-            "{$sequence}.pdf"
+            "{$sequence}{$extension}"
         );
 
         $upload_dir = dirname($filepath);

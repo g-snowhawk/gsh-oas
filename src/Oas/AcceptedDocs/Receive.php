@@ -13,6 +13,7 @@ namespace Gsnowhawk\Oas\AcceptedDocs;
 use ErrorException;
 use Gsnowhawk\Common\Lang;
 use Gsnowhawk\Core\Error;
+use PhpMimeMailParser\Parser;
 
 /**
  * User management request receive class.
@@ -28,23 +29,43 @@ class Receive extends Response
     {
         $id = $this->request->param('id');
         $data = $this->db->get(
-            'sequence,checksum,receipt_date',
+            'sequence,checksum,mimetype,receipt_date',
             'accepted_document',
             'id = ? AND userkey = ?',
             [$id, $this->uid]
         );
 
+        $extension = ($data['mimetype'] === 'message/rfc822') ? '.eml' : '.pdf';
         $filepath = $this->getPdfPath(
             date('Y', strtotime($data['receipt_date'])),
             'accepted_documents',
-            "{$data['sequence']}.pdf"
+            "{$data['sequence']}{$extension}"
         );
 
         if (file_exists($filepath)) {
             if ($data['checksum'] !== hash_file('sha256', $filepath)) {
                 throw new ErrorException('This file that could have been falsified');
             } else {
-                parent::responsePDF($filepath);
+                if ($extension === '.eml') {
+                    if (function_exists('mailparse_msg_parse_file')) {
+                        $parser = new Parser();
+                        $parser->setStream(fopen($filepath, 'r'));
+                        $message_body = $parser->getMessageBody('html');
+                        if (empty($message_body)) {
+                            header('Content-Type: text/plain');
+                            echo $parser->getMessageBody('text');
+                        } else {
+                            echo $message_body;
+                        }
+                    } else {
+                        header('Content-Type: message/rfc822');
+                        header('Content-Disposition: inline; filename="' . "{$data['sequence']}{$extension}" . '"');
+                        readfile($filepath);
+                    }
+                    exit;
+                } else {
+                    parent::responsePDF($filepath);
+                }
             }
         } else {
             parent::pageNotFound($this->app);
@@ -79,7 +100,8 @@ class Receive extends Response
             ];
             $response = [[$this, 'addFile'], null];
         } else {
-            $response = [[$this, 'redirect'], [$redirect_mode, $redirect_type]];
+            //$response = [[$this, 'redirect'], [$redirect_mode, $redirect_type]];
+            $response = [[$this, 'didSetSearchOptions'], ['created']];
         }
 
         $this->postReceived(Lang::translate($message_key), $status, $response, $options);

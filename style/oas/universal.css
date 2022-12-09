@@ -152,7 +152,10 @@ table.transfer-detail input[type=text]:focus {
 
 table.transfer-detail #page-nav td {
   border: 0 none transparent;
-  text-align: right;
+  text-align: start;
+}
+table.transfer-detail #page-nav td:last-child {
+  text-align: end;
 }
 table.transfer-detail #page-nav td span,
 table.transfer-detail #page-nav td a {
@@ -401,13 +404,14 @@ html.fixedasset.edit #transfer-list tr.existing td:nth-child(5) {
   text-align: end;
 }
 #oas-accepteddocs-default .explorer-list table tbody tr td:nth-child(3) {
-  width: 10%;
   text-align: end;
+  width: 10%;
 }
 #oas-accepteddocs-default .explorer-list table tbody tr td:nth-child(4) {
   width: 30%;
 }
 #oas-accepteddocs-default .explorer-list table tbody tr td:nth-child(5) {
+  text-align: center;
   width: 10%;
 }
 #oas-accepteddocs-default .explorer-list table tbody tr td:last-child {

@@ -116,12 +116,14 @@ class Response extends AcceptedDocs
      */
     public function addFile(): void
     {
+        $this->view->bind('rel', $this->request->param('rel'));
         $this->view->bind('err', $this->app->err);
         $response = $this->view->render('oas/accepteddocs/addfile.tpl', true);
 
         $json = [
             'status' => 200,
             'response' => $response,
+            'finally' => 'setRel',
         ];
         header('Content-type: application/json; charset=utf-8');
         echo json_encode($json);

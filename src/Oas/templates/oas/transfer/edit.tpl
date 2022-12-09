@@ -15,6 +15,7 @@
       </template>
     {% endif %}
   {% endfor %}
+  <script src="script/oas/accepted_document.js"></script>
 {% endblock %}
 
 {% block main %}
@@ -68,7 +69,12 @@
           {% endif %}
           </tr>
           <tr id="page-nav">
-            <td colspan="{% if post.category == 'T' %}5{% else %}3{% endif %}">
+            <td>
+              {% if apps.hasPermission('oas.accepteddocs.create') %}
+              <a href="?mode=oas.accepted-docs.response:add-file&rel={{ post.category ~ post.issue_date|date('Ymd') ~ '.' ~ post.page_number }}" class="subform-opener">関係書類保存</a>
+              {% endif %}
+            </td>
+            <td colspan="{% if post.category == 'T' %}4{% else %}2{% endif %}">
               <a href="#calender" id="calendar-search" class="calendar-trigger">日付で検索</a>
             {% if prevPage is not empty %}
               <a href="#{{ prevPage.issue_date|url_encode }}:{{ prevPage.page_number|url_encode }}" id="prev-page-link">&lt;</a>
