@@ -11,30 +11,36 @@
       <div class="explorer-list">
         <h2 class="headline">受領書類一覧</h2>
         <div class="explorer-body">
-          <table>
-            <thead>
-              <tr>
-                <td>番号</td>
-                <td>日付</td>
-                <td>金額</td>
-                <td>取引先</td>
-                <td>種別</td>
-                <td>&nbsp;</td>
-              </tr>
-            </thead>
-            <tbody id="document-list">
-              {% for doc in docs %}
-              <tr data-id="{{ doc.id }}">
-                <td>{{ doc.sequence }}</td>
-                <td>{{ doc.receipt_date|date('Y年m月d日') }}</td>
-                <td>{{ doc.price|number_format }}</td>
-                <td>{{ doc.sender }}</td>
-                <td>{{ doc.category }}</td>
-                <td>&nbsp;</td>
-              </tr>
-              {% endfor %}
-            </tbody>
-          </table>
+          {% for doc in docs %}
+            {% if loop.first %}
+              <table>
+                <thead>
+                  <tr>
+                    <td>番号</td>
+                    <td>日付</td>
+                    <td>金額</td>
+                    <td>取引先</td>
+                    <td>種別</td>
+                    <td>&nbsp;</td>
+                  </tr>
+                </thead>
+                <tbody id="document-list">
+            {% endif %}
+            <tr data-id="{{ doc.id }}">
+              <td>{{ doc.sequence }}</td>
+              <td>{{ doc.receipt_date|date('Y年m月d日') }}</td>
+              <td>{{ doc.price|number_format }}</td>
+              <td>{{ doc.sender }}</td>
+              <td>{{ doc.category }}</td>
+              <td>&nbsp;</td>
+            </tr>
+            {% if loop.last %}
+                </tbody>
+              </table>
+            {% endif %}
+          {% else %}
+            <div class="empty-list">該当するファイルはありません</div>
+          {% endfor %}
         </div>
         <div class="footer-controls">
           <nav class="links flexbox">

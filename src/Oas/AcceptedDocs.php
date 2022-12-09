@@ -11,6 +11,7 @@
 namespace Gsnowhawk\Oas;
 
 use DateTime;
+use Gsnowhawk\Common\Lang;
 
 /**
  * Category management class.
@@ -88,16 +89,22 @@ class AcceptedDocs extends \Gsnowhawk\Oas
             return false;
         }
 
-        $sequence = (int)$this->db->max('sequence', 'accepted_document', 'userkey = ?', [$userkey]) + 1;
+        $sequence = (int)$this->db->max(
+            'sequence',
+            'accepted_document',
+            'userkey = ? AND year = ?',
+            [$userkey, $receipt_date->format('Y')]
+        ) + 1;
 
         $data = [
             'sequence' => $sequence,
             'userkey' => $userkey,
             'checksum' => $checksum,
             'sender' => $this->request->param('sender'),
-            'price' => $this->request->param('price'),
-            'receipt_date' => $receipt_date->format('Y-m-d'),
             'category' => $this->request->param('category'),
+            'receipt_date' => $receipt_date->format('Y-m-d'),
+            'year' => $receipt_date->format('Y'),
+            'price' => $this->request->param('price'),
         ];
         if (!empty($this->request->param('tax_a'))) {
             $data['tax_a'] = $this->request->param('tax_a');
@@ -121,6 +128,7 @@ class AcceptedDocs extends \Gsnowhawk\Oas
         $data = [
             'document_id' => $id,
             'type' => 'CREATE',
+            'reason' => Lang::translate('CREATE_DOCUMENT'),
         ];
         if (false === $this->db->insert('accepted_history', $data)) {
             trigger_error($this->db->error());

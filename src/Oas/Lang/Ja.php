@@ -76,4 +76,6 @@ class Ja extends \Gsnowhawk\Common\Lang
     const LOSS_ON_SALE = '売却損';
     const GAIN_ON_SALE = '売却益';
     const RETIREMENT = '除却';
+
+    const CREATE_DOCUMENT = '新規作成';
 }

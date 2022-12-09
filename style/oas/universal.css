@@ -413,6 +413,17 @@ html.fixedasset.edit #transfer-list tr.existing td:nth-child(5) {
 #oas-accepteddocs-default .explorer-list table tbody tr td:last-child {
   width: 50%;
 }
+#oas-accepteddocs-default .explorer-list .empty-list {
+  align-items: center;
+  bottom: 0;
+  color: #999;
+  display: flex;
+  justify-content: center;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
 
 /* Chrome, Safari, Edge, Opera */
 input::-webkit-outer-spin-button,
