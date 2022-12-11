@@ -168,6 +168,18 @@ class Response extends \Gsnowhawk\Oas\Transfer
         );
         $this->view->bind('accountItems', $account_items);
 
+        $documents = [];
+        if (preg_match('/a(\{.+?\})/', $post['note'][1] ?? '', $matches)) {
+            $json = json_decode($matches[1], true);
+
+            foreach ($json['docid'] as $docid) {
+                if ($this->db->exists('accepted_document', 'id = ?', [$docid])) {
+                    $documents[] = $docid;
+                }
+            }
+        }
+        $this->view->bind('documents', $documents);
+
         $this->view->bind('lineCount', parent::LINE_COUNT[$post['category']]);
 
         $globals = $this->view->param();
@@ -181,6 +193,8 @@ class Response extends \Gsnowhawk\Oas\Transfer
         $header = $globals['header'];
         $header['id'] = 'oas-transfer-edit';
         $this->view->bind('header', $header);
+
+        $this->app->execPlugin('beforeRendering');
 
         $this->view->bind('err', $this->app->err);
         $this->view->render('oas/transfer/edit.tpl');

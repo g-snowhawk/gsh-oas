@@ -28,13 +28,7 @@ function acceptedDocumentInit(event) {
         TM.subform.addListener('opened', acceptedDocumentSetRedirectMode);
     }
 
-    const tbody = document.getElementById('document-list');
-    if (tbody) {
-        const rows = tbody.querySelectorAll('tr');
-        rows.forEach(element => {
-            element.addEventListener('click', acceptedDocumentOpenDoc);
-        });
-    }
+    acceptedDocumentSetListener();
 
     document.querySelectorAll('input.search-query').forEach((element) => {
         element.form.dataset.freeUnload = "1";
@@ -54,6 +48,13 @@ function acceptedDocumentInit(event) {
             next.addEventListener('click', execSearchReceipt);
         }
         clearSearches.push(next);
+    });
+}
+
+function acceptedDocumentSetListener() {
+    const rows = document.querySelectorAll('*[data-id]');
+    rows.forEach(element => {
+        element.addEventListener('click', acceptedDocumentOpenDoc);
     });
 }
 
@@ -90,7 +91,7 @@ function acceptedDocumentOpenDoc(event) {
 
 function acceptedDocumentCloseSubForm(args) {
     if (args === 'created') {
-        if (args.indexOf('oas.transfer.response') !== -1) {
+        if (location.search.indexOf('oas.transfer.response') !== -1) {
             return;
         }
     }

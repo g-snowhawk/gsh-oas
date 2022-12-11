@@ -69,23 +69,29 @@
           {% endif %}
           </tr>
           <tr id="page-nav">
-            <td>
-              {% if apps.hasPermission('oas.accepteddocs.create') %}
-              <a href="?mode=oas.accepted-docs.response:add-file&rel={{ post.category ~ post.issue_date|date('Ymd') ~ '.' ~ post.page_number }}" class="subform-opener">関係書類保存</a>
-              {% endif %}
-            </td>
-            <td colspan="{% if post.category == 'T' %}4{% else %}2{% endif %}">
-              <a href="#calender" id="calendar-search" class="calendar-trigger">日付で検索</a>
-            {% if prevPage is not empty %}
-              <a href="#{{ prevPage.issue_date|url_encode }}:{{ prevPage.page_number|url_encode }}" id="prev-page-link">&lt;</a>
-            {% else %}
-              <span>&lt;</span>
-            {% endif %}
-            {% if nextPage is not empty %}
-              <a href="#{{ nextPage.issue_date|url_encode }}:{{ nextPage.page_number|url_encode }}" id="next-page-link">&gt;</a>
-            {% else %}
-              <span>&gt;</span>
-            {% endif %}
+            <td colspan="{% if post.category == 'T' %}5{% else %}3{% endif %}">
+              <div class="flex-box">
+                {% if apps.hasPermission('oas.accepteddocs.create') %}
+                  <a href="?mode=oas.accepted-docs.response:add-file&rel={{ post.category ~ post.issue_date|date('Ymd') ~ '.' ~ post.page_number }}" class="subform-opener{% if readonly == false or post.locked == '1' %} disabled{% endif %}">関連書類</a>
+                {% endif %}
+                {% for document in documents %}
+                  <a class="link-to-document" data-id="{{ document }}">{{ loop.index }}</a>
+                {% endfor %}
+                {% for receipt in receipts %}
+                  <a class="link-to-document" href="{{ receipt }}" target="_blank">{{ loop.index }}</a>
+                {% endfor %}
+                <a href="#calender" id="calendar-search" class="calendar-trigger">日付で検索</a>
+                {% if prevPage is not empty %}
+                  <a href="#{{ prevPage.issue_date|url_encode }}:{{ prevPage.page_number|url_encode }}" id="prev-page-link">&lt;</a>
+                {% else %}
+                  <span>&lt;</span>
+                {% endif %}
+                {% if nextPage is not empty %}
+                  <a href="#{{ nextPage.issue_date|url_encode }}:{{ nextPage.page_number|url_encode }}" id="next-page-link">&gt;</a>
+                {% else %}
+                  <span>&gt;</span>
+                {% endif %}
+              </div>
             </td>
           </tr>
         </tfoot>
@@ -125,8 +131,8 @@
     <div class="form-footer">
         <div class="separate-block">
           <span>
-            <input type="reset" id="cancel" value="キャンセル">
-            <input type="submit" name="s1_submit" value="保存" data-if-blank="空欄があります">
+            <input type="reset" id="cancel" value="キャンセル" class="hide-on-readonly">
+            <input type="submit" name="s1_submit" value="保存" class="hide-on-readonly" data-if-blank="空欄があります">
           </span>
           <span>
             {% if readonly == true and post.locked != '1' %}

@@ -109,7 +109,6 @@ class AcceptedDocs extends \Gsnowhawk\Oas
             'receipt_date' => $receipt_date->format('Y-m-d'),
             'year' => $receipt_date->format('Y'),
             'price' => $this->request->param('price'),
-            'rel' => $this->request->param('rel'),
         ];
         if (!empty($this->request->param('tax_a'))) {
             $data['tax_a'] = $this->request->param('tax_a');
@@ -139,6 +138,32 @@ class AcceptedDocs extends \Gsnowhawk\Oas
             trigger_error($this->db->error());
 
             return false;
+        }
+
+        // Update relation
+        $rel = $this->request->param('rel');
+        if (!empty($rel)) {
+            $documents = [];
+            $statement = "userkey = ? AND CONCAT(category, DATE_FORMAT(issue_date, '%Y%m%d'), '.', page_number) = ? AND line_number = ?";
+            $options = [$userkey, $rel, 1];
+
+            $note = $this->db->get('note', 'transfer', $statement, $options);
+            if (empty($note)) {
+                $note = '';
+            } elseif (preg_match('/a(\{.+?\})/', $note, $matchs)) {
+                $tmp = json_decode($matchs[1], true);
+                $documents = $tmp['docid'];
+                $note = preg_replace('/a(\{.+?\})/', '', $note);
+            }
+
+            $documents[] = $id;
+
+            $json = 'a' . json_encode(['docid' => $documents]);
+            if (false === $this->db->update('transfer', ['note' => $json.$note], $statement, $options)) {
+                trigger_error($this->db->error());
+
+                return false;
+            }
         }
 
         // Save the uploaded file

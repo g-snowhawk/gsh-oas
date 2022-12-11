@@ -170,8 +170,50 @@ table.transfer-detail #page-nav td a {
 table.transfer-detail #page-nav td a:hover {
   background: rgba(0,0,0,.2);
 }
+table.transfer-detail #page-nav td a.disabled {
+  color: #666;
+  pointer-events: none;
+}
 table.transfer-detail #page-nav td span {
   color: #999;
+}
+table.transfer-detail #page-nav .flex-box {
+  align-items: center;
+  display: flex;
+}
+table.transfer-detail #page-nav #calendar-search {
+  margin-left: auto;
+}
+table.transfer-detail #page-nav .link-to-document {
+  background-color: rgba(204,204,204,0.4);
+  border: 1px solid rgba(0,0,0,0.2);
+  border-radius: 0;
+  box-sizing: border-box;
+  color: transparent;
+  display: inline-block;
+  font-size: 0;
+  height: 18px;
+  margin: auto 3px;
+  padding: 0;
+  position: relative;
+  width: 14px;
+}
+table.transfer-detail #page-nav .link-to-document:after {
+  background-color: transparent;
+  border: 1px solid #999;
+  border-width: 1px 0;
+  content: '';
+  display: inline-block;
+  height: 2px;
+  left: 0;
+  margin: auto;
+  position: absolute;
+  right: 0;
+  top: 3px;
+  width: 70%;
+}
+table.transfer-detail #page-nav .link-to-document:hover {
+  background-color: rgba(204,204,204,0);
 }
 
 table.item-list {

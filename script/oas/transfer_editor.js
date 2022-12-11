@@ -375,7 +375,9 @@ function addNewPage(event) {
         queryString += '&issue_date=' + day;
         removeCalendar();
     } else /* if (linkNextPage) */ {
-        queryString += '&issue_date=' + issueDate;
+        if (buttonUnlock) {
+            queryString += '&issue_date=' + issueDate;
+        }
     }
 
     fetch(location.pathname + queryString, {
@@ -410,13 +412,16 @@ function lockForm() {
     const forms = document.querySelectorAll('form');
     for (let form of forms) {
         if (form.classList.contains('readonly')) {
-            let i;
-            for (i = 0; i < form.elements.length; i++) {
+            for (let i = 0; i < form.elements.length; i++) {
                 let element = form.elements[i];
                 if (element.dataset.lockType !== 'never') {
                     element.disabled = true;
                 }
             }
+            const hiddens = document.querySelectorAll('.hide-on-readonly');
+            hiddens.forEach(element => {
+                element.classList.add('hidden-block');
+            });
         } else {
             if (naviPagination && naviPagination.findParent('form') === form) {
                 naviPagination.classList.add('hidden-block');
@@ -426,7 +431,7 @@ function lockForm() {
 }
 
 function unlockForm() {
-    const forms = document.querySelectorAll('form.readonly');
+    const forms = document.querySelectorAll('form');
     for (let form of forms) {
         if (form.classList.contains('readonly')) {
             let i;
@@ -445,6 +450,11 @@ function unlockForm() {
             if (naviPagination) {
                 naviPagination.classList.add('hidden-block');
             }
+
+            const hiddens = document.querySelectorAll('.hide-on-readonly');
+            hiddens.forEach(element => {
+                element.classList.remove('hidden-block');
+            });
         }
     }
 }
@@ -476,6 +486,10 @@ function replaceForm(source) {
     if (newForm && currentForm) {
         currentForm.parentNode.replaceChild(newForm, currentForm);
         initializeTransferEditor();
+    }
+
+    if (typeof acceptedDocumentSetListener == 'function') {
+        acceptedDocumentSetListener();
     }
 }
 
