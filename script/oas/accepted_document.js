@@ -92,6 +92,13 @@ function acceptedDocumentOpenDoc(event) {
 function acceptedDocumentCloseSubForm(args) {
     if (args === 'created') {
         if (location.search.indexOf('oas.transfer.response') !== -1) {
+            if (typeof reloadTransferPage === 'function') {
+                const issueDate = document.querySelector('input[name=issue_date]');
+                const pageNumber = document.querySelector('input[name=page_number]');
+                if (issueDate && pageNumber) {
+                    reloadTransferPage(issueDate.value, pageNumber.value);
+                }
+            }
             return;
         }
     }

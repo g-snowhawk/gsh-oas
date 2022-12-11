@@ -403,9 +403,11 @@ html.fixedasset.edit #transfer-list tr.existing td:nth-child(5) {
 #oas-accepteddocs-default .explorer-list .footer-controls a.options {
   font-size: .75rem;
 }
+#oas-transfer-edit #subform input[type=number],
 #oas-accepteddocs-default #subform input[type=number] {
   text-align: end;
 }
+#oas-transfer-edit #subform #fs-price .tax,
 #oas-accepteddocs-default #subform #fs-price .tax {
   margin-left: 10%;
   margin-top: 3px;
