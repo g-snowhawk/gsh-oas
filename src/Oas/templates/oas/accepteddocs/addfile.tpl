@@ -67,6 +67,7 @@
     <div class="fieldset">
       <label for="sender">取引先</label>
       <input type="text" name="sender" id="sender" value="{{ post.sender }}" required>
+      <div id="sender-data"></div>
     </div>
 
     <div class="fieldset">

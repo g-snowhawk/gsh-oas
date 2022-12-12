@@ -144,20 +144,20 @@ class Receive extends Response
 
         $keyword = str_replace([$ideographic_space,' '], '', $this->request->param('keyword'));
 
-        $clients = $this->db->select(
-            'company,fullname,zipcode,address1,address2,division',
-            'receipt_to',
-            "WHERE REPLACE(REPLACE(company,'$ideographic_space',' '),' ','') like ? collate utf8_unicode_ci",
+        $senders = $this->db->select(
+            'sender',
+            'accepted_document',
+            "WHERE REPLACE(REPLACE(sender,'$ideographic_space',' '),' ','') like ? collate utf8_unicode_ci",
             ["%$keyword%"]
         );
 
-        if ($clients === false) {
+        if ($senders === false) {
             $json_array['status'] = 1;
             $json_array['message'] = 'Database Error: '.$this->db->error();
         } else {
             // TODO: Use to Template Engine
-            $this->view->bind('clients', $clients);
-            $json_array['source'] = $this->view->render('srm/receipt/suggest_client.tpl', true);
+            $this->view->bind('senders', $senders);
+            $json_array['source'] = $this->view->render('oas/accepteddocs/suggest_sender.tpl', true);
         }
 
         header('Content-type: application/json');

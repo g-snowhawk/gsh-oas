@@ -178,4 +178,234 @@ function execSearchReceipt(event) {
 function acceptedDocumentSetRedirectMode(event) {
     const form = document.getElementById('subform');
     form.redirect_mode.value = location.search.substr(1);
+
+    acceptedDocumentSuggestionInit(event);
+}
+
+/*
+ * for Suggestion
+ */
+const acceptedDocumentSuggestionListID = 'suggestion-list';
+const acceptedDocumentSuggestionDataClassName = 'sender-data';
+
+let suggestionListLock = false;
+let acceptedDocumentSuggestionIsComposing = false;
+let acceptedDocumentIsFetching = false;
+let acceptedDocumentValueAtKeyDown = undefined;
+let acceptedDocumentSuggestionListContainer = undefined;
+let acceptedDocumentSenderInput = undefined;
+let acceptedDocumentFetchCanceller = new AbortController();
+
+function acceptedDocumentSuggestionInit(event) {
+    const form = document.getElementById('subform');
+    acceptedDocumentSenderInput = form.sender;
+    acceptedDocumentSenderInput.addEventListener('compositionend', acceptedDocumentSwitchComposing);
+    acceptedDocumentSenderInput.addEventListener('compositionstart', acceptedDocumentSwitchComposing);
+    acceptedDocumentSenderInput.addEventListener('focus', acceptedDocumentSuggestion);
+    acceptedDocumentSenderInput.addEventListener('keydown', acceptedDocumentSuggestion);
+    acceptedDocumentSenderInput.addEventListener('keyup', acceptedDocumentSuggestion);
+
+    acceptedDocumentSuggestionListContainer = document.getElementById(acceptedDocumentSuggestionDataClassName);
+}
+
+function acceptedDocumentSwitchComposing(event) {
+    acceptedDocumentSuggestionIsComposing = false; /*(event.type !== 'compositionend');*/
+}
+
+function acceptedDocumentSuggestion(event) {
+    let inputedValue = event.target.value;
+    switch (event.type) {
+        case 'keyup':
+            if (event.key === 'ArrowDown'
+                || event.key === inputedValue
+                || (!acceptedDocumentSuggestionIsComposing && acceptedDocumentValueAtKeyDown !== inputedValue)
+            ) {
+                acceptedDocumentSuggestSender();
+            }
+        case 'focus':
+            acceptedDocumentValueAtKeyDown = inputedValue;
+            break;
+    }
+}
+
+function acceptedDocumentSuggestSender() {
+    if (acceptedDocumentSenderInput.value === '') {
+        acceptedDocumentDisplaySuggestionList('');
+
+        return;
+    }
+
+    if (document.getElementById(acceptedDocumentSuggestionListID)) {
+    }
+
+    const form = acceptedDocumentSenderInput.form;
+
+    let data = new FormData();
+    data.append('stub', form.stub.value);
+    data.append('keyword', acceptedDocumentSenderInput.value);
+    data.append('mode', 'oas.accepted-docs.receive:suggest-sender');
+
+    if (acceptedDocumentIsFetching) {
+        acceptedDocumentFetchCanceller.abort();
+        acceptedDocumentIsFetching = false;
+    }
+
+    acceptedDocumentIsFetching = true;
+    fetch(form.action, {
+        signal: acceptedDocumentFetchCanceller.signal,
+        method: 'POST',
+        credentials: 'same-origin',
+        body: data,
+    }).then(response => {
+        if (response.ok) {
+            let contentType = response.headers.get("content-type");
+            if (contentType.match(/^application\/json/)) {
+                return response.json();
+            }
+            throw new Error('Unexpected response'.translate());
+        } else {
+            throw new Error('Server Error'.translate());
+        }
+    }).then(json => {
+        if (json.status === 0) {
+            acceptedDocumentDisplaySuggestionList(json.source);
+        } else {
+            throw new Error(json.message);
+        }
+    }).catch(error => {
+        if (error.name === 'AbortError') {
+            console.warn("Aborted!!");
+            acceptedDocumentFetchCanceller = new AbortController()
+        } else {
+            console.error(error)
+        }
+    }).then(() => {
+        acceptedDocumentIsFetching = false;
+    });
+}
+
+function acceptedDocumentHideSuggestion(event) {
+    const element = event.target;
+    if (element === acceptedDocumentSenderInput
+        || element.childOf(acceptedDocumentSuggestionListContainer) !== -1
+    ) {
+        return;
+    }
+
+    suggestionListLock = false;
+    acceptedDocumentDisplaySuggestionList('');
+}
+
+function acceptedDocumentDisplaySuggestionList(source, checkCurrent) {
+    if (!acceptedDocumentSuggestionListContainer) {
+        return;
+    }
+
+    let list = document.getElementById(acceptedDocumentSuggestionListID);
+    if (list && !suggestionListLock) {
+        list.parentNode.removeChild(list);
+        window.removeEventListener('mouseup', acceptedDocumentHideSuggestion);
+        window.removeEventListener('keydown', acceptedDocumentMoveFocus);
+    }
+    if (source === '') {
+        if (!checkCurrent) {
+            return;
+        }
+    }
+
+    list = acceptedDocumentSuggestionListContainer.appendChild(document.createElement('div'));
+    list.id = acceptedDocumentSuggestionListID;
+    list.innerHTML = source;
+
+    let i;
+    let anchors = list.getElementsByTagName('a');
+    for (i = 0; i < anchors.length; i++) {
+        anchors[i].addEventListener('mousedown', acceptedDocumentSwitchSuggestionLock);
+        anchors[i].addEventListener('mouseup', acceptedDocumentSwitchSuggestionLock);
+        anchors[i].addEventListener('click', acceptedDocumentAutoFillSender);
+    }
+
+    window.addEventListener('mouseup', acceptedDocumentHideSuggestion);
+    window.addEventListener('keydown', acceptedDocumentMoveFocus);
+}
+
+function acceptedDocumentMoveFocus(event) {
+    if (event.key !== 'ArrowDown'
+        && event.key !== 'ArrowUp'
+        && event.key !== 'Tab'
+        && event.key !== ' '
+        && event.key !== 'Enter'
+        && event.key !== 'Escape'
+    ) {
+        return;
+    }
+
+    const list = document.getElementById(acceptedDocumentSuggestionListID);
+    if (!list) {
+        return;
+    }
+    const anchors = list.getElementsByTagName('a');
+
+    let current = document.activeElement;
+    if (!current.findParent('#' + acceptedDocumentSuggestionListID)) {
+        if (event.key !== 'Enter') {
+            current = anchors[0];
+            current.focus();
+        }
+        return;
+    }
+
+    event.preventDefault();
+    switch (event.key) {
+        case 'ArrowDown':
+        case 'Tab':
+        case ' ':
+            for (let i = 0; i < anchors.length; i++) {
+                if (anchors[i] === current) {
+                    const next = anchors[(i+1)];
+                    if (next) {
+                        next.focus();
+                        return;
+                    }
+                }
+            }
+            if (event.key !== 'ArrowDown') {
+                anchors[0].focus();
+            }
+            break;
+        case 'ArrowUp':
+            for (let i = 0; i < anchors.length; i++) {
+                if (anchors[i] === current) {
+                    const next = anchors[(i-1)];
+                    if (next) {
+                        next.focus();
+                        return;
+                    }
+                }
+            }
+            acceptedDocumentSenderInput.focus();
+            break;
+        case 'Enter':
+            current.click();
+            break;
+        case 'Escape':
+            acceptedDocumentDisplaySuggestionList('');
+            acceptedDocumentSenderInput.focus();
+            break;
+    }
+}
+
+function acceptedDocumentSwitchSuggestionLock(event) {
+    suggestionListLock = (event.type === 'mousedown');;
+}
+
+function acceptedDocumentAutoFillSender(event) {
+    const element = event.target;
+
+    acceptedDocumentSenderInput.value = element.dataset.sender;
+
+    const list = document.getElementById(acceptedDocumentSuggestionListID);
+    if (list) {
+        list.parentNode.removeChild(list);
+    }
 }
