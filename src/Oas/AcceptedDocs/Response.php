@@ -121,7 +121,7 @@ class Response extends AcceptedDocs
 
         if (!empty($rel) && preg_match('/^[PRT](\d{4})(\d{2})(\d{2})\.\d{2}+$/', $rel, $match)) {
             $post = [
-                'receipt_date' => sprintf('%d-%d-%d', $match[1], $match[2], $match[3]),
+                'receipt_date' => sprintf('%04d-%02d-%02d', $match[1], $match[2], $match[3]),
             ];
             $this->view->bind('post', $post);
         }
