@@ -621,8 +621,8 @@ class Ledger extends Taxation
     public function SQL(): String
     {
         $args = func_get_args();
-        $item_code = filter_var($args[0], FILTER_SANITIZE_STRING);
-        $at = filter_var($args[1], FILTER_SANITIZE_STRING);
+        $item_code = htmlspecialchars($args[0]);
+        $at = htmlspecialchars($args[1]);
 
         if ($at) {
             $start = date('Y-01-01 00:00:00', strtotime($at));

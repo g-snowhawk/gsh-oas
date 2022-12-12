@@ -585,9 +585,9 @@ class Response extends \Gsnowhawk\Oas\Fixedasset
     public function SQL()
     {
         $args = func_get_args();
-        $lod = filter_var($args[0], FILTER_SANITIZE_STRING);
+        $lod = htmlspecialchars($args[0]);
         if (isset($args[1])) {
-            $at = filter_var($args[1], FILTER_SANITIZE_STRING);
+            $at = htmlspecialchars($args[1]);
         }
 
         return "SELECT fa.*,
