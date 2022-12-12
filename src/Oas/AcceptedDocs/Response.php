@@ -116,7 +116,16 @@ class Response extends AcceptedDocs
      */
     public function addFile(): void
     {
-        $this->view->bind('rel', $this->request->param('rel'));
+        $rel = $this->request->param('rel');
+        $this->view->bind('rel', $rel);
+
+        if (!empty($rel) && preg_match('/^[PRT](\d{4})(\d{2})(\d{2})\.\d{2}+$/', $rel, $match)) {
+            $post = [
+                'receipt_date' => sprintf('%d-%d-%d', $match[1], $match[2], $match[3]),
+            ];
+            $this->view->bind('post', $post);
+        }
+
         $this->view->bind('err', $this->app->err);
         $response = $this->view->render('oas/accepteddocs/addfile.tpl', true);
 
