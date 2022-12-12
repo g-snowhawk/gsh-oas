@@ -75,7 +75,7 @@
                   <a href="?mode=oas.accepted-docs.response:add-file&rel={{ post.category ~ post.issue_date|date('Ymd') ~ '.' ~ post.page_number }}" class="subform-opener{% if readonly == false or post.locked == '1' %} disabled{% endif %}">関連書類</a>
                 {% endif %}
                 {% for document in documents %}
-                  <a class="link-to-document" data-id="{{ document }}">{{ loop.index }}</a>
+                  <a class="link-to-document" data-id="{{ document.id }}" title="{{ document.sender ~ ' ' ~ document.category }}">{{ loop.index }}</a>
                 {% endfor %}
                 {% for receipt in receipts %}
                   <a class="link-to-document" href="{{ receipt }}" target="_blank">{{ loop.index }}</a>

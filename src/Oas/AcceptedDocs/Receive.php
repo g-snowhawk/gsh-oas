@@ -147,7 +147,7 @@ class Receive extends Response
         $senders = $this->db->select(
             'sender',
             'accepted_document',
-            "WHERE REPLACE(REPLACE(sender,'$ideographic_space',' '),' ','') like ? collate utf8_unicode_ci",
+            "WHERE REPLACE(REPLACE(sender,'$ideographic_space',' '),' ','') like ? collate utf8_unicode_ci GROUP BY sender",
             ["%$keyword%"]
         );
 

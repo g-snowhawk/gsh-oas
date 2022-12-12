@@ -173,8 +173,9 @@ class Response extends \Gsnowhawk\Oas\Transfer
             $json = json_decode($matches[1], true);
 
             foreach ($json['docid'] as $docid) {
-                if ($this->db->exists('accepted_document', 'id = ?', [$docid])) {
-                    $documents[] = $docid;
+                $doc = $this->db->get('id,sender,category', 'accepted_document', 'id = ?', [$docid]);
+                if (!empty($doc)) {
+                    $documents[] = $doc;
                 }
             }
         }
