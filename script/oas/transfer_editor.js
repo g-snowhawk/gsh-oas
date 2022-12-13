@@ -34,6 +34,8 @@ let token = undefined;
 let issueDate = undefined;
 let pageNumber = undefined;
 let naviPagination = undefined;
+let calcApportionment = undefined;
+let apportionment = undefined;
 
 switch (document.readyState) {
     case 'loading' :
@@ -67,8 +69,10 @@ function initializeTransferEditor(event) {
     buttonCancel = document.getElementById('cancel');
     buttonSave = document.querySelector('input[name=s1_submit]');
     naviPagination = document.getElementById('page-nav');
+    calcApportionment = document.getElementById('calc-apportionment');
     linkPreviousPage = document.getElementById('prev-page-link');
     linkNextPage = document.getElementById('next-page-link');
+    apportionment = document.getElementById('apportionment')
 
     issueDate = document.querySelector('input[name=issue_date]').value;
     pageNumber = document.querySelector('input[name=page_number]').value;
@@ -80,13 +84,13 @@ function initializeTransferEditor(event) {
 
     let i;
     for (i = 0; i < inputAmountLeft.length; i++) {
-        inputAmountLeft[i].addEventListener('keyup', culculateTotals);
+        inputAmountLeft[i].addEventListener('keyup', calculateTotals);
     }
-    culculateTotals(event);
+    calculateTotals(event);
     for (i = 0; i < inputAmountRight.length; i++) {
-        inputAmountRight[i].addEventListener('keyup', culculateTotals);
+        inputAmountRight[i].addEventListener('keyup', calculateTotals);
     }
-    culculateTotals(event, 'right');
+    calculateTotals(event, 'right');
 
     for (i = 0; i < selectItemCodeLeft.length; i++) {
         let element = selectItemCodeLeft[i];
@@ -105,6 +109,9 @@ function initializeTransferEditor(event) {
     if (buttonSave) buttonSave.addEventListener('click', checkTransferBeforeSubmit);
     if (linkPreviousPage) linkPreviousPage.addEventListener('click', moveToPage);
     if (linkNextPage) linkNextPage.addEventListener('click', moveToPage);
+    if (apportionment) {
+        apportionment.addEventListener('keydown', calculateApportionment);
+    }
 
     const calendarSearch = document.getElementById('calendar-search');
     calendarSearch.addEventListener('click', openCalendarForSearch);
@@ -193,7 +200,7 @@ function appendItemCodeOptions(element)
     }
 }
 
-function culculateTotals(event, leftOrRight) {
+function calculateTotals(event, leftOrRight) {
     let amountItems = inputAmountLeft;
     let displayTotal = displayTotalLeft;
 
@@ -422,6 +429,9 @@ function lockForm() {
             hiddens.forEach(element => {
                 element.classList.add('hidden-block');
             });
+            if (calcApportionment && calcApportionment.findParent('form') === form) {
+                calcApportionment.classList.add('hidden-block');
+            }
         } else {
             if (naviPagination && naviPagination.findParent('form') === form) {
                 naviPagination.classList.add('hidden-block');
@@ -449,6 +459,10 @@ function unlockForm() {
 
             if (naviPagination) {
                 naviPagination.classList.add('hidden-block');
+            }
+
+            if (calcApportionment) {
+                calcApportionment.classList.remove('hidden-block');
             }
 
             const hiddens = document.querySelectorAll('.hide-on-readonly');
@@ -541,5 +555,55 @@ function checkTransferBeforeSubmit(event)
         for (let element of elements) {
             element.disabled = false;
         }
+    }
+}
+
+function calculateApportionment(event) {
+    if (event.key !== 'Enter') {
+        return;
+    }
+
+    event.preventDefault();
+
+    const element = event.target;
+    const percentage = parseFloat(element.value);
+    if (isNaN(percentage) || percentage <= 0) {
+        return;
+    }
+    const rate = percentage / 100;
+    const wbo = element.dataset.withdrawalsByOwner;
+    const amountLeft = document.querySelectorAll('*[name^=amount_left]');
+    const itemCodeLeft = document.querySelectorAll('*[name^=item_code_left]');
+
+    let withdrawalsByOwner = 0;
+    let fixedRow = undefined;
+    let notEmpty = undefined;
+    for (let i = 0; i < amountLeft.length; i++) {
+        const amount = amountLeft[i];
+        const itemCode = itemCodeLeft[i];
+        if (itemCode.options[itemCode.selectedIndex].value == wbo) {
+            fixedRow = i;
+            continue;
+        }
+        let value = parseInt(amount.value);
+        if (isNaN(value)) {
+            continue;
+        }
+        notEmpty = i;
+        const business = Math.ceil(value * rate);
+        withdrawalsByOwner += (value - business);
+        amount.value = business;
+    }
+
+    if (withdrawalsByOwner > 0) {
+        const n = fixedRow || (notEmpty + 1);
+        amountLeft[n].value = withdrawalsByOwner;
+        if (!fixedRow) {
+            const itemCode = itemCodeLeft[n];
+            itemCode.options.forEach(option => {
+                option.selected = (option.value == wbo);
+            });
+        }
+        calculateTotals({ currentTarget: amountLeft[n] }, 'left')
     }
 }

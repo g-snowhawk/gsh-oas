@@ -94,6 +94,11 @@
               </div>
             </td>
           </tr>
+          <tr id="calc-apportionment">
+            <td colspan="{% if post.category == 'T' %}5{% else %}3{% endif %}">
+              <label class="flex-box"><input type="number" name="apportionment" id="apportionment" placeholder="事業割合" data-withdrawals-by-owner="{{ withdrawalsByOwner }}"><span class="unit">%</span></label>
+            </td>
+          </tr>
         </tfoot>
         <tbody>
           {% for i in 1..lineCount %}

@@ -215,6 +215,41 @@ table.transfer-detail #page-nav .link-to-document:after {
 table.transfer-detail #page-nav .link-to-document:hover {
   background-color: rgba(204,204,204,0);
 }
+table.transfer-detail #page-nav.hidden-block {
+  display: none;
+}
+
+table.transfer-detail #calc-apportionment td {
+  border: 0 none transparent;
+  text-align: start;
+}
+table.transfer-detail #calc-apportionment td:first-child {
+  padding-left: 0;
+}
+table.transfer-detail #calc-apportionment .flex-box {
+  align-items: center;
+  display: flex;
+}
+table.transfer-detail #calc-apportionment .flex-box .unit {
+  font-size: 0.7rem;
+  margin-left: 0.2em;
+}
+table.transfer-detail #calc-apportionment input {
+  font-size: 0.8rem;
+  padding: 0.3em;
+  text-align: end;
+  width: 4.5em;
+}
+table.transfer-detail.payment #calc-apportionment input[type=number] {
+  border-color: #9cf;
+}
+table.transfer-detail.receipt #calc-apportionment input[type=number] {
+  border-color: #f99;
+}
+table.transfer-detail #calc-apportionment.hidden-block {
+  display: none;
+}
+
 
 table.item-list {
   border-collapse: collapse;

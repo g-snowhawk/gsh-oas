@@ -182,6 +182,7 @@ class Response extends \Gsnowhawk\Oas\Transfer
         $this->view->bind('documents', $documents);
 
         $this->view->bind('lineCount', parent::LINE_COUNT[$post['category']]);
+        $this->view->bind('withdrawalsByOwner', $this->oas_config->withdrawals_by_owner ?? '');
 
         $globals = $this->view->param();
         $form = $globals['form'];
