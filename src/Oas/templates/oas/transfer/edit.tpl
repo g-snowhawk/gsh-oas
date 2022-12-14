@@ -106,16 +106,25 @@
             <tr>
             {% if post.category == 'R' %}
               <td><select name="item_code_right[{{ i }}]" data-default-value="{{ post.item_code_right[i] }}"{{ attr }}></select></td>
-              <td><input type="text" name="summary[{{ i }}]" value="{{ post.summary[i] }}"></td>
+              <td>
+                <input type="hidden" name="note[{{ i }}]" value="{{ post.note[i] }}">
+                <input type="text" name="summary[{{ i }}]" value="{{ post.summary[i] }}">
+              </td>
               <td><input type="number" name="amount_right[{{ i }}]" value="{{ post.amount_right[i] }}"{{ attr }}></td>
             {% elseif post.category == 'P' %}
               <td><select name="item_code_left[{{ i }}]" data-default-value="{{ post.item_code_left[i] }}"{{ attr }}></select></td>
-              <td><input type="text" name="summary[{{ i }}]" value="{{ post.summary[i] }}"></td>
+              <td>
+                <input type="hidden" name="note[{{ i }}]" value="{{ post.note[i] }}">
+                <input type="text" name="summary[{{ i }}]" value="{{ post.summary[i] }}">
+              </td>
               <td><input type="number" name="amount_left[{{ i }}]" value="{{ post.amount_left[i] }}"{{ attr }}></td>
             {% else %}
               <td><input type="number" name="amount_left[{{ i }}]" value="{{ post.amount_left[i] }}"{{ attr }}></td>
               <td><select name="item_code_left[{{ i }}]" data-default-value="{{ post.item_code_left[i] }}"{{ attr }}></select></td>
-              <td><input type="text" name="summary[{{ i }}]" value="{{ post.summary[i] }}"></td>
+              <td>
+                <input type="hidden" name="note[{{ i }}]" value="{{ post.note[i] }}">
+                <input type="text" name="summary[{{ i }}]" value="{{ post.summary[i] }}">
+              </td>
               <td><select name="item_code_right[{{ i }}]" data-default-value="{{ post.item_code_right[i] }}"{{ attr }}></select></td>
               <td><input type="number" name="amount_right[{{ i }}]" value="{{ post.amount_right[i] }}"{{ attr }}></td>
             {% endif %}

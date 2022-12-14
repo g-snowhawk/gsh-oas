@@ -10,6 +10,7 @@
 
 namespace Gsnowhawk\Oas\AcceptedDocs;
 
+use Gsnowhawk\Common\Environment as Env;
 use Gsnowhawk\Oas\AcceptedDocs;
 
 /**
@@ -83,9 +84,10 @@ class Response extends AcceptedDocs
         $statement = implode(' AND ', $conditions);
 
         // Pagenation
-        $rows_per_page = (empty($this->session->param('rows_per_page_accepteddocs_list')))
-            ? $this->rows_per_page
-            : (int)$this->session->param('rows_per_page_accepteddocs_list');
+        $rows_per_page = (Int)Env::cookie('rows_per_page_accepted_document');
+        if (empty($rows_per_page)) {
+            $rows_per_page = $this->rows_per_page;
+        }
         $total_count = $this->db->count('accepted_document', $statement, $options);
         $pager = clone $this->pager;
         $pager->init($total_count, $rows_per_page);
@@ -95,9 +97,10 @@ class Response extends AcceptedDocs
         }
         $pager->setCurrentPage($current_page);
         $pager->setLinkFormat($this->app->systemURI().'?mode='.parent::DEFAULT_MODE.'&p=%d');
-        $this->view->bind('pager', $pager);
         $offset_list = $rows_per_page * ($current_page - 1);
         $statement .= " LIMIT $offset_list,$rows_per_page";
+        $this->view->bind('rows_per_page', $rows_per_page);
+        $this->view->bind('pager', $pager);
 
         $docs = $this->db->select('*', 'accepted_document', 'WHERE '.$statement, $options);
         $this->view->bind('docs', $docs);

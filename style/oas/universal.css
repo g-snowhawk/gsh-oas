@@ -507,6 +507,17 @@ html.fixedasset.edit #transfer-list tr.existing td:nth-child(5) {
   right: 0;
   top: 0;
 }
+#oas-accepteddocs-default .pagination {
+  align-items: center;
+  display: flex;
+  justify-content: end;
+}
+#oas-accepteddocs-default .pagination .setcookie-and-reload {
+  border-radius: 0;
+  font-size: 0.8rem;
+  padding: 0.3em;
+  margin-right: 0.5em;
+}
 
 #sender-data {
   display: block;

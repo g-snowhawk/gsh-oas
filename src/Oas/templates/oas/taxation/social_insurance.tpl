@@ -45,7 +45,15 @@
     </div>
     <div class="fieldset">
       <label>控除額</label>
-      <input type="text" name="amount" value="{{ post.amount}}" class="short ta-r" required>
+      <input type="text" name="amount" value="{{ post.amount }}" class="short ta-r" required>
+    </div>
+    <div class="fieldset">
+      <label>添付ファイル</label>
+      <div class="input">
+        <input type="file" name="file" id="file" accept=".pdf,application/pdf,.eml,message/rfc822">
+        <input type="hidden" name="category" value="控除証明書">
+        <input type="hidden" name="source" value="紙媒体（スキャン／撮影）">
+      </div>
     </div>
     <div class="form-footer">
       <div class="separate-block">

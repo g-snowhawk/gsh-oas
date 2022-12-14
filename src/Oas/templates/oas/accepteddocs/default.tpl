@@ -52,6 +52,18 @@
           </nav>
           <nav class="pagination">
             {% include 'pagination.tpl' %}
+            {% set rows = [30,50,100,150] %}
+            {% if pager.records > rows[0] %}
+              {% for row in rows %}
+                {% if loop.first %}
+                  <select name="rows_per_page_accepted_document" class="setcookie-and-reload">
+                {% endif %}
+                    <option value="{{ row }}"{% if rows_per_page == row %} selected{% endif %}>{{ row }}件表示</option>
+                {% if loop.last %}
+                  </select>
+                {% endif %}
+              {% endfor %}
+            {% endif %}
           </nav>
         </div>
       </div>

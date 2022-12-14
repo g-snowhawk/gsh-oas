@@ -24,7 +24,7 @@
       </div>
     {% endif %}
     <div class="fieldset{% if err.vl_file == 1 %} invalid{% endif %}">
-      <label for="file">ファイル<small>&nbsp;※PDFのみ選択可</small></label>
+      <label for="file">ファイル<small>&nbsp;※PDF、EMLのみ選択可</small></label>
       <input type="file" name="file" id="file" accept=".pdf,application/pdf,.eml,message/rfc822" required>
     </div>
 
@@ -81,6 +81,7 @@
         <option value="請求書"{% if post.category == '請求書' %} selected{% endif %}>請求書</option>
         <option value="領収書"{% if post.category == '領収書' %} selected{% endif %}>領収書</option>
         <option value="利用明細"{% if post.category == '利用明細' %} selected{% endif %}>利用明細</option>
+        <option value="控除証明書"{% if post.category == '控除証明書' %} selected{% endif %}>控除証明書</option>
         <option value="その他"{% if post.category == 'その他' %} selected{% endif %}>その他</option>
       </select>
     </div>

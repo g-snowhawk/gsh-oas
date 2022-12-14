@@ -11,6 +11,9 @@ const DICTIONARY = {
     "ja-JP" : {
         Cancel : '\u30AD\u30E3\u30F3\u30BB\u30EB',
     },
+    "ja" : {
+        Cancel : '\u30AD\u30E3\u30F3\u30BB\u30EB',
+    },
 };
 
 String.prototype.translate = function(dict) {
@@ -42,6 +45,7 @@ function initializeSocialinsurance(event) {
     table.querySelectorAll('tr').forEach((element) => {
         element.addEventListener('click', editSocialinsurance);
     });
+    console.log(navigator.languages);
 }
 
 let cancelEditSocialinsuranceButton;
@@ -57,7 +61,7 @@ function editSocialinsurance(event) {
     for (let name of ['year', 'colnumber']) {
         let options = form[name].options;
         for (let i = 0; i < options.length; i++) {
-            if (options[i].value === detail[name]) {
+            if (options[i].value == detail[name]) {
                 form[name].selectedIndex = i;
                 break;
             }

@@ -10,6 +10,7 @@
 
 namespace Gsnowhawk\Oas\Taxation;
 
+use DateTime;
 use Gsnowhawk\Common\Http;
 use Gsnowhawk\Common\Lang;
 
@@ -72,7 +73,14 @@ class Socialinsurance extends \Gsnowhawk\Oas\Taxation
         }
         $this->view->bind('post', $post);
 
-        $list = $this->db->select('id,year,colnumber,title,amount', 'social_insurance', 'WHERE year = ? AND userkey = ? ORDER BY colnumber', [$year, $this->uid]);
+        $options = $years;
+        $options[] = $this->uid;
+        $list = $this->db->select(
+            'id,year,colnumber,title,amount',
+            'social_insurance',
+            'WHERE year IN ('.implode(',', array_fill(0, count($years), '?')).') AND userkey = ? ORDER BY year DESC,colnumber',
+            $options
+        );
         foreach ($list as &$unit) {
             $unit['json'] = json_encode([
                 'year' => $unit['year'],
@@ -85,6 +93,10 @@ class Socialinsurance extends \Gsnowhawk\Oas\Taxation
         $this->view->bind('list', $list);
 
         $this->session->clear('si_year');
+
+        $form = $this->view->param('form');
+        $form['enctype'] = 'multipart/form-data';
+        $this->view->bind('form', $form);
 
         $this->setHtmlId($html_id);
         $this->view->render($template_path);
@@ -118,7 +130,9 @@ class Socialinsurance extends \Gsnowhawk\Oas\Taxation
                     $key = 'col_' . $unit['colnumber'];
                     $data[$key] = $unit['amount'];
                 }
-                if (false !== $this->updateAccountBook($year, $data)) {
+                if (false !== $this->updateAccountBook($year, $data)
+                    && false !== $this->saveAttachments($year)
+                ) {
                     $this->db->commit();
 
                     $this->session->param('si_year', $this->request->param('year'));
@@ -167,5 +181,94 @@ class Socialinsurance extends \Gsnowhawk\Oas\Taxation
         trigger_error($this->db->error());
         $this->db->rollback();
         $this->defaultView();
+    }
+
+    private function saveAttachments($year): bool
+    {
+        $file = $this->request->FILES('file');
+
+        // No file uploaded
+        if (empty($file)) {
+            return true;
+        }
+
+        $userkey = $this->uid;
+
+        $checksum = hash_file('sha256', $file['tmp_name']);
+        $mimetype = mime_content_type($file['tmp_name']);
+        $extension = ($mimetype === 'message/rfc822') ? '.eml' : '.pdf';
+
+        if ($this->db->exists('accepted_document', 'userkey = ? AND checksum = ?', [$userkey, $checksum])) {
+            $this->app->err['vl_file'] = 128;
+        }
+
+        $date = new DateTime('now');
+        if ($date->format('Y') !== $year) {
+            $date->setDate((Int)$year, 12, 31);
+        }
+
+        $sequence = (int)$this->db->max(
+            'sequence',
+            'accepted_document',
+            'userkey = ? AND year = ?',
+            [$userkey, $date->format('Y')]
+        ) + 1;
+
+        $data = [
+            'sequence' => $sequence,
+            'userkey' => $userkey,
+            'checksum' => $checksum,
+            'mimetype' => $mimetype,
+            'sender' => $this->request->param('title'),
+            'category' => $this->request->param('category'),
+            'source' => $this->request->param('source'),
+            'receipt_date' => $date->format('Y-m-d'),
+            'year' => $date->format('Y'),
+            'price' => $this->request->param('amount'),
+        ];
+
+        // Save the meta data
+        if (false === $this->db->insert('accepted_document', $data)) {
+            trigger_error($this->db->error());
+
+            return false;
+        }
+
+        $id = $this->db->lastInsertId();
+
+        // Save the history
+        $data = [
+            'document_id' => $id,
+            'type' => 'CREATE',
+            'reason' => Lang::translate('CREATE_DOCUMENT'),
+        ];
+        if (false === $this->db->insert('accepted_history', $data)) {
+            trigger_error($this->db->error());
+
+            return false;
+        }
+
+        // Save the uploaded file
+        $filepath = $this->getPdfPath(
+            $date->format('Y'),
+            'accepted_documents',
+            "{$sequence}{$extension}"
+        );
+
+        $upload_dir = dirname($filepath);
+        if (!file_exists($upload_dir) && false === @mkdir($upload_dir, 0700, true)) {
+            trigger_error('Failed make a directory');
+
+            return false;
+        }
+
+        if (false === move_uploaded_file($file['tmp_name'], $filepath)) {
+            trigger_error('Does not save upload file');
+
+            return false;
+        }
+        @chmod($filepath, 0444);
+
+        return true;
     }
 }
