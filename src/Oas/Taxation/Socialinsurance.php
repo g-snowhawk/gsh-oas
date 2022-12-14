@@ -56,6 +56,7 @@ class Socialinsurance extends \Gsnowhawk\Oas\Taxation
         if (false !== $this->db->query($sql, [$this->uid])) {
             if ($unit = $this->db->fetch()) {
                 $years = range($unit['year'], date('Y'));
+                rsort($years);
             }
         } else {
             echo $this->db->error();
