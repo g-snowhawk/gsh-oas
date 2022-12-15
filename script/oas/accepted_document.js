@@ -59,6 +59,7 @@ function acceptedDocumentSetListener() {
 }
 
 function acceptedDocumentOpenDoc(event) {
+    event.stopPropagation();
     const element = event.currentTarget;
     const csrfToken = document.querySelector('input[name=stub]');
     const data = {

@@ -55,6 +55,7 @@ function editSocialinsurance(event) {
     let detail = JSON.parse(element.dataset.detail);
 
     let form = document.getElementById('TMS-mainform');
+    form.note.value = detail['note'];
     form.title.value = detail['title'];
     form.amount.value = detail['amount'];
 
@@ -83,6 +84,7 @@ function editSocialinsurance(event) {
 function cancelEditSocialinsurance(event) {
     event.preventDefault();
     let form = document.getElementById('TMS-mainform');
+    form.note.value = '';
     form.title.value = '';
     form.amount.value = '';
     for (let name of ['year', 'colnumber']) {

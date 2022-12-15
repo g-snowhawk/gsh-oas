@@ -91,7 +91,7 @@ class Receive extends Response
         $status = 0;
         $options = [];
 
-        if (!parent::save()) {
+        if (false === parent::saveAcceptedDocument()) {
             $message_key = 'FAILED_SAVE';
             $status = 1;
             $options = [

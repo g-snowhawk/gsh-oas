@@ -77,7 +77,7 @@ class Socialinsurance extends \Gsnowhawk\Oas\Taxation
         $options = $years;
         $options[] = $this->uid;
         $list = $this->db->select(
-            'id,year,colnumber,title,amount',
+            'id,year,colnumber,title,amount,note',
             'social_insurance',
             'WHERE year IN ('.implode(',', array_fill(0, count($years), '?')).') AND userkey = ? ORDER BY year DESC,colnumber',
             $options
@@ -88,7 +88,15 @@ class Socialinsurance extends \Gsnowhawk\Oas\Taxation
                 'colnumber' => $unit['colnumber'],
                 'title' => $unit['title'],
                 'amount' => $unit['amount'],
+                'note' => $unit['note'],
             ], JSON_UNESCAPED_UNICODE);
+
+            $unit['documents'] = [];
+            if (preg_match('/a(\{.+\})/', $unit['note'], $match)) {
+                $json = json_decode($match[1]);
+                $documents = $json->docid;
+                $unit['documents'] = $documents;
+            }
         }
         unset($unit);
         $this->view->bind('list', $list);
@@ -111,35 +119,61 @@ class Socialinsurance extends \Gsnowhawk\Oas\Taxation
             ['id','userkey','modify_date']
         );
         $data['userkey'] = $this->uid;
+        $year = $data['year'];
+
+        $documents = [];
+        if (preg_match('/a(\{.+\})/', $data['note'], $match)) {
+            $json = json_decode($match[1]);
+            $documents = $json->docid;
+        }
 
         $this->db->begin();
-        if (false !== $this->db->merge(
-            'social_insurance',
-            $data,
-            ['id','userkey','modify_date'],
-            'social_insurance_uk_1'
-        )) {
-            $year = $data['year'];
-            $sql = 'SELECT SUM(amount) AS amount,
-                            MIN(LEFT(colnumber, 2)) AS colnumber
-                      FROM table::social_insurance
-                     WHERE year = ? AND userkey = ?
-                     GROUP BY LEFT(colnumber, 2)';
-            if (false !== $this->db->query($sql, [$year, $this->uid])) {
-                $data = [];
-                while ($unit = $this->db->fetch()) {
-                    $key = 'col_' . $unit['colnumber'];
-                    $data[$key] = $unit['amount'];
-                }
-                if (false !== $this->updateAccountBook($year, $data)
-                    && false !== $this->saveAttachments($year)
-                ) {
-                    $this->db->commit();
 
-                    $this->session->param('si_year', $this->request->param('year'));
+        $file = $this->request->FILES('file');
+        $document_id = null;
+        if (!empty($file)) {
+            $date = new DateTime('now');
+            if ($date->format('Y') !== $year) {
+                $date->setDate((Int)$year, 12, 31);
+            }
+            $this->request->param('receipt_date', $date->format('Y-m-d'));
+            $this->request->param('year', $date->format('Y'));
+            $this->request->param('sender', $this->request->param('title'));
+            $this->request->param('price', $this->request->param('amount'));
+            $document_id = parent::saveAcceptedDocument('id');
+        }
 
-                    $url = $this->app->systemURI().'?mode=oas.taxation.socialinsurance';
-                    Http::redirect($url);
+        if (false !== $document_id) {
+            if (!is_null($document_id)) {
+                $documents[] = (String)$document_id;
+            }
+            $documents = array_unique($documents, SORT_NUMERIC);
+            $data['note'] = (!empty($documents)) ? 'a' . json_encode(['docid' => $documents]) : null;
+            if (false !== $this->db->merge(
+                'social_insurance',
+                $data,
+                ['id','userkey','modify_date'],
+                'social_insurance_uk_1'
+            )) {
+                $sql = 'SELECT SUM(amount) AS amount,
+                                MIN(LEFT(colnumber, 2)) AS colnumber
+                          FROM table::social_insurance
+                         WHERE year = ? AND userkey = ?
+                         GROUP BY LEFT(colnumber, 2)';
+                if (false !== $this->db->query($sql, [$year, $this->uid])) {
+                    $data = [];
+                    while ($unit = $this->db->fetch()) {
+                        $key = 'col_' . $unit['colnumber'];
+                        $data[$key] = $unit['amount'];
+                    }
+                    if (false !== $this->updateAccountBook($year, $data)) {
+                        $this->db->commit();
+
+                        $this->session->param('si_year', $this->request->param('year'));
+
+                        $url = $this->app->systemURI().'?mode=oas.taxation.socialinsurance';
+                        Http::redirect($url);
+                    }
                 }
             }
         }

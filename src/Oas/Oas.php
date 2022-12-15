@@ -10,6 +10,7 @@
 
 namespace Gsnowhawk;
 
+use DateTime;
 use Gsnowhawk\Common\Lang;
 use Gsnowhawk\Common\Text;
 use Gsnowhawk\Base;
@@ -359,12 +360,174 @@ class Oas extends User implements PackageInterface
         return $gengo . ($year - $offset);
     }
 
-    //protected function privateSavePath()
-    //{
-    //    if (empty($this->private_save_path)) {
-    //        $this->private_save_path = sprintf('%s/%s', $this->app->cnf('data_dir'), md5($this->uid));
-    //    }
+    protected function saveAcceptedDocument(string $ifexists = null): int|false
+    {
+        $userkey = $this->uid;
 
-    //    return $this->private_save_path;
-    //}
+        $valid = [];
+        $valid[] = ['vl_file', 'file', 'upload'];
+        $valid[] = ['vl_price', 'price', 'int'];
+        $valid[] = ['vl_sender', 'sender', 'empty'];
+        $valid[] = ['vl_category', 'category', 'empty'];
+        $valid[] = ['vl_receipt_date', 'receipt_date', 'empty'];
+
+        if (!empty($this->request->param('tax_a'))) {
+            $valid[] = ['vl_tax_a', 'tax_a', 'int'];
+        }
+        if (!empty($this->request->param('tax_b'))) {
+            $valid[] = ['vl_tax_b', 'tax_b', 'int'];
+        }
+
+        if (!$this->validate($valid)) {
+            return false;
+        }
+
+        $file = $this->request->FILES('file');
+        $checksum = hash_file('sha256', $file['tmp_name']);
+        $mimetype = mime_content_type($file['tmp_name']);
+        $extension = ($mimetype === 'message/rfc822') ? '.eml' : '.pdf';
+
+        $statement = 'userkey = ? AND checksum = ?';
+        $options = [$userkey, $checksum];
+        if ($this->db->exists('accepted_document', $statement, $options)) {
+            if ($ifexists === 'id') {
+                return $this->db->get($ifexists, 'accepted_document', $statement, $options);
+            }
+            $this->app->err['vl_file'] = 128;
+        }
+
+        $today = new DateTime();
+        $receipt_date = new DateTime($this->request->param('receipt_date'));
+        if ($today < $receipt_date) {
+            $this->app->err['vl_receipt_date'] = 2;
+        }
+
+        if (array_sum($this->app->err) > 0) {
+            return false;
+        }
+
+        $sequence = (int)$this->db->max(
+            'sequence',
+            'accepted_document',
+            'userkey = ? AND year = ?',
+            [$userkey, $receipt_date->format('Y')]
+        ) + 1;
+
+        $data = [
+            'sequence' => $sequence,
+            'userkey' => $userkey,
+            'checksum' => $checksum,
+            'mimetype' => $mimetype,
+            'sender' => $this->request->param('sender'),
+            'category' => $this->request->param('category'),
+            'source' => $this->request->param('source'),
+            'receipt_date' => $receipt_date->format('Y-m-d'),
+            'year' => $receipt_date->format('Y'),
+            'price' => $this->request->param('price'),
+        ];
+        if (!empty($this->request->param('tax_a'))) {
+            $data['tax_a'] = $this->request->param('tax_a');
+        }
+        if (!empty($this->request->param('tax_b'))) {
+            $data['tax_b'] = $this->request->param('tax_b');
+        }
+
+        if ($this->db->getTransaction()) {
+            $savepoint = 'accepted_document';
+            if (false === $this->db->query("SAVEPOINT {$savepoint}")) {
+                return false;
+            }
+        } else {
+            $this->db->begin();
+        }
+
+        // Save the meta data
+        if (false === $this->db->insert('accepted_document', $data)) {
+            trigger_error($this->db->error());
+            if (isset($savepoint)) {
+                $this->db->exec("ROLLBACK TO SAVEPOINT {$savepoint}");
+            }
+
+            return false;
+        }
+
+        $document_id = $this->db->lastInsertId();
+
+        // Save the history
+        $data = [
+            'document_id' => $document_id,
+            'type' => 'CREATE',
+            'reason' => Lang::translate('CREATE_DOCUMENT'),
+        ];
+        if (false === $this->db->insert('accepted_history', $data)) {
+            trigger_error($this->db->error());
+            if (isset($savepoint)) {
+                $this->db->exec("ROLLBACK TO SAVEPOINT {$savepoint}");
+            }
+
+            return false;
+        }
+
+        // Update relation
+        $rel = $this->request->param('rel');
+        if (!empty($rel)) {
+            $documents = [];
+            $statement = "userkey = ? AND CONCAT(category, DATE_FORMAT(issue_date, '%Y%m%d'), '.', page_number) = ? AND line_number = ?";
+            $options = [$userkey, $rel, 1];
+
+            $note = $this->db->get('note', 'transfer', $statement, $options);
+            if (empty($note)) {
+                $note = '';
+            } elseif (preg_match('/a(\{.+?\})/', $note, $matchs)) {
+                $tmp = json_decode($matchs[1], true);
+                $documents = $tmp['docid'];
+                $note = preg_replace('/a(\{.+?\})/', '', $note);
+            }
+
+            $documents[] = $document_id;
+
+            $json = 'a' . json_encode(['docid' => $documents]);
+            if (false === $this->db->update('transfer', ['note' => $json.$note], $statement, $options)) {
+                trigger_error($this->db->error());
+                if (isset($savepoint)) {
+                    $this->db->exec("ROLLBACK TO SAVEPOINT {$savepoint}");
+                }
+
+                return false;
+            }
+        }
+
+        // Save the uploaded file
+        $filepath = $this->getPdfPath(
+            $receipt_date->format('Y'),
+            'accepted_documents',
+            "{$sequence}{$extension}"
+        );
+
+        $upload_dir = dirname($filepath);
+        if (!file_exists($upload_dir) && false === @mkdir($upload_dir, 0700, true)) {
+            trigger_error('Failed make a directory');
+
+            return false;
+        }
+
+        if (false === move_uploaded_file($file['tmp_name'], $filepath)) {
+            trigger_error('Does not save upload file');
+
+            return false;
+        }
+        @chmod($filepath, 0444);
+
+        if (isset($savepoint)) {
+            if (false === $this->db->query("RELEASE SAVEPOINT {$savepoint}")) {
+                return false;
+            }
+        } else {
+            if (false === $this->db->commit()) {
+                return false;
+            }
+        }
+
+        return $document_id;
+    }
 }

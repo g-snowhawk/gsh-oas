@@ -184,6 +184,7 @@ table.transfer-detail #page-nav .flex-box {
 table.transfer-detail #page-nav #calendar-search {
   margin-left: auto;
 }
+#oas-taxation-socialinsurance .link-to-document,
 table.transfer-detail #page-nav .link-to-document {
   background-color: rgba(204,204,204,0.4);
   border: 1px solid rgba(0,0,0,0.2);
@@ -196,8 +197,10 @@ table.transfer-detail #page-nav .link-to-document {
   margin: auto 3px;
   padding: 0;
   position: relative;
+  vertical-align: top;
   width: 14px;
 }
+#oas-taxation-socialinsurance .link-to-document:after,
 table.transfer-detail #page-nav .link-to-document:after {
   background-color: transparent;
   border: 1px solid #999;
@@ -212,6 +215,7 @@ table.transfer-detail #page-nav .link-to-document:after {
   top: 3px;
   width: 70%;
 }
+#oas-taxation-socialinsurance .link-to-document:hover,
 table.transfer-detail #page-nav .link-to-document:hover {
   background-color: rgba(204,204,204,0);
 }
@@ -372,6 +376,11 @@ html.fixedasset.edit #transfer-list tr.existing td:nth-child(5) {
 #oas-taxation-socialinsurance table.data-list td {
   font-size: .9rem;
   padding: .6em;
+}
+#oas-taxation-socialinsurance table.data-list .links {
+  position: relative;
+  vertical-align: middle;
+  white-space: nowrap;
 }
 #oas-taxation-socialinsurance table.data-list td small {
   color: #666;

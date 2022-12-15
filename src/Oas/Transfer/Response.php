@@ -156,6 +156,7 @@ class Response extends \Gsnowhawk\Oas\Transfer
             }
         }
         $post['category'] = $category;
+
         $this->view->bind('post', $post);
 
         $this->view->bind('readonly', $readonly);
@@ -181,6 +182,25 @@ class Response extends \Gsnowhawk\Oas\Transfer
         }
         $this->view->bind('documents', $documents);
 
+        $format = '?mode=srm.receipt.response:download-pdf&id='.$post['issue_date'].':%d:%d';
+        $receipt_id = $this->db->get(
+            'id',
+            'receipt_template',
+            'userkey = ? AND pdf_mapper LIKE ?',
+            [$this->uid, '% typeof="bill" %']
+        );
+        $receipts = [];
+        foreach ($post['note'] ?? [] as $value) {
+            // bill only
+            if (preg_match('/bill:([0-9]+)(.*)/', $value ?? '', $matches)
+                && strpos($matches[2], ':received') !== 0
+            ) {
+                $receipts[] = sprintf($format, $matches[1], $receipt_id);
+            }
+        }
+        $receipts = array_unique($receipts);
+        $this->view->bind('receipts', $receipts);
+
         $this->view->bind('lineCount', parent::LINE_COUNT[$post['category']]);
         $this->view->bind('withdrawalsByOwner', $this->oas_config->withdrawals_by_owner ?? '');
 
@@ -195,8 +215,6 @@ class Response extends \Gsnowhawk\Oas\Transfer
         $header = $globals['header'];
         $header['id'] = 'oas-transfer-edit';
         $this->view->bind('header', $header);
-
-        $this->app->execPlugin('beforeRendering');
 
         $this->view->bind('err', $this->app->err);
         $this->view->render('oas/transfer/edit.tpl');

@@ -2,6 +2,7 @@
 
 {% block main %}
   <input type="hidden" name="mode" value="oas.taxation.socialinsurance:save">
+  <input type="hidden" name="note">
   <div class="wrapper">
     <h1>社会保険料等に係る控除証明書等の記載事項</h1>
     <div class="fieldset">
@@ -73,6 +74,11 @@
           <td>{{ unit.year }}<small>年</small></td>
           <td>{{ unit.title }}</td>
           <td><i>{{ unit.amount|number_format }}</i><small>円</small></td>
+          <td class="links">
+            {% for document in unit.documents %}
+              <a class="link-to-document" data-id="{{ document }}">{{ loop.index }}</a>
+            {% endfor %}
+          </td>
           <td><a href="#remove:{{ unit.id }}" class="remove" data-confirmation="{{ unit.title }}を削除します。よろしいですか？">削除</a></td>
         </tr>
       {% if loop.last %}
@@ -84,4 +90,5 @@
 
 {% block pagefooter %}
 <script src="/script/oas/social_insurance.js"></script>
+<script src="/script/oas/accepted_document.js"></script>
 {% endblock %}

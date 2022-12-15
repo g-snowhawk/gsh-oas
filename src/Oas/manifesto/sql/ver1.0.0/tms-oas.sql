@@ -55,6 +55,7 @@ CREATE TABLE IF NOT EXISTS `table::social_insurance` (
   `colnumber` varchar(8) NOT NULL,
   `title` varchar(128) NOT NULL,
   `amount` int NOT NULL,
+  `note` text,
   `modify_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `table::social_insurance_uk_1` (`year`,`userkey`,`colnumber`,`title`),
