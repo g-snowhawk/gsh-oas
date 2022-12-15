@@ -92,7 +92,7 @@ class Socialinsurance extends \Gsnowhawk\Oas\Taxation
             ], JSON_UNESCAPED_UNICODE);
 
             $unit['documents'] = [];
-            if (preg_match('/a(\{.+\})/', $unit['note'], $match)) {
+            if (preg_match('/a(\{.+\})/', $unit['note'] ?? '', $match)) {
                 $json = json_decode($match[1]);
                 $documents = $json->docid;
                 $unit['documents'] = $documents;
@@ -122,7 +122,7 @@ class Socialinsurance extends \Gsnowhawk\Oas\Taxation
         $year = $data['year'];
 
         $documents = [];
-        if (preg_match('/a(\{.+\})/', $data['note'], $match)) {
+        if (preg_match('/a(\{.+\})/', $data['note'] ?? '', $match)) {
             $json = json_decode($match[1]);
             $documents = $json->docid;
         }
