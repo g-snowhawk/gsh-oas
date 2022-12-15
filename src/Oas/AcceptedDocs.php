@@ -30,6 +30,8 @@ class AcceptedDocs extends \Gsnowhawk\Oas
     public const QUERY_STRING_KEY = 'accepteddocs_search_condition';
     public const SEARCH_OPTIONS_KEY = 'accepteddocs_search_options';
     public const PAGE_KEY = 'accepteddocs_page';
+    public const ORDER_COOKIE = 'accepted_document_order_column';
+    public const SORT_COOKIE = 'accepted_document_order_sort';
 
     protected $user_root;
 

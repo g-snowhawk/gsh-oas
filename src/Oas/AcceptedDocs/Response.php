@@ -83,6 +83,26 @@ class Response extends AcceptedDocs
 
         $statement = implode(' AND ', $conditions);
 
+        $secure_cookie = true;
+        if (strtolower($this->app->cnf('allow_http_cookie') === 'yes')
+            && Env::server('https') !== 'on'
+        ) {
+            $secure_cookie = false;
+        }
+        $column = Env::cookie(parent::ORDER_COOKIE);
+        if (empty($column)) {
+            $column = 'sequence';
+            $this->app->setcookie(parent::ORDER_COOKIE, $column, 0, null, null, $secure_cookie, false);
+        }
+        $sort = Env::cookie(parent::SORT_COOKIE);
+        if (empty($sort)) {
+            $sort = 'DESC';
+            $this->app->setcookie(parent::SORT_COOKIE, $sort, 0, null, null, $secure_cookie, false);
+        }
+        $statement .= " ORDER BY {$column} {$sort}";
+        $this->view->bind('order_cookie', parent::ORDER_COOKIE);
+        $this->view->bind('sort_cookie', parent::SORT_COOKIE);
+
         // Pagenation
         $rows_per_page = (Int)Env::cookie('rows_per_page_accepted_document');
         if (empty($rows_per_page)) {

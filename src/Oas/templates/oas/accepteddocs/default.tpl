@@ -15,12 +15,12 @@
             {% if loop.first %}
               <table>
                 <thead>
-                  <tr>
-                    <td>番号</td>
-                    <td>日付</td>
-                    <td>金額</td>
-                    <td>取引先</td>
-                    <td>種別</td>
+                  <tr data-order="{{ order_cookie }}" data-sort="{{ sort_cookie }}">
+                    <td class="change-sort" data-column="sequence">番号</td>
+                    <td class="change-sort" data-column="receipt_date">日付</td>
+                    <td class="change-sort" data-column="price">金額</td>
+                    <td class="change-sort" data-column="sender">取引先</td>
+                    <td class="change-sort" data-column="category">種別</td>
                     <td>備考</td>
                   </tr>
                 </thead>

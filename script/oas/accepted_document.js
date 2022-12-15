@@ -56,6 +56,11 @@ function acceptedDocumentSetListener() {
     rows.forEach(element => {
         element.addEventListener('click', acceptedDocumentOpenDoc);
     });
+
+    const sorters = document.querySelectorAll('td.change-sort');
+    sorters.forEach(element => {
+        element.addEventListener('click', acceptedDocumentSetOrder);
+    });
 }
 
 function acceptedDocumentOpenDoc(event) {
@@ -409,4 +414,24 @@ function acceptedDocumentAutoFillSender(event) {
     if (list) {
         list.parentNode.removeChild(list);
     }
+}
+
+function acceptedDocumentSetOrder(event) {
+    const element = event.currentTarget;
+    const parent = element.findParent('tr');
+    if (!parent) {
+        return;
+    }
+    let column = getcookie(parent.dataset.order);
+    let sort = getcookie(parent.dataset.sort);
+    if (column !== element.dataset.column) {
+        column = element.dataset.column;
+        sort = 'ASC';
+    } else {
+        sort = (sort === 'ASC') ? 'DESC' : 'ASC';
+    }
+    setcookie(parent.dataset.order, column);
+    setcookie(parent.dataset.sort, sort);
+
+    location.reload();
 }
