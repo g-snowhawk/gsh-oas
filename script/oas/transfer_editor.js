@@ -40,10 +40,12 @@ let apportionment = undefined;
 switch (document.readyState) {
     case 'loading' :
         window.addEventListener('DOMContentLoaded', initializeTransferEditor)
+        window.addEventListener('DOMContentLoaded', transferSummarySuggestionInit)
         break;
     case 'interactive':
     case 'complete':
         initializeTransferEditor();
+        transferSummarySuggestionInit();
         break;
 }
 
@@ -229,147 +231,6 @@ function calculateTotals(event, leftOrRight) {
     displayTotal.innerHTML = (total === 0) ? '' : formatter.format(total);
 }
 
-/*
-function hideSuggestionList(event) {
-    const element = event.target;
-    if (element === inputCompany
-        || element.childOf(suggestionListContainer) !== -1
-    ) {
-        return;
-    }
-
-    suggestionListLock = false;
-    displaySuggestionList('');
-}
-*/
-
-/*
-function displaySuggestionList(source) {
-
-    if (debugLevel > 0) {
-        console.log(source);
-        console.log(suggestionListLock);
-    }
-
-    if (!suggestionListContainer) return;
-
-    let list = document.getElementById(suggestionListID);
-    if (list && !suggestionListLock) {
-        list.parentNode.removeChild(list);
-        window.removeEventListener('mouseup', hideSuggestionList);
-    }
-    if (source === '') {
-        return;
-    }
-
-    list = suggestionListContainer.appendChild(document.createElement('div'));
-    list.id = suggestionListID;
-    list.innerHTML = source;
-
-    let i;
-    let anchors = list.getElementsByTagName('a');
-    for (i = 0; i < anchors.length; i++) {
-        anchors[i].addEventListener('mousedown', switchSuggestionListLock);
-        anchors[i].addEventListener('mouseup', switchSuggestionListLock);
-    }
-
-    window.addEventListener('mouseup', hideSuggestionList);
-}
-*/
-
-/*
-function suggestComplete(response) {
-    response.json().then(function(data){
-
-        if (debugLevel > 0) {
-            console.log(data);
-        }
-
-        if (data.status === 0) {
-            displaySuggestionList(data.source);
-        }
-    }).catch(error => console.error(error));
-}
-*/
-
-/*
-function suggestClient() {
-    if (inputCompany.value === '') {
-        displaySuggestionList('');
-        return;
-    }
-
-    if (debugLevel > 0) {
-        console.log(inputCompany.value);
-    }
-
-    const form = inputCompany.form;
-
-    let data = new FormData();
-    data.append('stub', form.stub.value);
-    data.append('keyword', inputCompany.value);
-    data.append('mode', 'srm.receipt.receive:suggest-client');
-
-    suggestionBrowser.abort();
-    const signal = suggestionBrowser.signal;
-
-    fetch(form.action, {
-        method: 'POST',
-        credentials: 'same-origin',
-        body: data,
-    }).then(
-        suggestComplete
-    ).catch(error => console.error(error));
-}
-*/
-
-/*
-function switchComposing(event) {
-    isComposing = (event.type === 'compostionstart');
-}
-*/
-
-/*
-function switchSuggestionListLock(event) {
-    suggestionListLock = (event.type === 'mousedown');;
-}
-*/
-
-/*
-function listenerForSuggestion(event) {
-
-    if (debugLevel > 0) {
-        console.log(event.type);
-    }
-
-    let inputedValue = event.target.value;
-    switch (event.type) {
-        case 'blur':
-            displaySuggestionList('');
-            break;
-        case 'keydown':
-            valueAtKeyDown = inputedValue;
-            break;
-        case 'keyup':
-            if (event.key === 'ArrowDown'
-                || (!isComposing && valueAtKeyDown !== inputedValue)
-            ) {
-                clearTimeout(suggestionTimer);
-                suggestionTimer = setTimeout(suggestClient, suggestionTimeout);
-            }
-
-            else {
-                if (debugLevel > 0) {
-                    console.log(event.key);
-                }
-            }
-
-            valueAtKeyDown = undefined;
-            break;
-    }
-}
-*/
-
 function addNewPage(event) {
     const element = event.currentTarget;
 
@@ -505,6 +366,7 @@ function replaceForm(source) {
     if (typeof acceptedDocumentSetListener == 'function') {
         acceptedDocumentSetListener();
     }
+    transferSummarySuggestionInit();
 }
 
 function checkTransferBeforeSubmit(event)
@@ -605,5 +467,258 @@ function calculateApportionment(event) {
             });
         }
         calculateTotals({ currentTarget: amountLeft[n] }, 'left')
+    }
+}
+
+/*
+ * for Suggestion
+ */
+const transferSummarySuggestionListID = 'summary-list';
+
+let transferSummarySuggestionListLock = false;
+let transferSummaryIsComposing = false;
+let transferSummarySuggestionIsFetching = false;
+let transferSummaryAtKeyDown = undefined;
+let transferSummarySuggestionContainer = undefined;
+let transferSummaryCurrentElement = undefined;
+let transferSummarySuggestionFetchCanceller = new AbortController();
+
+function transferSummarySuggestionInit(event) {
+    const container = document.querySelector('table.transfer-detail');
+    const elements = container.querySelectorAll('input[name^=summary]');
+    elements.forEach(element => {
+        element.addEventListener('focus', transferSummarySetListener);
+    });
+}
+
+function transferSummarySetListener(event) {
+    const element = event.target;
+    if (event.type === 'focus') {
+        element.addEventListener('blur', transferSummarySetListener);
+        element.addEventListener('compositionend', transferSummarySwitchComposing);
+        element.addEventListener('compositionstart', transferSummarySwitchComposing);
+        element.addEventListener('keyup', transferSummarySuggestion);
+        transferSummaryCurrentElement = element;
+        transferSummaryAtKeyDown = element.value;
+    } else if (event.type === 'blur') {
+        element.removeEventListener('blur', transferSummarySetListener);
+        element.removeEventListener('compositionend', transferSummarySwitchComposing);
+        element.removeEventListener('compositionstart', transferSummarySwitchComposing);
+        element.removeEventListener('keyup', transferSummarySuggestion);
+        //transferSummaryCurrentElement = undefined;
+        transferSummaryAtKeyDown = undefined;
+    }
+}
+
+function transferSummarySwitchComposing(event) {
+    transferSummaryIsComposing = (event.type === 'compostionstart');
+}
+
+function transferSummarySuggestion(event) {
+    let inputedValue = event.target.value;
+    switch (event.type) {
+        case 'keyup':
+            if (event.key === 'Escape') {
+                transferSummaryHideSuggestion();
+                return;
+            }
+            if (event.key === 'ArrowDown'
+                || event.key === inputedValue
+                || (!transferSummaryIsComposing && transferSummaryAtKeyDown !== inputedValue)
+            ) {
+                transferSummaryFetchSuggestion();
+            }
+            transferSummaryAtKeyDown = inputedValue;
+            break;
+    }
+}
+
+function transferSummaryFetchSuggestion() {
+    if (transferSummaryCurrentElement.value === '') {
+        transferSummaryDisplaySuggestion('');
+
+        return;
+    }
+
+    const form = transferSummaryCurrentElement.form;
+
+    let data = new FormData();
+    data.append('stub', form.stub.value);
+    data.append('keyword', transferSummaryCurrentElement.value);
+    data.append('mode', 'oas.transfer.receive:suggest-summary');
+
+    if (transferSummarySuggestionIsFetching) {
+        transferSummarySuggestionFetchCanceller.abort();
+        transferSummarySuggestionIsFetching = false;
+    }
+
+    transferSummarySuggestionIsFetching = true;
+    fetch(form.action, {
+        signal: transferSummarySuggestionFetchCanceller.signal,
+        method: 'POST',
+        credentials: 'same-origin',
+        body: data,
+    }).then(response => {
+        if (response.ok) {
+            let contentType = response.headers.get("content-type");
+            if (contentType.match(/^application\/json/)) {
+                return response.json();
+            }
+            throw new Error('Unexpected response'.translate());
+        } else {
+            throw new Error('Server Error'.translate());
+        }
+    }).then(json => {
+        if (json.status === 0) {
+            transferSummaryDisplaySuggestion(json.source);
+        } else {
+            throw new Error(json.message);
+        }
+    }).catch(error => {
+        if (error.name === 'AbortError') {
+            console.warn("Aborted!!");
+            transferSummarySuggestionFetchCanceller = new AbortController()
+        } else {
+            console.error(error)
+        }
+    }).then(() => {
+        transferSummarySuggestionIsFetching = false;
+    });
+}
+
+function transferSummaryDisplaySuggestion(source) {
+    let list = document.getElementById(transferSummarySuggestionListID);
+    if (list && !transferSummarySuggestionListLock) {
+        list.parentNode.removeChild(list);
+        window.removeEventListener('mouseup', transferSummaryHideSuggestion);
+        window.removeEventListener('keydown', transferSummarySuggestionMoveFocus);
+    }
+    if (source === '') {
+        return;
+    }
+
+    transferSummarySuggestionContainer = transferSummaryCurrentElement.findParent('td');
+
+    list = transferSummarySuggestionContainer.appendChild(document.createElement('div'));
+    list.id = transferSummarySuggestionListID;
+    list.innerHTML = source;
+
+    let i;
+    let anchors = list.getElementsByTagName('a');
+    for (i = 0; i < anchors.length; i++) {
+        anchors[i].addEventListener('mousedown', transferSummarySwitchSuggestionLock);
+        anchors[i].addEventListener('mouseup', transferSummarySwitchSuggestionLock);
+        anchors[i].addEventListener('click', transferSummaryAutoFill);
+    }
+
+    window.addEventListener('mouseup', transferSummaryHideSuggestion);
+    window.addEventListener('keydown', transferSummarySuggestionMoveFocus);
+}
+
+function transferSummaryHideSuggestion(event) {
+    if (event) {
+        const element = event.target;
+        if (element === transferSummaryCurrentElement
+            || element.childOf(transferSummarySuggestionContainer) !== -1
+        ) {
+            return;
+        }
+    }
+
+    transferSummarySuggestionListLock = false;
+    const suggestions = document.getElementById(transferSummarySuggestionListID);
+    if (suggestions) {
+        suggestions.parentNode.removeChild(suggestions);
+    }
+}
+
+function transferSummarySuggestionMoveFocus(event) {
+    if (event.key !== 'ArrowDown'
+        && event.key !== 'ArrowUp'
+        && event.key !== 'Tab'
+        && event.key !== ' '
+        && event.key !== 'Space'
+        && event.key !== 'Enter'
+        && event.key !== 'Escape'
+    ) {
+        return;
+    }
+
+    const list = document.getElementById(transferSummarySuggestionListID);
+    if (!list) {
+        return;
+    }
+    const anchors = list.getElementsByTagName('a');
+
+    let current = document.activeElement;
+    if (!current.findParent('#' + transferSummarySuggestionListID)) {
+        const ignoreKeys = ['Enter', 'Escape', ' ', 'Space'];
+        if (ignoreKeys.indexOf(event.key) === -1) {
+            current = anchors[0];
+            current.focus();
+            setTimeout(() => {
+                const parent = document.getElementById(transferSummarySuggestionListID);
+                if (parent) {
+                    parent.scrollTo(0, 0);
+                }
+            }, 0);
+        }
+        return;
+    }
+
+    event.preventDefault();
+    switch (event.key) {
+        case 'ArrowDown':
+        case 'Tab':
+            for (let i = 0; i < anchors.length; i++) {
+                if (anchors[i] === current) {
+                    const next = anchors[(i+1)];
+                    if (next) {
+                        next.focus();
+                        return;
+                    }
+                }
+            }
+            if (event.key !== 'ArrowDown') {
+                anchors[0].focus();
+            }
+            break;
+        case 'ArrowUp':
+            for (let i = 0; i < anchors.length; i++) {
+                if (anchors[i] === current) {
+                    const prev = anchors[(i-1)];
+                    if (prev) {
+                        prev.focus();
+                        return;
+                    }
+                }
+            }
+            //transferSummaryCurrentElement.focus();
+            break;
+        case ' ':
+        case 'Enter':
+        case 'Space':
+            current.click();
+            break;
+        case 'Escape':
+            transferSummaryHideSuggestion();
+            transferSummaryCurrentElement.focus();
+            break;
+    }
+}
+
+function transferSummarySwitchSuggestionLock(event) {
+    transferSummarySuggestionListLock = (event.type === 'mousedown');;
+}
+
+function transferSummaryAutoFill(event) {
+    event.preventDefault();
+    const element = event.target;
+
+    transferSummaryCurrentElement.value = element.dataset.suggest;
+
+    const list = document.getElementById(transferSummarySuggestionListID);
+    if (list) {
+        list.parentNode.removeChild(list);
     }
 }

@@ -150,6 +150,53 @@ table.transfer-detail input[type=text]:focus {
   color: #039;
 }
 
+table.transfer-detail tbody td.summary-cell {
+  position: relative;
+}
+table.transfer-detail tbody td.summary-cell #summary-list {
+  background: rgba(255,255,255,.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid #ccc;
+  box-shadow: 1px 2px 8px rgba(0,0,0,0.3);
+  margin-left: -1px;
+  max-height: 300px;
+  overflow: auto;
+  position: absolute;
+  top: 100%;
+  z-index: 1000;
+}
+table.transfer-detail tbody td.summary-cell #summary-list ul {
+  box-sizing: border-box;
+  list-style-type: none;
+  margin: 0;
+  min-width: 280px;
+  padding: 0;
+}
+table.transfer-detail tbody td.summary-cell #summary-list ul li a {
+  border-top: 1px solid rgba(0,0,0,0.12);
+  color: inherit;
+  display: block;
+  font-size: .7rem;
+  outline: none;
+  padding: .5em;
+  text-decoration: none;
+}
+table.transfer-detail tbody td.summary-cell #summary-list ul li a:first-child {
+  font-size: .8rem;
+}
+table.transfer-detail tbody td.summary-cell #summary-list ul li a:focus {
+  background: Highlight;
+  color: HighlightText;
+}
+table.transfer-detail tbody td.summary-cell #summary-list ul li a:hover {
+  background: #efefef;
+  color: inherit;
+}
+table.transfer-detail tbody td.summary-cell #summary-list ul li:first-child a {
+  border-top: 0 none rgba(0,0,0,0);
+}
+
 table.transfer-detail #page-nav td {
   border: 0 none transparent;
   text-align: start;

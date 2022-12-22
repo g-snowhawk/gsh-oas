@@ -89,27 +89,55 @@ class Receive extends Response
     }
      */
 
-    public function suggestClient()
+    //public function suggestClient()
+    //{
+    //    $json_array = ['status' => 0];
+    //    $ideographic_space = json_decode('"\u3000"');
+
+    //    $keyword = str_replace([$ideographic_space,' '], '', $this->request->param('keyword'));
+
+    //    $clients = $this->db->select(
+    //        'company,fullname,zipcode,address1,address2,division',
+    //        'receipt_to',
+    //        "WHERE REPLACE(REPLACE(company,'$ideographic_space',' '),' ','') like ? collate utf8_unicode_ci",
+    //        ["%$keyword%"]
+    //    );
+
+    //    if ($clients === false) {
+    //        $json_array['status'] = 1;
+    //        $json_array['message'] = 'Database Error: '.$this->db->error();
+    //    } else {
+    //        // TODO: Use to Template Engine
+    //        $this->view->bind('clients', $clients);
+    //        $json_array['source'] = $this->view->render('srm/receipt/suggest_client.tpl', true);
+    //    }
+
+    //    header('Content-type: application/json');
+    //    echo json_encode($json_array);
+    //    exit;
+    //}
+
+    public function suggestSummary()
     {
         $json_array = ['status' => 0];
         $ideographic_space = json_decode('"\u3000"');
 
-        $keyword = str_replace([$ideographic_space,' '], '', $this->request->param('keyword'));
+        $keyword = str_replace([$ideographic_space,' '], '', $this->request->param('keyword') ?? '');
 
-        $clients = $this->db->select(
-            'company,fullname,zipcode,address1,address2,division',
-            'receipt_to',
-            "WHERE REPLACE(REPLACE(company,'$ideographic_space',' '),' ','') like ? collate utf8_unicode_ci",
+        $summary = $this->db->select(
+            'summary',
+            'transfer',
+            "WHERE REPLACE(REPLACE(summary,'$ideographic_space',' '),' ','') like ? collate utf8_unicode_ci GROUP BY summary ORDER BY summary",
             ["%$keyword%"]
         );
 
-        if ($clients === false) {
+        if ($summary === false) {
             $json_array['status'] = 1;
             $json_array['message'] = 'Database Error: '.$this->db->error();
         } else {
             // TODO: Use to Template Engine
-            $this->view->bind('clients', $clients);
-            $json_array['source'] = $this->view->render('srm/receipt/suggest_client.tpl', true);
+            $this->view->bind('summary', $summary);
+            $json_array['source'] = $this->view->render('oas/transfer/suggest_summary.tpl', true);
         }
 
         header('Content-type: application/json');
