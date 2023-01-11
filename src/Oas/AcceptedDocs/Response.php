@@ -86,12 +86,14 @@ class Response extends AcceptedDocs
         $secure_cookie = true;
         if (strtolower($this->app->cnf('allow_http_cookie') === 'yes')
             && Env::server('https') !== 'on'
+            && Env::server('http_x_forwarded_proto') !== 'https'
         ) {
             $secure_cookie = false;
         }
         $column = Env::cookie(parent::ORDER_COOKIE);
         if (empty($column)) {
-            $column = 'sequence';
+            //$column = 'sequence';
+            $column = 'receipt_date';
             $this->app->setcookie(parent::ORDER_COOKIE, $column, 0, null, null, $secure_cookie, false);
         }
         $sort = Env::cookie(parent::SORT_COOKIE);
@@ -99,7 +101,10 @@ class Response extends AcceptedDocs
             $sort = 'DESC';
             $this->app->setcookie(parent::SORT_COOKIE, $sort, 0, null, null, $secure_cookie, false);
         }
-        $statement .= " ORDER BY {$column} {$sort}";
+
+        $sequence = ($column === 'sequence') ? '' : ", sequence {$sort}";
+
+        $statement .= " ORDER BY {$column} {$sort}{$sequence}";
         $this->view->bind('order_cookie', parent::ORDER_COOKIE);
         $this->view->bind('sort_cookie', parent::SORT_COOKIE);
 
