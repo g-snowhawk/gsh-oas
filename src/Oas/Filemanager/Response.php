@@ -23,7 +23,7 @@ class Response extends \Gsnowhawk\Filemanager
      */
     public function __construct()
     {
-        call_user_func_array('parent::__construct', func_get_args());
+        call_user_func_array(parent::class.'::__construct', func_get_args());
 
         $root = $this->privateSavePath();
         $conf_file = $root . '/oas_config.json';

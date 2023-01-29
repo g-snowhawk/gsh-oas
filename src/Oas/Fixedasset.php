@@ -32,7 +32,7 @@ class Fixedasset extends Taxation
     public function __construct()
     {
         $params = func_get_args();
-        call_user_func_array('parent::__construct', $params);
+        call_user_func_array(parent::class.'::__construct', $params);
 
         $paths = $this->view->getPaths();
         $this->pdf = new Pdf($paths);

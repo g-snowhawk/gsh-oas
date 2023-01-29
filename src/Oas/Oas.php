@@ -59,7 +59,7 @@ class Oas extends User implements PackageInterface
     public function __construct()
     {
         $params = func_get_args();
-        call_user_func_array('parent::__construct', $params);
+        call_user_func_array(parent::class.'::__construct', $params);
 
         $this->tax_rate = (float)$this->app->cnf('srm:tax_rate');
         $this->reduced_tax_rate = (float)$this->app->cnf('srm:reduced_tax_rate');

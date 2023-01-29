@@ -39,7 +39,7 @@ class Financial extends \Gsnowhawk\Oas\Taxation
     public function __construct()
     {
         $params = func_get_args();
-        call_user_func_array('parent::__construct', $params);
+        call_user_func_array(parent::class.'::__construct', $params);
 
         $this->view->bind(
             'header',

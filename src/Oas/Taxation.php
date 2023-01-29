@@ -35,7 +35,7 @@ class Taxation extends \Gsnowhawk\Oas
     public function __construct()
     {
         $params = func_get_args();
-        call_user_func_array('parent::__construct', $params);
+        call_user_func_array(parent::class.'::__construct', $params);
 
         if (false !== $operators = $this->db->select(
             'item_code,system_operator',

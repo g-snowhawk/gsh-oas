@@ -41,7 +41,7 @@ class Relational extends Transfer
             throw new Exception('No match application type');
         }
 
-        call_user_func_array('parent::__construct', $params);
+        call_user_func_array(parent::class.'::__construct', $params);
     }
 
     /**
