@@ -18,6 +18,8 @@ namespace Gsnowhawk\Oas\Filemanager;
  */
 class Response extends \Gsnowhawk\Filemanager
 {
+    protected $tree_order = 'DESC';
+
     /**
      * Object Constructor.
      */
@@ -40,6 +42,8 @@ class Response extends \Gsnowhawk\Filemanager
 
     public function defaultView()
     {
+        $this->view->bind('aliases', $this->cnf('filemanager:alias') ?? []);
+        $this->view->bind('filemanager_tree_depth', 1);
         parent::explorer();
     }
 
@@ -55,7 +59,11 @@ class Response extends \Gsnowhawk\Filemanager
 
     public function childDirectories($directory, $parent)
     {
-        return parent::fileList($directory, $parent, 'directory');
+        $child = parent::fileList($directory, $parent, 'directory');
+        $name = array_column($child, 'name');
+        array_multisort($name, SORT_DESC, $child);
+
+        return $child;
     }
 
     public function childFiles($directory, $parent)

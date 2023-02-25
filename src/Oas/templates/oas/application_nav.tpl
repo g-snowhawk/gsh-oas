@@ -21,5 +21,5 @@
 </li>
 {% if apps.hasPermission('oas.file.read', 0, 0, 'Do not use filesystem') %}
 <li id="oas-taxation"><a href="?mode=oas.accepted-docs.response">受領書類管理</a>
-<!--li id="oas-taxation"><a href="?mode=oas.filemanager.response">ファイル管理</a-->
+<li id="oas-taxation"><a href="?mode=oas.filemanager.response">ファイル管理</a>
 {% endif %}
