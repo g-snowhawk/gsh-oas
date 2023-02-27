@@ -482,6 +482,11 @@ class Taxreturn extends \Gsnowhawk\Oas\Taxation
                             $diff *= $unit['floor'];
                             $width = $unit['width'] ?? null;
                         }
+
+                        if ($diff < 0 && isset($unit['negative'])) {
+                            $diff = $unit['negative'];
+                        }
+
                         $data[$key] = $diff;
                         break;
                     case 'floor':
