@@ -1193,6 +1193,36 @@ class Financial extends \Gsnowhawk\Oas\Taxation
         $keys = $this->oas_config->debit_keys;
 
         foreach ($keys as $key) {
+            // Add 2024.02.10
+            if ($key === 'consumption_tax' && !is_null($last_year)) {
+                $sql = 'SELECT item_code_right AS code,
+                               SUM(amount_right) AS amount
+                          FROM `table::transfer`
+                         WHERE item_code_right = ?
+                           AND (issue_date >= ? AND issue_date <= ?)
+                         GROUP BY item_code_right';
+                if (false === $this->db->query($sql, [$this->filter_items['TAX_RECEIPT'], $start, $end])) {
+                    return false;
+                }
+                $unit = $this->db->fetch();
+                $receipt = $unit['amount'];
+                $sql = 'SELECT item_code_left AS code,
+                               SUM(amount_left) AS amount
+                          FROM `table::transfer`
+                         WHERE item_code_left = ?
+                           AND (issue_date >= ? AND issue_date <= ?)
+                         GROUP BY item_code_left';
+                if (false === $this->db->query($sql, [$this->filter_items['TAX_PAYMENT'], $start, $end])) {
+                    return false;
+                }
+                $unit = $this->db->fetch();
+                $payment = $unit['amount'];
+                if ($receipt > $payment) {
+                    $data[$key] = $receipt - $payment;
+                    $total += $data[$key];
+                }
+            }
+
             if (isset($data[$key])) {
                 $data[$key] = number_format($data[$key]);
             }
@@ -1213,6 +1243,16 @@ class Financial extends \Gsnowhawk\Oas\Taxation
                     'item_code = ?',
                     [$key]
                 );
+            } elseif ($key === 'consumption_tax' && !empty($data[$key])) {
+                $cell = $origin;
+                $cell['font'] = $this->mincho;
+                $cell['x'] = $cell['x'] - $origin['width'] * 2;
+                $cell['y'] = $y;
+                $cell['name'] = $label_key;
+                $cell['align'] = 'C';
+                $cell['size'] = 9;
+                $ary[] = $cell;
+                $data[$label_key] = $this->oas_config->debit_consumption_tax_label;
             }
 
             $y += $h;
