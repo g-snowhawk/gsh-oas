@@ -360,7 +360,7 @@ class Oas extends User implements PackageInterface
         return $gengo . ($year - $offset);
     }
 
-    protected function saveAcceptedDocument(string $ifexists = null): int|false
+    protected function saveAcceptedDocument(string $ifexists = ''): int|false
     {
         $userkey = $this->uid;
 
