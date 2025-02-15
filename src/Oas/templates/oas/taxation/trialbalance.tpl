@@ -8,10 +8,12 @@
   <input type="hidden" name="mode" value="oas.taxation.trialbalance:pdf">
   <div class="wrapper narrow-labels">
     <h1>合計残高試算表作成</h1>
-    <p>試算する年度を指定してください</p>
+    <p>試算する期間を指定してください</p>
     <div class="fieldset">
-      <label>年度</label>
-      <input type="text" name="nendo" id="nendo" maxlength="4" class="short" required>
+      <label>期間指定</label>
+      <div class="input flex">
+        <input type="date" name="start" id="start" class="ta-r" required>〜<input type="date" name="end" id="end" required>
+      </div>
     </div>
     <div class="form-footer">
       <div class="separate-block">

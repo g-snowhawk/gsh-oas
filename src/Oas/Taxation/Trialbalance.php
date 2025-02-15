@@ -61,8 +61,6 @@ class Trialbalance extends \Gsnowhawk\Oas\Taxation
 
     public function pdf(): void
     {
-        $target_year = strtotime($this->app->request->param('nendo') . '-01-01');
-
         $this->pdf->loadTemplate('oas/taxation/trialbalance.pdf');
         $tplIdx = $this->pdf->addPageFromTemplate(1);
 
@@ -91,11 +89,10 @@ class Trialbalance extends \Gsnowhawk\Oas\Taxation
                      ORDER BY a.item_code";
         };
 
-        $this_year = (date('Y') === date('Y', $target_year));
-        $date = ($this_year) ? date('m-d') : '12-31';
+        $start = date('Y-m-d 00:00:00', strtotime($this->app->request->param('start')));
+        $end = date('Y-m-d 23:59:59', strtotime($this->app->request->param('end')));
 
-        $start = date('Y-01-01 00:00:00', $target_year);
-        $end = date("Y-{$date} 23:59:59", $target_year);
+        $this_year = (date('Y') === date('Y', strtotime($start)));
 
         $replaces = [$this->uid, $start, $end];
 
