@@ -103,9 +103,18 @@ class Financial extends \Gsnowhawk\Oas\Taxation
         $this->pdf->setPage(2, false);
         $this->drawDeduction();
 
-        $amount = $this->withdrawals + $this->deposit + $this->column43 - $this->investments;
-        $item_code = $this->filter_items['DEPOSIT'];
-        $this->transferAmount($year, $item_code, $amount);
+        foreach($this->filter_items['FORWARD_2'] as $item_code) {
+            $amount = 0;
+            switch ($item_code) {
+                case $this->filter_items['ACCRUED_CONSUMPTION_TAX']:
+                    //
+                    break;
+                case $this->filter_items['DEPOSIT']:
+                    $amount = $this->withdrawals + $this->deposit + $this->column43 - $this->investments;
+                    break;
+            }
+            $this->transferAmount($year, $item_code, $amount);
+        }
 
         $file = $this->getPdfPath($year, 'taxation', 'financialsheet.pdf');
         $locked = ($this->request->POST('locked') === '1') ? true : false;
@@ -517,7 +526,7 @@ class Financial extends \Gsnowhawk\Oas\Taxation
             $depreciate = Fixedasset::depreciate($result, $lda, $t, false);
             $depreciable = Fixedasset::depreciate($result, $lda, $t);
             $price_onhand = ($result['quantity'] * $result['price']) - $depreciable;
-            if (isset($result['ido']['month'])) {
+            if (isset($result['ido']['month']) || $t >= $limit) {
                 $price_onhand = 0;
             }
             $dpsum += $depreciate;
