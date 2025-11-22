@@ -10,6 +10,7 @@
 
 namespace Gsnowhawk\Oas\Taxation;
 
+use ErrorException;
 use Gsnowhawk\Common\Lang;
 use Gsnowhawk\Common\Text;
 use Gsnowhawk\Pdf;
@@ -122,7 +123,7 @@ class Taxreturn extends \Gsnowhawk\Oas\Taxation
         $year = date('Y', strtotime($target_year));
 
         if ($year === date('Y')) {
-            trigger_error('Today is still in the period.', E_USER_ERROR);
+            throw new ErrorException('Today is still in the period.');
         }
 
         $this->pdf->loadTemplate('oas/taxation/tax_return_B.pdf');
