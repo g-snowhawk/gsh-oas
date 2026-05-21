@@ -90,11 +90,31 @@ class Response extends \Gsnowhawk\Oas\Transfer
             if ($this->request->param('add') === '1') {
                 $post['addnew'] = '1';
                 if ($this->request->param('issue_date')) {
-                    $issue_date = date(
-                        'Y-m-d',
-                        strtotime($this->request->param('issue_date'))
-                    );
+                    $issue_date = date( 'Y-m-d', strtotime($this->request->param('issue_date')));
                     $post['issue_date'] = $issue_date;
+                }
+
+                if ($this->request->param('src')) {
+                    list($i, $p, $t) = explode(',', $this->request->param('src'));
+                    $fetch = $this->currentTransfer($i, $t, $p);
+                    if (!empty($fetch)) {
+                        foreach ($fetch as $unit) {
+                            $line_number = $unit['line_number'];
+                            if (empty($post['nissue_date'])) {
+                                $post['nissue_date'] = $unit['issue_date'];
+                            }
+                            foreach ($unit as $key => $value) {
+                                if (!in_array($key, ['category','issue_date','page_number','trade','locked'])) {
+                                    if (!isset($post[$key])) {
+                                        $post[$key] = [];
+                                    }
+                                    $post[$key][$line_number] = $unit[$key];
+                                } elseif (!isset($post[$key])) {
+                                    $post[$key] = $value;
+                                }
+                            }
+                        }
+                    }
                 }
             } else {
                 $latest_transfer = $this->latestTransfer($category, 'issue_date,page_number');
@@ -182,6 +202,11 @@ class Response extends \Gsnowhawk\Oas\Transfer
         }
         $this->view->bind('documents', $documents);
 
+        if (empty($post['issue_date'])) {
+            $hage = $this->request->param();
+            trigger_error(var_export($hage, true));
+            trigger_error(var_export($post, true));
+        }
         $format = '?mode=srm.receipt.response:download-pdf&id='.$post['issue_date'].':%d:%d';
         $receipt_id = $this->db->get(
             'id',

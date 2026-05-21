@@ -171,7 +171,7 @@ class Transfer extends \Gsnowhawk\Oas
         }
 
         if ($result !== false) {
-            //$this->app->logger->log("Save the transfer", 201);
+            //$this->app->syslog("Save the transfer", [], 201);
 
             $this->saved_issue_date = $save['issue_date'];
             $this->saved_page_number = $page_number;

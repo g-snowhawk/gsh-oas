@@ -25,6 +25,7 @@ let displayTotalLeft = undefined;
 let displayTotalRight = undefined;
 let itemCodeTemplate = undefined;
 let buttonAddPage = undefined;
+let buttonCopyPage = undefined;
 let buttonUnlock = undefined;
 let buttonCancel = undefined;
 let buttonSave = undefined;
@@ -33,6 +34,7 @@ let linkNextPage = undefined;
 let token = undefined;
 let issueDate = undefined;
 let pageNumber = undefined;
+let category = undefined;
 let naviPagination = undefined;
 let calcApportionment = undefined;
 let apportionment = undefined;
@@ -67,6 +69,7 @@ function initializeTransferEditor(event) {
     displayTotalRight = document.getElementById('total-right');
     itemCodeTemplate = document.getElementById('account-items');
     buttonAddPage = document.getElementById('addpage');
+    buttonCopyPage = document.getElementById('copy');
     buttonUnlock = document.getElementById('unlock');
     buttonCancel = document.getElementById('cancel');
     buttonSave = document.querySelector('input[name=s1_submit]');
@@ -78,6 +81,7 @@ function initializeTransferEditor(event) {
 
     issueDate = document.querySelector('input[name=issue_date]').value;
     pageNumber = document.querySelector('input[name=page_number]').value;
+    category = document.querySelector('input[name=category]').value;
 
     const currentForm = document.getElementById(mainFormID);
     currentForm.addEventListener('submit', checkTransferBeforeSubmit);
@@ -106,6 +110,7 @@ function initializeTransferEditor(event) {
     }
 
     if (buttonAddPage) buttonAddPage.addEventListener('click', addNewPage);
+    if (buttonCopyPage) buttonCopyPage.addEventListener('click', copyPage);
     if (buttonUnlock) buttonUnlock.addEventListener('click', unlockForm);
     if (buttonCancel) buttonCancel.addEventListener('click', backToViewMode);
     if (buttonSave) buttonSave.addEventListener('click', checkTransferBeforeSubmit);
@@ -256,6 +261,50 @@ function addNewPage(event) {
     .catch(error => console.error(error));
 }
 
+function copyPage(event) {
+    event.preventDefault();
+    const element = event.currentTarget;
+    const form = element.form;
+
+    if (element.findParent('.calendar-ui')) {
+        const hash = hashFromCalendar(element).substr(1);
+        const match = hash.match(/([0-9]+)-([0-9]+)-([0-9]+)/);
+        const day = match[1] + '-' + ('00' + match[2]).slice(-2) + '-' + ('00' + match[3]).slice(-2);
+        let queryString = '?mode=' + editMode + '&add=1';
+        queryString += '&issue_date=' + day;
+        queryString += '&src=' + issueDate + ',' + category + ',' + pageNumber;
+        removeCalendar();
+
+        fetch(location.pathname + queryString, {
+            method: 'GET',
+            credentials: 'same-origin'
+        }).then(response => response.text())
+        .then(source => replaceForm(source))
+        .catch(error => console.error(error));
+    } else {
+        const today = new Date().toLocaleDateString("ja-JP", {year: "numeric",month: "2-digit", day: "2-digit"});
+        let queryString = '?mode=' + calendarMode + '&date=' + today;
+        fetch(location.pathname + queryString, {
+            method: 'GET',
+            credentials: 'same-origin'
+        })
+        .then(function(response){
+            response.json().then(function(result){
+                const date = new Date(result.date);
+                const days = result.days || null;
+                const element = event.currentTarget || event.target;
+
+                popupCalendar(
+                    element,
+                    date.getFullYear(), date.getMonth() + 1, days,
+                    moveToPage, moveCalendar, copyPage
+                );
+            })
+        })
+        .catch(error => console.error(error));
+    }
+}
+
 function reloadTransferPage(date, page) {
     let data = new FormData();
     data.append('stub', token);
@@ -273,6 +322,9 @@ function reloadTransferPage(date, page) {
 }
 
 function backToViewMode(event) {
+    if (event.target.form.nissue_date) {
+        issueDate = event.target.form.nissue_date.value;
+    }
     reloadTransferPage(issueDate, pageNumber);
 }
 

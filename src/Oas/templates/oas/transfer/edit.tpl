@@ -23,6 +23,9 @@
   {% set class = {'T': 'transfer', 'P': 'payment', 'R': 'receipt'} %}
   <input type="hidden" name="mode" value="oas.transfer.receive:save">
   <input type="hidden" name="category" value="{{ post.category }}">
+  {% if post.nissue_date is not empty %}
+    <input type="hidden" name="nissue_date" value="{{ post.nissue_date }}">
+  {% endif %}
   <p id="backlink"><a href="?mode=oas.transfer.response">帳簿一覧</a></p>
   <div class="wrapper">
     <h1>{{ h1[post.category] }}伝票</h1>
@@ -153,6 +156,7 @@
             <input type="button" id="unlock" value="編集" data-lock-type="never">
             {% endif %}
             {% if post.addnew != '1' %}
+            <input type="button" id="copy" value="複製" data-lock-type="never">
             <input type="button" id="addpage" value="次葉の追加" data-lock-type="never">
             {% endif %}
           </span>
