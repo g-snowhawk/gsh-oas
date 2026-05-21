@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of G.Snowhawk Application.
  *
@@ -90,7 +91,7 @@ class Response extends \Gsnowhawk\Oas\Transfer
             if ($this->request->param('add') === '1') {
                 $post['addnew'] = '1';
                 if ($this->request->param('issue_date')) {
-                    $issue_date = date( 'Y-m-d', strtotime($this->request->param('issue_date')));
+                    $issue_date = date('Y-m-d', strtotime($this->request->param('issue_date')));
                     $post['issue_date'] = $issue_date;
                 }
 

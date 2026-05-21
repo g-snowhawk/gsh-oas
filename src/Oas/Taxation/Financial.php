@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of G.Snowhawk Application.
  *
@@ -104,7 +105,7 @@ class Financial extends \Gsnowhawk\Oas\Taxation
         $this->pdf->setPage(2, false);
         $this->drawDeduction();
 
-        foreach($this->filter_items['FORWARD_2'] as $item_code) {
+        foreach ($this->filter_items['FORWARD_2'] as $item_code) {
             $amount = 0;
             switch ($item_code) {
                 case $this->filter_items['ACCRUED_CONSUMPTION_TAX']:
@@ -1172,7 +1173,7 @@ class Financial extends \Gsnowhawk\Oas\Taxation
             //$total += $data[$deposit];
             //
             $this->withdrawals = (isset($data[$withdrawals])) ? (int)$data[$withdrawals] : 0;
-        //$this->deposit = $kari + (int)$data[$deposit] + (int)$data['no33'] - $this->investments;
+            //$this->deposit = $kari + (int)$data[$deposit] + (int)$data['no33'] - $this->investments;
         } else {
             $data['no43'] = null;
             $this->deposit = $data[$deposit];

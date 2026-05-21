@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of G.Snowhawk Application.
  *
@@ -109,7 +110,7 @@ class Response extends AcceptedDocs
         $this->view->bind('sort_cookie', parent::SORT_COOKIE);
 
         // Pagenation
-        $rows_per_page = (Int)Env::cookie('rows_per_page_accepted_document');
+        $rows_per_page = (int)Env::cookie('rows_per_page_accepted_document');
         if (empty($rows_per_page)) {
             $rows_per_page = $this->rows_per_page;
         }

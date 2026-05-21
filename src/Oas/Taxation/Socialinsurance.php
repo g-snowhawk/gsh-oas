@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of G.Snowhawk Application.
  *
@@ -134,7 +135,7 @@ class Socialinsurance extends \Gsnowhawk\Oas\Taxation
         if (!empty($file)) {
             $date = new DateTime('now');
             if ($date->format('Y') !== $year) {
-                $date->setDate((Int)$year, 12, 31);
+                $date->setDate((int)$year, 12, 31);
             }
             $this->request->param('receipt_date', $date->format('Y-m-d'));
             $this->request->param('year', $date->format('Y'));
@@ -145,7 +146,7 @@ class Socialinsurance extends \Gsnowhawk\Oas\Taxation
 
         if (false !== $document_id) {
             if (!is_null($document_id)) {
-                $documents[] = (String)$document_id;
+                $documents[] = (string)$document_id;
             }
             $documents = array_unique($documents, SORT_NUMERIC);
             $data['note'] = (!empty($documents)) ? 'a' . json_encode(['docid' => $documents]) : null;
@@ -239,7 +240,7 @@ class Socialinsurance extends \Gsnowhawk\Oas\Taxation
 
         $date = new DateTime('now');
         if ($date->format('Y') !== $year) {
-            $date->setDate((Int)$year, 12, 31);
+            $date->setDate((int)$year, 12, 31);
         }
 
         $sequence = (int)$this->db->max(
