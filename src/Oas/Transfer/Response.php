@@ -110,6 +110,9 @@ class Response extends \Gsnowhawk\Oas\Transfer
                                         $post[$key] = [];
                                     }
                                     $post[$key][$line_number] = $unit[$key];
+                                    if ($key === 'note' && preg_match('/^a\{"docid":\["[\d,]+"\]\}$/', $value)) {
+                                        $post[$key][$line_number] = null;
+                                    }
                                 } elseif (!isset($post[$key])) {
                                     $post[$key] = $value;
                                 }
