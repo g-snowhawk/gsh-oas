@@ -38,6 +38,7 @@ let category = undefined;
 let naviPagination = undefined;
 let calcApportionment = undefined;
 let apportionment = undefined;
+let calendarOption = undefined;
 
 switch (document.readyState) {
     case 'loading' :
@@ -166,6 +167,9 @@ function moveCalendar(event) {
 
     const element = event.currentTarget;
     let queryString = '?mode=' + calendarMode + '&date=' + element.hash.substr(1) + '-01';
+    if (calendarOption) {
+        queryString += '&opt=' + calendarOption;
+    }
     fetch(location.pathname + queryString, {
         method: 'GET',
         credentials: 'same-origin'
@@ -274,6 +278,7 @@ function copyPage(event) {
         queryString += '&issue_date=' + day;
         queryString += '&src=' + issueDate + ',' + category + ',' + pageNumber;
         removeCalendar();
+        calendarOption = undefined;
 
         fetch(location.pathname + queryString, {
             method: 'GET',
@@ -282,8 +287,12 @@ function copyPage(event) {
         .then(source => replaceForm(source))
         .catch(error => console.error(error));
     } else {
+        calendarOption = 'naked';
         const today = new Date().toLocaleDateString("ja-JP", {year: "numeric",month: "2-digit", day: "2-digit"});
         let queryString = '?mode=' + calendarMode + '&date=' + today;
+        if (calendarOption) {
+            queryString += '&opt=' + calendarOption;
+        }
         fetch(location.pathname + queryString, {
             method: 'GET',
             credentials: 'same-origin'

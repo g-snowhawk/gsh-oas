@@ -117,6 +117,9 @@ class Response extends \Gsnowhawk\Oas\Transfer
                                     $post[$key] = $value;
                                 }
                             }
+
+                            // Don't copy page number!
+                            $post['page_number'] = null;
                         }
                     }
                 }
@@ -269,6 +272,12 @@ class Response extends \Gsnowhawk\Oas\Transfer
             [$this->uid, $category, $firstDay->format('Y-m-d'), $lastDay->format('Y-m-d')]
         );
         $result = $this->db->fetchAll();
+
+        $json_array['opt'] = $this->request->param('opt');
+        if ($this->request->param('opt') === 'naked')  {
+            $result = null;
+        }
+
         if (!empty($result)) {
             $json_array['days'] = [];
             foreach ((array)$result as $unit) {
